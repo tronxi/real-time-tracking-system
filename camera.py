@@ -14,12 +14,11 @@ picam2.configure("preview")
 picam2.start()
 
 def handler(signum, frame):
-  res = input("Ctrl-c was pressed. Do you really want to exit? y/n ")
-  if res == 'y':
-    picam2.close()
-    exit(1)
+  picam2.close()
+  exit(1)
 
 signal.signal(signal.SIGINT, handler)
+signal.signal(signal.SIGTSTP, handler)
 
 command = ['ffmpeg',
            '-y',
