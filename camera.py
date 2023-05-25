@@ -3,8 +3,8 @@ from picamera2 import Picamera2
 import subprocess
 import signal
 
-width = 640
-height = 480
+width = 1280
+height = 720
 rtmp_url = "rtmp://tronxi.ddns.net:1935/live/test"
 picam2 = Picamera2()
 picam2.preview_configuration.main.size = (width, height)
@@ -26,7 +26,7 @@ command = ['ffmpeg',
            '-vcodec', 'rawvideo',
            '-pix_fmt', 'bgr24',
            '-s', "{}x{}".format(width, height),
-           '-r', "20",
+           '-r', "30",
            '-i', '-',
            '-c:v', 'libx264',
            '-pix_fmt', 'yuv420p',
