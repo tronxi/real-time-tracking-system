@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+    mysql:
+      container_name: rtmp-hls
+      image: alqutami/rtmp-hls
+      ports:
+        - "1935:1935"
+        - "8080:8080"
+      volumes: 
+        - ./custom_players:/usr/local/nginx/html/players
+      networks: 
+        - rtmp-hls-net
+
+networks: 
+    rtmp-hls-net:
