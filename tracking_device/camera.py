@@ -32,6 +32,7 @@ class Camera:
         self._picam2.close()
 
     def start(self):
+        self._picam2.start()
         p = subprocess.Popen(self._command, stdin=subprocess.PIPE)
         while True:
             im = self._picam2.capture_array()

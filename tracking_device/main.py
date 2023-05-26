@@ -1,4 +1,4 @@
-from tracking_device import camera
+import camera
 import signal
 
 cam = camera.Camera()
