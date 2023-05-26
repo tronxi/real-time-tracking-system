@@ -27,14 +27,11 @@ class Metrics extends StatelessWidget {
               child: Card(
                   child: Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Expanded(
-                  flex: 1,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Text(
-                      "...........\n...........\n...........\n...........\n...........\nLogs del cohete\n...........\n...........\n...........\n...........\n...........\n...........\n",
-                      style: TextStyle(fontSize: 16.0),
-                    ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Text(
+                    "...........\n...........\n...........\n...........\n...........\nLogs del cohete\n...........\n...........\n...........\n...........\n...........\n...........\n",
+                    style: TextStyle(fontSize: 16.0),
                   ),
                 ),
               )),
