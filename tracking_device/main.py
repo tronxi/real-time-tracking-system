@@ -23,7 +23,6 @@ signal.signal(signal.SIGTSTP, exit_program)
 
 def main():
     thread_cam.start()
-    print("otra cosa")
 
 
 if __name__ == "__main__":
