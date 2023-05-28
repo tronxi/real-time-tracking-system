@@ -1,46 +1,55 @@
+import sys
 import camera
 import heartbeat_sender as hs
 import signal
 import serial_port_reader
 from threading import Thread
 
-cam = camera.Camera()
-spr = serial_port_reader.SerialPortReader()
 
+class Main:
+    def __init__(self):
+        self.cam = None
+        self.spr = None
+        self.thread_cam = Thread(target=self.start_cam)
+        self.thread_heartbeat_sender = Thread(target=self.start_heartbeat_sender)
+        self.thread_serial_port_reader = Thread(target=self.start_serial_port_reader)
+        signal.signal(signal.SIGINT, self.exit_program)
+        signal.signal(signal.SIGTSTP, self.exit_program)
 
-def start_cam():
-    cam.start()
+    def start_cam(self):
+        self.cam = camera.Camera()
+        self.cam.start()
 
+    def start_serial_port_reader(self):
+        self.spr = serial_port_reader.SerialPortReader()
+        self.spr.start()
 
-def start_serial_port_reader():
-    spr.start()
+    def start_heartbeat_sender(self):
+        heartbeat_sender = hs.HeartbeatSender()
+        heartbeat_sender.start()
 
+    def exit_program(self, signum, frame):
+        if self.cam is not None:
+            self.cam.close()
+        if self.spr is not None:
+            self.spr.close()
+        exit(1)
 
-def start_heartbeat_sender():
-    heartbeat_sender = hs.HeartbeatSender()
-    heartbeat_sender.start()
-
-
-thread_cam = Thread(target=start_cam)
-thread_heartbeat_sender = Thread(target=start_heartbeat_sender)
-thread_serial_port_reader = Thread(target=start_serial_port_reader)
-
-
-def exit_program(signum, frame):
-    cam.close()
-    spr.close()
-    exit(1)
-
-
-signal.signal(signal.SIGINT, exit_program)
-signal.signal(signal.SIGTSTP, exit_program)
-
-
-def main():
-    thread_cam.start()
-    thread_heartbeat_sender.start()
-    thread_serial_port_reader.start()
+    def main(self, args):
+        if args == "all":
+            self.thread_cam.start()
+            self.thread_heartbeat_sender.start()
+            self.thread_serial_port_reader.start()
+        elif args == "cam":
+            self.thread_cam.start()
+        elif args == "serial":
+            self.thread_serial_port_reader.start()
+        elif args == "heart":
+            self.thread_heartbeat_sender.start()
 
 
 if __name__ == "__main__":
-    main()
+    arg = "all"
+    if len(sys.argv) > 1:
+        arg = sys.argv[1]
+    Main().main(arg)
