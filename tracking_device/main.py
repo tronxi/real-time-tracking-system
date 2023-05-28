@@ -1,5 +1,8 @@
 import sys
-import camera
+try:
+    import camera
+except ImportError:
+    pass
 import heartbeat_sender as hs
 import signal
 import serial_port_reader
