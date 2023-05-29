@@ -14,8 +14,10 @@ class Main:
         self.cam = None
         self.spr = None
         self.thread_cam = Thread(target=self.start_cam)
-        self.thread_heartbeat_sender = Thread(target=self.start_heartbeat_sender)
-        self.thread_serial_port_reader = Thread(target=self.start_serial_port_reader)
+        self.thread_heartbeat_sender = Thread(
+            target=self.start_heartbeat_sender)
+        self.thread_serial_port_reader = Thread(
+            target=self.start_serial_port_reader)
         signal.signal(signal.SIGINT, self.exit_program)
         signal.signal(signal.SIGTSTP, self.exit_program)
 
