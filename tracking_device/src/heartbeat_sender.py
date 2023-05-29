@@ -1,4 +1,6 @@
 import time
+import event
+from datetime import datetime
 
 
 class HeartbeatSender:
@@ -8,5 +10,6 @@ class HeartbeatSender:
 
     def start(self):
         while True:
-            print("sending to url" + self._url)
+            ev = event.Event("HEARTBEAT", datetime.now())
+            print(ev.to_json())
             time.sleep(5)
