@@ -1,5 +1,5 @@
 import serial
-
+import json
 
 class SerialPortReader:
 
@@ -12,4 +12,6 @@ class SerialPortReader:
     def start(self):
         while True:
             line = self.port.readline().decode()
+            serial_event = json.loads(line)
             print(line)
+            print(serial_event["type"])
