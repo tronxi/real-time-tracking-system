@@ -16,7 +16,7 @@ class SerialPortReader:
         while True:
             line = self.port.readline().decode()
             ev = self._create_event(line)
-            print(ev)
+            print(ev.to_json())
 
     def _create_event(self, line):
         serial_event = json.loads(line)
