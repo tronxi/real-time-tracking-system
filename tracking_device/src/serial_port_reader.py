@@ -11,5 +11,5 @@ class SerialPortReader:
 
     def start(self):
         while True:
-            line = self.port.readline().strip()
+            line = self.port.readline().decode()
             print(line)
