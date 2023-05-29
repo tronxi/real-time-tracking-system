@@ -1,5 +1,8 @@
 import serial
 import json
+import event
+from datetime import datetime
+
 
 class SerialPortReader:
 
@@ -12,6 +15,11 @@ class SerialPortReader:
     def start(self):
         while True:
             line = self.port.readline().decode()
-            serial_event = json.loads(line)
-            print(line)
-            print(serial_event["type"])
+            ev = self._create_event(line)
+            print(ev)
+
+    def _create_event(self, line):
+        serial_event = json.loads(line)
+        event_type = serial_event["type"]
+        serial_event.pop("type")
+        return event.Event(event_type, datetime.now(), serial_event)
