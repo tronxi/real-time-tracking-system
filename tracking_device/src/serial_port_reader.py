@@ -4,7 +4,7 @@ import serial
 class SerialPortReader:
 
     def __init__(self):
-        self.port = serial.Serial('/dev/ttyUSB0', 115200)
+        self.port = serial.Serial('/dev/ttyUSB0', 9600)
 
     def close(self):
         self.port.close()
