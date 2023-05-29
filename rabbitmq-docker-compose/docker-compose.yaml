@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  chat-rabbit:
+    container_name: rabbit-stomp
+    image: tronxi/rabbit-stomp
+    build:
+      context: .
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "61613:61613"
+    env_file: .env
+    networks:
+      - rabbit-net
+
+networks:
+  rabbit-net:
