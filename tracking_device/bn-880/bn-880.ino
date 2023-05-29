@@ -16,14 +16,15 @@ void setup()
 
 void loop()
 {
-  StaticJsonDocument<200> doc;
-  doc["stalleites"] = gps.satellites.value();
-  doc["hdop"] = gps.hdop.hdop();
-  doc["lat"] = gps.location.lat();
-  doc["long"] = gps.location.lng();
-  doc["altitude"] = gps.altitude.meters();
-  doc["speed"] = gps.speed.kmph();
-  serializeJson(doc, Serial);
+  StaticJsonDocument<200> positionEvent;
+  positionEvent["type"] = "POSITION";
+  positionEvent["satellites"] = gps.satellites.value();
+  positionEvent["hdop"] = gps.hdop.hdop();
+  positionEvent["lat"] = gps.location.lat();
+  positionEvent["long"] = gps.location.lng();
+  positionEvent["altitude"] = gps.altitude.meters();
+  positionEvent["speed"] = gps.speed.kmph();
+  serializeJson(positionEvent, Serial);
   Serial.println();
   smartDelay(1000);
 
