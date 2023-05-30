@@ -6,16 +6,18 @@ from datetime import datetime
 
 class SerialPortReader:
 
-    def __init__(self):
-        self.port = serial.Serial('/dev/ttyUSB0', 9600)
+    def __init__(self, rabbitmq_connection):
+        self._rabbitmq_connection = rabbitmq_connection
+        self._port = serial.Serial('/dev/ttyUSB0', 9600)
 
     def close(self):
-        self.port.close()
+        self._port.close()
 
     def start(self):
         while True:
-            line = self.port.readline().decode()
+            line = self._port.readline().decode()
             ev = self._create_event(line)
+            self._rabbitmq_connection.publish(ev.to_json())
             print(ev.to_json())
 
     def _create_event(self, line):
