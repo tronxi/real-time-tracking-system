@@ -6,13 +6,13 @@ except ImportError:
 import heartbeat_sender as hs
 import signal
 import serial_port_reader
-import rabbitmq_connection
+import rabbitmq_connection_manager
 from threading import Thread
 
 
 class Main:
     def __init__(self):
-        self.connection = rabbitmq_connection.RabbitmqConnection()
+        self.connection_manager = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.cam = None
         self.spr = None
         self.thread_cam = Thread(target=self.start_cam)
@@ -28,11 +28,11 @@ class Main:
         self.cam.start()
 
     def start_serial_port_reader(self):
-        self.spr = serial_port_reader.SerialPortReader(self.connection)
+        self.spr = serial_port_reader.SerialPortReader(self.connection_manager)
         self.spr.start()
 
     def start_heartbeat_sender(self):
-        heartbeat_sender = hs.HeartbeatSender(self.connection)
+        heartbeat_sender = hs.HeartbeatSender(self.connection_manager)
         heartbeat_sender.start()
 
     def exit_program(self, signum, frame):
@@ -40,7 +40,7 @@ class Main:
             self.cam.close()
         if self.spr is not None:
             self.spr.close()
-        self.connection.close()
+        self.connection_manager.close()
         exit(1)
 
     def main(self, args):
