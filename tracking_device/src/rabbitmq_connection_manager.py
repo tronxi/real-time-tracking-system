@@ -12,21 +12,14 @@ class RabbitmqConnectionManager:
                                           username="rocket",
                                           password="rocket")))
         self._exchange_name = 'tracking_device_events'
-        self._init_exchanges()
+        self._channel = self._connection.channel()
+        self._channel.exchange_declare(exchange=self._exchange_name,
+                                       exchange_type='fanout')
 
-    def _init_exchanges(self):
-        channel = self._connection.channel()
-        channel.exchange_declare(exchange=self._exchange_name,
-                                 exchange_type='fanout')
-        channel.close()
-
-    def create_channel(self):
-        return self._connection.channel()
-
-    def publish(self, channel, body):
-        channel.basic_publish(exchange=self._exchange_name,
-                              routing_key='',
-                              body=body)
+    def publish(self, body):
+        self._channel.basic_publish(exchange=self._exchange_name,
+                                    routing_key='',
+                                    body=body)
 
     def close(self):
         self._connection.close()

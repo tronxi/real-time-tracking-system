@@ -6,9 +6,8 @@ from datetime import datetime
 
 class SerialPortReader:
 
-    def __init__(self, rabbitmq_connection_manager, channel):
+    def __init__(self, rabbitmq_connection_manager):
         self._rabbitmq_connection_manager = rabbitmq_connection_manager
-        self._channel = channel
         self._port = serial.Serial('/dev/ttyUSB0', 9600)
 
     def close(self):
@@ -18,7 +17,7 @@ class SerialPortReader:
         while True:
             line = self._port.readline().decode()
             ev = self._create_event(line)
-            self._rabbitmq_connection_manager.publish(self._channel, "ev.to_json()")
+            self._rabbitmq_connection_manager.publish(ev.to_json())
             print(ev.to_json())
 
     def _create_event(self, line):
