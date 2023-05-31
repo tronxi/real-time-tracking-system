@@ -5,9 +5,9 @@ from datetime import datetime
 
 class HeartbeatSender:
 
-    def __init__(self, rabbitmq_connection_manager):
+    def __init__(self, rabbitmq_connection_manager, channel):
         self._rabbitmq_connection_manager = rabbitmq_connection_manager
-        self._channel = self._rabbitmq_connection_manager.create_channel()
+        self._channel = channel
 
     def start(self):
         while True:

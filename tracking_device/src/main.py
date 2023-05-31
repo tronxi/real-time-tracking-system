@@ -13,6 +13,8 @@ from threading import Thread
 class Main:
     def __init__(self):
         self.connection_manager = rabbitmq_connection_manager.RabbitmqConnectionManager()
+        self._channel_heart = self.connection_manager.create_channel()
+        self._channel_serial = self.connection_manager.create_channel()
         self.cam = None
         self.spr = None
         self.thread_cam = Thread(target=self.start_cam)
@@ -28,11 +30,11 @@ class Main:
         self.cam.start()
 
     def start_serial_port_reader(self):
-        self.spr = serial_port_reader.SerialPortReader(self.connection_manager)
+        self.spr = serial_port_reader.SerialPortReader(self.connection_manager, self._channel_serial)
         self.spr.start()
 
     def start_heartbeat_sender(self):
-        heartbeat_sender = hs.HeartbeatSender(self.connection_manager)
+        heartbeat_sender = hs.HeartbeatSender(self.connection_manager, self._channel_heart)
         heartbeat_sender.start()
 
     def exit_program(self, signum, frame):
