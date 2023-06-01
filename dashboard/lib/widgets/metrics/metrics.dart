@@ -1,4 +1,5 @@
 import 'package:dashboard/models/event.dart';
+import 'package:dashboard/shared/responsive_query.dart';
 import 'package:flutter/material.dart';
 
 class Metrics extends StatefulWidget {
@@ -50,7 +51,7 @@ class _MetricsState extends State<Metrics> {
                 value: latestLocationPayload['speed'] ?? "unknown"),
             _Property(property: "Ultima conexión", value: latestDatetime),
             SizedBox(
-              width: 640,
+              width: ResponsiveQuery.isDesktop(context) ? 640 : 380,
               height: 220,
               child: Card(
                   child: Padding(

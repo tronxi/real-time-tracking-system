@@ -25,19 +25,21 @@ class _CustomMapState extends State<CustomMap> {
   late LatLng? _current;
   late double _currentHeading;
   late LatLng? _latestRocketPosition;
+  late bool _moveToRocket;
   final MapController _mapController = MapController();
 
   @override
   void initState() {
+    _moveToRocket = true;
     _defaultZoom = 18;
     _markers = [];
     _rocketMarkers = [];
     _currentHeading = 0;
+    _latestRocketPosition = null;
     _current = LatLng(40.416775, -3.703790);
     _determinePosition().then((value) {
       _current = LatLng(value.latitude, value.longitude);
       _markers.add(_createCompassMarker());
-      _moveToCurrent();
       _initCompass();
       _followPosition();
     });
@@ -47,6 +49,12 @@ class _CustomMapState extends State<CustomMap> {
 
   @override
   Widget build(BuildContext context) {
+    if(_moveToRocket && _latestRocketPosition != null) {
+      _moveToCurrentRocketPosition();
+      setState(() {
+        _moveToRocket = false;
+      });
+    }
     if (widget.latestEvent.isPosition()) {
       setState(() {
         _latestRocketPosition = widget.latestEvent.latLng();
@@ -63,7 +71,13 @@ class _CustomMapState extends State<CustomMap> {
             bottom: 16.0,
             right: 16.0,
             child: IconButton(
-                onPressed: _moveToCurrent,
+                onPressed: _moveToCurrentRocketPosition,
+                icon: const Icon(Icons.rocket))),
+        Positioned(
+            bottom: 16.0,
+            right: 80.0,
+            child: IconButton(
+                onPressed: _moveToCurrentUserPosition,
                 icon: const Icon(Icons.location_searching)))
       ],
       children: [
@@ -79,9 +93,15 @@ class _CustomMapState extends State<CustomMap> {
     );
   }
 
-  void _moveToCurrent() {
+  void _moveToCurrentRocketPosition() {
     if (_latestRocketPosition != null) {
       _mapController.move(_latestRocketPosition!, _defaultZoom);
+    }
+  }
+
+  void _moveToCurrentUserPosition() {
+    if (_current != null) {
+      _mapController.move(_current!, _defaultZoom);
     }
   }
 

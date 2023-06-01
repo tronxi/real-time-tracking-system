@@ -1,5 +1,6 @@
 import 'package:dashboard/bloc/events_bloc.dart';
 import 'package:dashboard/models/event.dart';
+import 'package:dashboard/shared/responsive_query.dart';
 import 'package:dashboard/widgets/camera/camera.dart';
 import 'package:dashboard/widgets/maps/map.dart';
 import 'package:dashboard/widgets/metrics/metrics.dart';
@@ -47,8 +48,33 @@ class _HomeBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TrackingDeviceEventBloc, Event>(
         builder: (context, state) {
-      return Scaffold(body: _DashboardView(latestEvent: state));
+      return Scaffold(
+          body: ResponsiveQuery.isDesktop(context)
+              ? _DashboardView(latestEvent: state)
+              : _DashboardViewMobile(latestEvent: state));
     });
+  }
+}
+
+class _DashboardViewMobile extends StatelessWidget {
+  final Event latestEvent;
+  const _DashboardViewMobile({Key? key, required this.latestEvent})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Metrics(latestEvent: latestEvent),
+          const SizedBox(height: 40),
+          const Camera(
+              url: 'https://tronxi.ddns.net/players/players/hlsjs.html'),
+          const SizedBox(height: 40),
+          SizedBox(height: 300, child: CustomMap(latestEvent: latestEvent))
+        ],
+      ),
+    );
   }
 }
 
