@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>tronxi</groupId>
 	<artifactId>dashboard_backend</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>0.0.3-SNAPSHOT</version>
 	<name>dashboard_backend</name>
 	<description>dashboard_backend</description>
 	<properties>
