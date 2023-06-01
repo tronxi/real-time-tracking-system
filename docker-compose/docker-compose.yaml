@@ -28,7 +28,7 @@ services:
 
   dashboard-backend:
     container_name: dashboard-backend
-    image: dashboard_backend:0.0.3-SNAPSHOT
+    image: dashboard_backend:0.0.4-SNAPSHOT
     ports:
        - "8070:8080"
     env_file: .env

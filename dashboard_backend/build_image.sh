@@ -1,1 +1,1 @@
-mvn -Pnative spring-boot:build-image
+mvn spring-boot:build-image
