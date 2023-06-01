@@ -28,7 +28,6 @@ class _DeviceCameraState extends State<DeviceCamera> {
 
   @override
   Widget build(BuildContext context) {
-    print("iframe");
     return const SizedBox(
       width: 100,
       height: 720,

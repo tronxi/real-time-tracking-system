@@ -24,7 +24,6 @@ class _DeviceCameraState extends State<DeviceCamera> {
 
   @override
   Widget build(BuildContext context) {
-    print("webview");
     return SizedBox(
         width: 400,
         height: 200,

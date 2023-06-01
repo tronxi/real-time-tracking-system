@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:dashboard/models/event.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
@@ -10,7 +11,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 class CustomMap extends StatefulWidget {
-  const CustomMap({Key? key}) : super(key: key);
+  final Event latestEvent;
+  const CustomMap({Key? key, required this.latestEvent}) : super(key: key);
 
   @override
   State<CustomMap> createState() => _CustomMapState();
@@ -19,16 +21,19 @@ class CustomMap extends StatefulWidget {
 class _CustomMapState extends State<CustomMap> {
   late final double _defaultZoom;
   late final List<Marker> _markers;
+  late final List<Marker> _rocketMarkers;
   late LatLng? _current;
   late double _currentHeading;
+  late LatLng? _latestRocketPosition;
   final MapController _mapController = MapController();
 
   @override
   void initState() {
     _defaultZoom = 18;
     _markers = [];
+    _rocketMarkers = [];
     _currentHeading = 0;
-    _current = LatLng(0, 0);
+    _current = LatLng(40.416775, -3.703790);
     _determinePosition().then((value) {
       _current = LatLng(value.latitude, value.longitude);
       _markers.add(_createCompassMarker());
@@ -42,9 +47,17 @@ class _CustomMapState extends State<CustomMap> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.latestEvent.isPosition()) {
+      setState(() {
+        _latestRocketPosition = widget.latestEvent.latLng();
+        _rocketMarkers.clear();
+        _rocketMarkers.add(_createRocketMarker());
+      });
+    }
     return FlutterMap(
       mapController: _mapController,
-      options: MapOptions(maxZoom: 18.2, zoom: _defaultZoom, minZoom: 0),
+      options: MapOptions(
+          center: _current, maxZoom: 18.2, zoom: _defaultZoom, minZoom: 0),
       nonRotatedChildren: [
         Positioned(
             bottom: 16.0,
@@ -58,14 +71,17 @@ class _CustomMapState extends State<CustomMap> {
             urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'),
         MarkerLayer(
           markers: _markers,
+        ),
+        MarkerLayer(
+          markers: _rocketMarkers,
         )
       ],
     );
   }
 
   void _moveToCurrent() {
-    if (_current != null) {
-      _mapController.move(_current!, _defaultZoom);
+    if (_latestRocketPosition != null) {
+      _mapController.move(_latestRocketPosition!, _defaultZoom);
     }
   }
 
@@ -105,6 +121,22 @@ class _CustomMapState extends State<CustomMap> {
           Icons.keyboard_arrow_up,
           color: Colors.blueAccent,
           size: 80,
+        ),
+      ),
+    );
+  }
+
+  Marker _createRocketMarker() {
+    return Marker(
+      width: 40,
+      height: 40,
+      point: widget.latestEvent.latLng()!,
+      builder: (context) => Transform.rotate(
+        angle: (_currentHeading * (math.pi / 180)),
+        child: const Icon(
+          Icons.rocket,
+          color: Colors.redAccent,
+          size: 40,
         ),
       ),
     );

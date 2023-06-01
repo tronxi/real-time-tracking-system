@@ -1,7 +1,10 @@
+import 'package:dashboard/bloc/events_bloc.dart';
+import 'package:dashboard/models/event.dart';
 import 'package:dashboard/widgets/camera/camera.dart';
 import 'package:dashboard/widgets/maps/map.dart';
 import 'package:dashboard/widgets/metrics/metrics.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:split_view/split_view.dart';
 
 void main() {
@@ -31,6 +34,30 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider<TrackingDeviceEventBloc>(
+        create: (BuildContext context) => TrackingDeviceEventBloc(),
+        child: const _HomeBuilder());
+  }
+}
+
+class _HomeBuilder extends StatelessWidget {
+  const _HomeBuilder({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TrackingDeviceEventBloc, Event>(
+        builder: (context, state) {
+      return Scaffold(body: _DashboardView(latestEvent: state));
+    });
+  }
+}
+
+class _DashboardView extends StatelessWidget {
+  final Event latestEvent;
+  const _DashboardView({Key? key, required this.latestEvent}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return SplitView(
       viewMode: SplitViewMode.Vertical,
       indicator: const SplitIndicator(viewMode: SplitViewMode.Vertical),
@@ -39,13 +66,17 @@ class Home extends StatelessWidget {
         isActive: true,
       ),
       gripSize: 5,
-      children: const [_TopView(), _BottomView()],
+      children: [
+        _TopView(latestEvent: latestEvent),
+        _BottomView(latestEvent: latestEvent)
+      ],
     );
   }
 }
 
 class _TopView extends StatelessWidget {
-  const _TopView({Key? key}) : super(key: key);
+  final Event latestEvent;
+  const _TopView({Key? key, required this.latestEvent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +89,7 @@ class _TopView extends StatelessWidget {
       ),
       gripSize: 5,
       children: [
-        Metrics(),
+        Metrics(latestEvent: latestEvent),
         const Camera(url: 'https://tronxi.ddns.net/players/players/hlsjs.html')
       ],
     );
@@ -66,10 +97,11 @@ class _TopView extends StatelessWidget {
 }
 
 class _BottomView extends StatelessWidget {
-  const _BottomView({Key? key}) : super(key: key);
+  final Event latestEvent;
+  const _BottomView({Key? key, required this.latestEvent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const CustomMap();
+    return CustomMap(latestEvent: latestEvent);
   }
 }
