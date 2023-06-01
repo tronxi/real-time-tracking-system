@@ -3,7 +3,7 @@ import json
 
 class Event:
 
-    def __init__(self, event_type, datetime, payload=""):
+    def __init__(self, event_type, datetime, payload=None):
         self.type = event_type
         self.datetime = datetime
         self.payload = payload
