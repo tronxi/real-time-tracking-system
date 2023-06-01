@@ -12,5 +12,4 @@ class HeartbeatSender:
         while True:
             ev = event.Event("HEARTBEAT", datetime.now())
             self._rabbitmq_connection_manager.publish(ev.to_json())
-            print(ev.to_json())
             time.sleep(5)

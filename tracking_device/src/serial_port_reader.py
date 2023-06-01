@@ -18,7 +18,6 @@ class SerialPortReader:
             line = self._port.readline().decode()
             ev = self._create_event(line)
             self._rabbitmq_connection_manager.publish(ev.to_json())
-            print(ev.to_json())
 
     def _create_event(self, line):
         serial_event = json.loads(line)
