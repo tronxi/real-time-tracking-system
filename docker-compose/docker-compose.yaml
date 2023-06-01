@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  rocket-rabbit-stomp:
+    container_name: rocket-rabbit-stomp
+    image: tronxi/rabbit-stomp
+    build:
+      context: ./rabbitmq/
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "61613:61613"
+    env_file: .env
+    networks:
+      - rocket-net
+
+
+  rtmp-hls:
+    container_name: rtmp-hls
+    image: alqutami/rtmp-hls
+    ports:
+      - "1935:1935"
+      - "8080:8080"
+    volumes:
+      - ./custom_players:/usr/local/nginx/html/players
+    networks:
+      - rocket-net
+
+
+  dashboard-backend:
+    container_name: dashboard-backend
+    image: dashboard_backend:0.0.1-SNAPSHOT
+    ports:
+       - "8070:8080"
+    env_file: .env
+    networks:
+      - rocket-net
+
+networks:
+  rocket-net:
