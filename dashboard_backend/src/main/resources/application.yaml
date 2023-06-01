@@ -3,6 +3,6 @@ spring:
     host: ${rabbitHost}
     port: ${rabbitPort}
     stomp:
-      port: 61613
+      port: ${rabbitStompPort}
     username: ${rabbitUsername}
     password: ${rabbitPassword}
