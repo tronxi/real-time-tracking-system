@@ -2,5 +2,7 @@ spring:
   rabbitmq:
     host: ${rabbitHost}
     port: ${rabbitPort}
+    stomp:
+      port: 61613
     username: ${rabbitUsername}
     password: ${rabbitPassword}
