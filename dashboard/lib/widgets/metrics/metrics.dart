@@ -133,9 +133,9 @@ class _Property extends StatelessWidget {
       children: [
         Text(
           "$property: ",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
-        Text(value, style: const TextStyle(fontSize: 18))
+        Text(value, style: const TextStyle(fontSize: 14))
       ],
     );
   }
