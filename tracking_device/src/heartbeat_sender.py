@@ -1,6 +1,7 @@
 import time
 import event
 from datetime import datetime
+from gpiozero import CPUTemperature
 
 
 class HeartbeatSender:
@@ -10,6 +11,11 @@ class HeartbeatSender:
 
     def start(self):
         while True:
-            ev = event.Event("HEARTBEAT", datetime.now())
+            cpu = CPUTemperature()
+            print(cpu.temperature)
+            payload = {
+                "cpuTemperature": cpu.temperature
+            }
+            ev = event.Event("HEARTBEAT", datetime.now(), payload)
             self._rabbitmq_connection_manager.publish(ev.to_json())
             time.sleep(5)
