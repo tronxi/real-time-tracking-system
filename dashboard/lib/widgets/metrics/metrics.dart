@@ -13,6 +13,7 @@ class Metrics extends StatefulWidget {
 class _MetricsState extends State<Metrics> {
   final ScrollController _controller = ScrollController();
   late Map<String, String> latestLocationPayload;
+  late Map<String, String> latestHeartbeatPayload;
   late String logs;
   late String latestDatetime;
 
@@ -21,6 +22,7 @@ class _MetricsState extends State<Metrics> {
     logs = "";
     latestDatetime = "Unknown";
     latestLocationPayload = <String, String>{};
+    latestHeartbeatPayload = <String, String>{};
     super.initState();
   }
 
@@ -39,17 +41,20 @@ class _MetricsState extends State<Metrics> {
           children: [
             _Property(
                 property: "Lat",
-                value: latestLocationPayload['lat'] ?? "unknown"),
+                value: latestLocationPayload['lat'] ?? "Unknown"),
             _Property(
                 property: "Long",
-                value: latestLocationPayload['long'] ?? "unknown"),
+                value: latestLocationPayload['long'] ?? "Unknown"),
             _Property(
                 property: "Altura",
-                value: latestLocationPayload['altitude'] ?? "unknown"),
+                value: latestLocationPayload['altitude'] ?? "Unknown"),
             _Property(
                 property: "Velocidad",
-                value: latestLocationPayload['speed'] ?? "unknown"),
+                value: latestLocationPayload['speed'] ?? "Unknown"),
             _Property(property: "Ultima conexión", value: latestDatetime),
+            _Property(
+                property: "Cpu Temperature",
+                value: latestHeartbeatPayload['cpuTemperature'] ?? "Unknown"),
             SizedBox(
               width: ResponsiveQuery.isDesktop(context) ? 640 : 380,
               height: 220,
@@ -92,8 +97,8 @@ class _MetricsState extends State<Metrics> {
 
   void _setValues() {
     logs += "${widget.latestEvent}\n\n";
-    if(logs.length > 10000) {
-      logs = logs.substring(5000, logs.length-1);
+    if (logs.length > 10000) {
+      logs = logs.substring(5000, logs.length - 1);
       _controller.jumpTo(_controller.position.maxScrollExtent);
     }
     if (_controller.positions.isNotEmpty) {
@@ -107,8 +112,11 @@ class _MetricsState extends State<Metrics> {
       setState(() {
         latestLocationPayload = widget.latestEvent.payload!;
       });
-    } else if(widget.latestEvent.isHeartBeat()) {
-      latestDatetime = widget.latestEvent.datetime;
+    } else if (widget.latestEvent.isHeartBeat()) {
+      setState(() {
+        latestDatetime = widget.latestEvent.datetime;
+        latestHeartbeatPayload = widget.latestEvent.payload!;
+      });
     }
   }
 }
@@ -125,9 +133,9 @@ class _Property extends StatelessWidget {
       children: [
         Text(
           "$property: ",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        Text(value, style: const TextStyle(fontSize: 20))
+        Text(value, style: const TextStyle(fontSize: 18))
       ],
     );
   }
