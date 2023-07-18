@@ -12,7 +12,6 @@ class HeartbeatSender:
     def start(self):
         while True:
             cpu = CPUTemperature()
-            print(cpu.temperature)
             payload = {
                 "cpuTemperature": cpu.temperature
             }
