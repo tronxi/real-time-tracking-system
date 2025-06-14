@@ -30,7 +30,18 @@ class RabbitmqConnectionManager:
             try:
                 if self._channel.is_closed:
                     print("Channel is closed. Attempting to reopen...")
-                    if self._connection and self._connection.is_open:
+                    if self._connection:
+                        self._connection = pika.BlockingConnection(
+                            pika.ConnectionParameters(
+                                host='tronxi.ddns.net',
+                                port=5672,
+                                credentials=credentials.PlainCredentials(
+                                    username="rocket",
+                                    password="rocket"
+                                ),
+                                heartbeat=60
+                            )
+                        )
                         self._channel = self._connection.channel()
                         self._channel.exchange_declare(exchange=self._exchange_name, exchange_type='fanout')
                         self._channel.basic_publish(exchange=self._exchange_name, routing_key='', body=body)
