@@ -9,11 +9,14 @@ import serial_port_reader
 import rabbitmq_connection_manager
 from datetime import datetime
 from threading import Thread
+from pathlib import Path
 
 
 class Main:
     def __init__(self):
         self.current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filepath = Path.home() / self.current_date
+        filepath.mkdir(parents=True, exist_ok=True)
         self.connection_manager_heart = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.connection_manager_serial = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.cam = None

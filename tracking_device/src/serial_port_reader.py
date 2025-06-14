@@ -2,6 +2,7 @@ import serial
 import json
 import event
 import pynmea2
+from datetime import datetime
 from pathlib import Path
 from event_logger import EventLogger
 
@@ -9,8 +10,8 @@ from event_logger import EventLogger
 class SerialPortReader:
 
     def __init__(self, rabbitmq_connection_manager, current_date):
-        filename = f"serial_{current_date}.jsonl"
-        filepath = Path.home() / filename
+        filename = f"gps_{current_date}.jsonl"
+        filepath = Path.home() / current_date / filename
 
         self.logger = EventLogger(str(filepath))
         self._rabbitmq_connection_manager = rabbitmq_connection_manager

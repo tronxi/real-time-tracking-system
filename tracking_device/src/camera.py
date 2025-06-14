@@ -12,7 +12,7 @@ class Camera:
         self._rtmp_url = "rtmp://tronxi.ddns.net:1935/live/test"
         fourcc = cv2.VideoWriter_fourcc(*'MJPG')
         filename = f"video_{current_date}.avi"
-        filepath = Path.home() / filename
+        filepath = Path.home() / current_date / filename
         self.out = cv2.VideoWriter(str(filepath), fourcc, self._framerate, (self._width, self._height))
 
         self._picam2 = Picamera2()
