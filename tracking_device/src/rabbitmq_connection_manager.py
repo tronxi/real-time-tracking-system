@@ -16,7 +16,8 @@ class RabbitmqConnectionManager:
                     credentials=credentials.PlainCredentials(
                         username="rocket",
                         password="rocket"
-                    )
+                    ),
+                    heartbeat=60
                 )
             )
             self._channel = self._connection.channel()
@@ -27,9 +28,19 @@ class RabbitmqConnectionManager:
     def publish(self, body):
         if self._channel:
             try:
-                self._channel.basic_publish(exchange=self._exchange_name, routing_key='', body=body)
+                if self._channel.is_closed:
+                    print("Channel is closed. Attempting to reopen...")
+                    if self._connection and self._connection.is_open:
+                        self._channel = self._connection.channel()
+                        self._channel.exchange_declare(exchange=self._exchange_name, exchange_type='fanout')
+                        self._channel.basic_publish(exchange=self._exchange_name, routing_key='', body=body)
+                    else:
+                        print("Connection is closed. Cannot reopen channel.")
+                else:
+                    self._channel.basic_publish(exchange=self._exchange_name, routing_key='', body=body)
             except Exception as e:
                 print(f"Failed to publish message: {e}")
+
 
     def close(self):
         if self._connection:
