@@ -1,5 +1,8 @@
 from picamera2 import Picamera2
 import subprocess
+import cv2
+from datetime import datetime
+from pathlib import Path
 
 class Camera:
 
@@ -8,6 +11,11 @@ class Camera:
         self._height = 480
         self._framerate = 25
         self._rtmp_url = "rtmp://tronxi.ddns.net:1935/live/test"
+        fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+        current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"video_{current_date}.avi"
+        filepath = Path.home() / filename
+        self.out = cv2.VideoWriter(str(filepath), fourcc, self._framerate, (self._width, self._height))
 
         self._picam2 = Picamera2()
         config = self._picam2.create_video_configuration(
@@ -41,10 +49,13 @@ class Camera:
                 frame = self._picam2.capture_array("main")
                 if ffmpeg.stdin:
                     ffmpeg.stdin.write(frame.tobytes())
+                bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
+                self.out.write(bgr)
         except BrokenPipeError:
             print("FFmpeg pipe broken.")
         finally:
             self._picam2.stop()
+            self.out.release()
             if ffmpeg.stdin:
                 ffmpeg.stdin.close()
             ffmpeg.wait()
