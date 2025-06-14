@@ -14,7 +14,6 @@ class HeartbeatSender:
         filepath = Path.home() / filename
 
         self.logger = EventLogger(str(filepath))
-        self.logger = EventLogger("event_log.jsonl")
         self._rabbitmq_connection_manager = rabbitmq_connection_manager
 
     def start(self):
