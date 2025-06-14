@@ -2,15 +2,13 @@ import serial
 import json
 import event
 import pynmea2
-from datetime import datetime
 from pathlib import Path
 from event_logger import EventLogger
 
 
 class SerialPortReader:
 
-    def __init__(self, rabbitmq_connection_manager):
-        current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+    def __init__(self, rabbitmq_connection_manager, current_date):
         filename = f"serial_{current_date}.jsonl"
         filepath = Path.home() / filename
 

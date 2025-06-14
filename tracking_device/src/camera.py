@@ -1,18 +1,16 @@
 from picamera2 import Picamera2
 import subprocess
 import cv2
-from datetime import datetime
 from pathlib import Path
 
 class Camera:
 
-    def __init__(self):
+    def __init__(self, current_date):
         self._width = 640
         self._height = 480
         self._framerate = 25
         self._rtmp_url = "rtmp://tronxi.ddns.net:1935/live/test"
         fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-        current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"video_{current_date}.avi"
         filepath = Path.home() / filename
         self.out = cv2.VideoWriter(str(filepath), fourcc, self._framerate, (self._width, self._height))

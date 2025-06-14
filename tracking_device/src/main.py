@@ -7,11 +7,13 @@ import heartbeat_sender as hs
 import signal
 import serial_port_reader
 import rabbitmq_connection_manager
+from datetime import datetime
 from threading import Thread
 
 
 class Main:
     def __init__(self):
+        self.current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.connection_manager_heart = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.connection_manager_serial = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.cam = None
@@ -25,15 +27,15 @@ class Main:
         signal.signal(signal.SIGTSTP, self.exit_program)
 
     def start_cam(self):
-        self.cam = camera.Camera()
+        self.cam = camera.Camera(self.current_date)
         self.cam.start()
 
     def start_serial_port_reader(self):
-        self.spr = serial_port_reader.SerialPortReader(self.connection_manager_serial)
+        self.spr = serial_port_reader.SerialPortReader(self.connection_manager_serial, self.current_date)
         self.spr.start()
 
     def start_heartbeat_sender(self):
-        heartbeat_sender = hs.HeartbeatSender(self.connection_manager_heart)
+        heartbeat_sender = hs.HeartbeatSender(self.connection_manager_heart, self.current_date)
         heartbeat_sender.start()
 
     def exit_program(self, signum, frame):

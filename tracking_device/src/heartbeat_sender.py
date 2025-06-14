@@ -8,8 +8,7 @@ from event_logger import EventLogger
 
 class HeartbeatSender:
 
-    def __init__(self, rabbitmq_connection_manager):
-        current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+    def __init__(self, rabbitmq_connection_manager, current_date):
         filename = f"heart_{current_date}.jsonl"
         filepath = Path.home() / filename
 
