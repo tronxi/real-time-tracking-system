@@ -62,6 +62,6 @@ class SerialPortReader:
             "speed": self._last_position_data.get("speed")
         }
 
-        ev = event.Event("POSITION", datetime.now().astimezone(), position_event)
+        ev = event.Event("POSITION", datetime.now(), position_event)
         self._rabbitmq_connection_manager.publish(ev.to_json())
         self.logger.log(ev)
