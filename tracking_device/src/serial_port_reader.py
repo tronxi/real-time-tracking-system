@@ -3,11 +3,18 @@ import json
 import event
 import pynmea2
 from datetime import datetime
+from pathlib import Path
+from event_logger import EventLogger
 
 
 class SerialPortReader:
 
     def __init__(self, rabbitmq_connection_manager):
+        current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"serial_{current_date}.jsonl"
+        filepath = Path.home() / filename
+
+        self.logger = EventLogger(str(filepath))
         self._rabbitmq_connection_manager = rabbitmq_connection_manager
         self._port = serial.Serial('/dev/serial0', 9600)
         self._last_position_data = {}
@@ -58,3 +65,4 @@ class SerialPortReader:
 
         ev = event.Event("POSITION", datetime.now(), position_event)
         self._rabbitmq_connection_manager.publish(ev.to_json())
+        self.logger.log(ev)
