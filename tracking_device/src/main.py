@@ -7,6 +7,8 @@ import heartbeat_sender as hs
 import signal
 import serial_port_reader
 import rabbitmq_connection_manager
+import socket
+import time
 from datetime import datetime
 from threading import Thread
 from pathlib import Path
@@ -14,6 +16,7 @@ from pathlib import Path
 
 class Main:
     def __init__(self):
+        self.wait_for_internet(timeout=120)
         self.current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = Path.home() / self.current_date
         filepath.mkdir(parents=True, exist_ok=True)
@@ -61,6 +64,20 @@ class Main:
             self.thread_serial_port_reader.start()
         elif args == "heart":
             self.thread_heartbeat_sender.start()
+
+    def wait_for_internet(self, timeout=120):
+        print("Waiting for internet connection...")
+        start = time.time()
+        while time.time() - start < timeout:
+            try:
+                socket.create_connection(("8.8.8.8", 53), timeout=3)
+                print("Internet connection detected.")
+                return
+            except OSError:
+                print("No internet yet, retrying...")
+                time.sleep(5)
+        print("Warning: No internet connection after timeout.")
+
 
 
 if __name__ == "__main__":
