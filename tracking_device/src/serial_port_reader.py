@@ -23,16 +23,17 @@ class SerialPortReader:
 
                     if line.startswith("$GNGGA") or line.startswith("$GPGGA"):
                         msg = pynmea2.parse(line)
-                        self._last_position_data["hdop"] = float(msg.horizontal_dil)
-                        self._last_position_data["satellites"] = int(msg.num_sats)
-                        self._last_position_data["altitude"] = float(msg.altitude)
+                        self._last_position_data["hdop"] = float(msg.horizontal_dil) if msg.horizontal_dil is not None else None
+                        self._last_position_data["satellites"] = int(msg.num_sats) if msg.num_sats is not None else None
+                        self._last_position_data["altitude"] = float(msg.altitude) if msg.altitude is not None else None
+
 
                     elif line.startswith("$GNRMC") or line.startswith("$GPRMC"):
                         msg = pynmea2.parse(line)
                         if msg.status == 'A':
                             self._last_position_data["lat"] = msg.latitude
                             self._last_position_data["long"] = msg.longitude
-                            self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852
+                            self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852 if msg.spd_over_grnd is not None else None
                             self._publish_position_event()
 
                 except pynmea2.ParseError:
