@@ -14,7 +14,7 @@ from pathlib import Path
 
 class Main:
     def __init__(self):
-        self.current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.current_date = datetime.now().astimezone().strftime("%Y%m%d_%H%M%S")
         filepath = Path.home() / self.current_date
         filepath.mkdir(parents=True, exist_ok=True)
         self.connection_manager_heart = rabbitmq_connection_manager.RabbitmqConnectionManager()

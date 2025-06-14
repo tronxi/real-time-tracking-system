@@ -21,7 +21,7 @@ class HeartbeatSender:
             payload = {
                 "cpuTemperature": cpu.temperature
             }
-            ev = event.Event("HEARTBEAT", datetime.now(), payload)
+            ev = event.Event("HEARTBEAT", datetime.now().astimezone(), payload)
             self._rabbitmq_connection_manager.publish(ev.to_json())
             self.logger.log(ev)
             time.sleep(5)
