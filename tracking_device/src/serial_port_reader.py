@@ -16,28 +16,33 @@ class SerialPortReader:
         self._port.close()
 
     def start(self):
-        while True:
-            try:
-                line = self._port.readline().decode(errors='replace').strip()
+        try:
+            while True:
+                try:
+                    line = self._port.readline().decode(errors='replace').strip()
 
-                if line.startswith("$GNGGA") or line.startswith("$GPGGA"):
-                    msg = pynmea2.parse(line)
-                    self._last_position_data["hdop"] = float(msg.horizontal_dil)
-                    self._last_position_data["satellites"] = int(msg.num_sats)
-                    self._last_position_data["altitude"] = float(msg.altitude)
+                    if line.startswith("$GNGGA") or line.startswith("$GPGGA"):
+                        msg = pynmea2.parse(line)
+                        self._last_position_data["hdop"] = float(msg.horizontal_dil)
+                        self._last_position_data["satellites"] = int(msg.num_sats)
+                        self._last_position_data["altitude"] = float(msg.altitude)
 
-                elif line.startswith("$GNRMC") or line.startswith("$GPRMC"):
-                    msg = pynmea2.parse(line)
-                    if msg.status == 'A':  # A = posición válida
-                        self._last_position_data["lat"] = msg.latitude
-                        self._last_position_data["long"] = msg.longitude
-                        self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852  # knots → km/h
-                        self._publish_position_event()
+                    elif line.startswith("$GNRMC") or line.startswith("$GPRMC"):
+                        msg = pynmea2.parse(line)
+                        if msg.status == 'A':
+                            self._last_position_data["lat"] = msg.latitude
+                            self._last_position_data["long"] = msg.longitude
+                            self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852
+                            self._publish_position_event()
 
-            except pynmea2.ParseError:
-                continue
-            except Exception as e:
-                print(f"[ERROR] {e}")
+                except pynmea2.ParseError:
+                    continue
+                except Exception as e:
+                    print(f"[ERROR] {e}")
+
+        except KeyboardInterrupt:
+            print("Interrupción detectada, cerrando puerto serial...")
+            self.close()
 
     def _publish_position_event(self):
         position_event = {
