@@ -4,9 +4,9 @@ import subprocess
 class Camera:
 
     def __init__(self):
-        self._width = 640     # Más pequeño = menos latencia
+        self._width = 640
         self._height = 480
-        self._framerate = 25  # Menor FPS = menos datos a transmitir
+        self._framerate = 25
         self._rtmp_url = "rtmp://tronxi.ddns.net:1935/live/test"
 
         self._picam2 = Picamera2()
