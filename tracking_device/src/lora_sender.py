@@ -16,7 +16,7 @@ class LoraSender:
         self.queue = Queue()
         self.running = True
 
-        self.ser = serial.Serial('/dev/serial0', 9600)
+        self.ser = serial.Serial('/dev/serial0', 4800)
         self.sender_thread = threading.Thread(target=self._sender_loop, daemon=True)
         self.sender_thread.start()
 
