@@ -12,6 +12,7 @@ import time
 from datetime import datetime
 from threading import Thread
 from pathlib import Path
+from lora_sender import LoraSender
 
 
 class Main:
@@ -22,6 +23,7 @@ class Main:
         filepath.mkdir(parents=True, exist_ok=True)
         self.connection_manager_heart = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.connection_manager_serial = rabbitmq_connection_manager.RabbitmqConnectionManager()
+        self.lora_sender = LoraSender()
         self.cam = None
         self.spr = None
         self.thread_cam = Thread(target=self.start_cam)
@@ -37,11 +39,11 @@ class Main:
         self.cam.start()
 
     def start_serial_port_reader(self):
-        self.spr = serial_port_reader.SerialPortReader(self.connection_manager_serial, self.current_date)
+        self.spr = serial_port_reader.SerialPortReader(self.connection_manager_serial, self.current_date, self.lora_sender)
         self.spr.start()
 
     def start_heartbeat_sender(self):
-        heartbeat_sender = hs.HeartbeatSender(self.connection_manager_heart, self.current_date)
+        heartbeat_sender = hs.HeartbeatSender(self.connection_manager_heart, self.current_date, self.lora_sender)
         heartbeat_sender.start()
 
     def exit_program(self, signum, frame):

@@ -9,12 +9,13 @@ from event_logger import EventLogger
 
 class SerialPortReader:
 
-    def __init__(self, rabbitmq_connection_manager, current_date):
+    def __init__(self, rabbitmq_connection_manager, current_date, lora_sender):
         filename = f"gps_{current_date}.jsonl"
         filepath = Path.home() / current_date / filename
 
         self.logger = EventLogger(str(filepath))
         self._rabbitmq_connection_manager = rabbitmq_connection_manager
+        self._lora_sender = lora_sender
         self._port = serial.Serial('/dev/ttyUSB0', 9600)
         self._last_position_data = {}
 
@@ -63,5 +64,6 @@ class SerialPortReader:
         }
 
         ev = event.Event("POSITION", datetime.now(), position_event)
+        self._lora_sender.send(ev.to_json())
         self._rabbitmq_connection_manager.publish(ev.to_json())
         self.logger.log(ev)
