@@ -5,7 +5,7 @@ except ImportError:
     pass
 import heartbeat_sender as hs
 import signal
-import serial_port_reader
+import gps_reader
 import rabbitmq_connection_manager
 import socket
 import time
@@ -22,15 +22,15 @@ class Main:
         filepath = Path.home() / self.current_date
         filepath.mkdir(parents=True, exist_ok=True)
         self.connection_manager_heart = rabbitmq_connection_manager.RabbitmqConnectionManager()
-        self.connection_manager_serial = rabbitmq_connection_manager.RabbitmqConnectionManager()
+        self.connection_manager_gps = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.lora_sender = LoraSender()
         self.cam = None
         self.spr = None
         self.thread_cam = Thread(target=self.start_cam)
         self.thread_heartbeat_sender = Thread(
             target=self.start_heartbeat_sender)
-        self.thread_serial_port_reader = Thread(
-            target=self.start_serial_port_reader)
+        self.thread_gps_reader = Thread(
+            target=self.start_gps_reader)
         signal.signal(signal.SIGINT, self.exit_program)
         signal.signal(signal.SIGTSTP, self.exit_program)
 
@@ -38,8 +38,8 @@ class Main:
         self.cam = camera.Camera(self.current_date)
         self.cam.start()
 
-    def start_serial_port_reader(self):
-        self.spr = serial_port_reader.SerialPortReader(self.connection_manager_serial, self.current_date, self.lora_sender)
+    def start_gps_reader(self):
+        self.spr = gps_reader.GPSReader(self.connection_manager_gps, self.current_date, self.lora_sender)
         self.spr.start()
 
     def start_heartbeat_sender(self):
@@ -52,18 +52,18 @@ class Main:
         if self.spr is not None:
             self.spr.close()
         self.connection_manager_heart.close()
-        self.connection_manager_serial.close()
+        self.connection_manager_gps.close()
         exit(1)
 
     def main(self, args):
         if args == "all":
             self.thread_cam.start()
             self.thread_heartbeat_sender.start()
-            self.thread_serial_port_reader.start()
+            self.thread_gps_reader.start()
         elif args == "cam":
             self.thread_cam.start()
-        elif args == "serial":
-            self.thread_serial_port_reader.start()
+        elif args == "gps":
+            self.thread_gps_reader.start()
         elif args == "heart":
             self.thread_heartbeat_sender.start()
 

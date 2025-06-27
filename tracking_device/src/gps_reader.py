@@ -7,7 +7,7 @@ from pathlib import Path
 from event_logger import EventLogger
 
 
-class SerialPortReader:
+class GPSReader:
 
     def __init__(self, rabbitmq_connection_manager, current_date, lora_sender):
         filename = f"gps_{current_date}.jsonl"
@@ -49,7 +49,7 @@ class SerialPortReader:
                     print(f"[ERROR] {e}")
 
         except KeyboardInterrupt:
-            print("Interrupción detectada, cerrando puerto serial...")
+            print("closing serial port...")
             self.close()
 
     def _publish_position_event(self):
