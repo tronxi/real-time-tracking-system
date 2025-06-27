@@ -56,9 +56,8 @@ class GPSReader:
 
     def _publish_position_event(self):
         position_event = {
-            "type": "POSITION",
-            "satellites": self._last_position_data.get("satellites"),
-            "hdop": self._last_position_data.get("hdop"),
+            # "satellites": self._last_position_data.get("satellites"),
+            # "hdop": self._last_position_data.get("hdop"),
             "lat": self._last_position_data.get("lat"),
             "long": self._last_position_data.get("long"),
             "altitude": self._last_position_data.get("altitude"),
