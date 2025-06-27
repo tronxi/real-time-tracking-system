@@ -1,3 +1,4 @@
 .idea
 __pycache__
 tracking_device/src/venv/
+.DS_Store

@@ -1,6 +1,7 @@
 import 'package:dashboard/bloc/events_bloc.dart';
 import 'package:dashboard/models/event.dart';
 import 'package:dashboard/shared/responsive_query.dart';
+import 'package:dashboard/widgets/attitude/attitude.dart';
 import 'package:dashboard/widgets/camera/camera.dart';
 import 'package:dashboard/widgets/maps/map.dart';
 import 'package:dashboard/widgets/metrics/metrics.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Real Time Tracking System Dashboard',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
@@ -128,6 +130,18 @@ class _BottomView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomMap(latestEvent: latestEvent);
+    return SplitView(
+      viewMode: SplitViewMode.Horizontal,
+      indicator: const SplitIndicator(viewMode: SplitViewMode.Horizontal),
+      activeIndicator: const SplitIndicator(
+        viewMode: SplitViewMode.Horizontal,
+        isActive: true,
+      ),
+      gripSize: 5,
+      children: [
+        const Attitude(),
+        CustomMap(latestEvent: latestEvent)
+      ],
+    );
   }
 }

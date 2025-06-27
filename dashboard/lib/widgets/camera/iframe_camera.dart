@@ -1,10 +1,10 @@
-import 'dart:html';
-import 'dart:ui' as ui;
-
+import 'package:web/web.dart' as web;
 import 'package:flutter/material.dart';
+import 'web_view_registry.dart';
 
 class DeviceCamera extends StatefulWidget {
   final String url;
+
   const DeviceCamera({Key? key, required this.url}) : super(key: key);
 
   @override
@@ -12,17 +12,16 @@ class DeviceCamera extends StatefulWidget {
 }
 
 class _DeviceCameraState extends State<DeviceCamera> {
-  late IFrameElement _iframeElement;
+  late web.HTMLIFrameElement _iframeElement;
+
   @override
   void initState() {
-    _iframeElement = IFrameElement()
-      ..src = widget.url
-      ..id = 'iframe'
-      ..style.border = 'none';
-    ui.platformViewRegistry.registerViewFactory(
-      'iframeElement',
-      (int viewId) => _iframeElement,
-    );
+    _iframeElement =
+        web.document.createElement('iframe') as web.HTMLIFrameElement
+          ..src = widget.url
+          ..id = 'iframe'
+          ..style.border = 'none';
+    registerViewFactory('iframeElement', (int viewId) => _iframeElement);
     super.initState();
   }
 

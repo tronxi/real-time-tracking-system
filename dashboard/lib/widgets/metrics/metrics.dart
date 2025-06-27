@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class Metrics extends StatefulWidget {
   final Event latestEvent;
+
   const Metrics({Key? key, required this.latestEvent}) : super(key: key);
 
   @override
@@ -46,12 +47,15 @@ class _MetricsState extends State<Metrics> {
                 property: "Long",
                 value: latestLocationPayload['long'] ?? "Unknown"),
             _Property(
-                property: "Altura",
+                property: "GPS Altitude",
                 value: latestLocationPayload['altitude'] ?? "Unknown"),
             _Property(
-                property: "Velocidad",
+                property: "Speed",
                 value: latestLocationPayload['speed'] ?? "Unknown"),
-            _Property(property: "Ultima conexión", value: latestDatetime),
+            _Property(
+                property: "Last GPS Connection",
+                value: latestLocationPayload['datetime'] ?? "Unknown"),
+            _Property(property: "Last Connection", value: latestDatetime),
             _Property(
                 property: "Cpu Temperature",
                 value: latestHeartbeatPayload['cpuTemperature'] ?? "Unknown"),
@@ -124,6 +128,7 @@ class _MetricsState extends State<Metrics> {
 class _Property extends StatelessWidget {
   final String property;
   final String value;
+
   const _Property({Key? key, required this.property, required this.value})
       : super(key: key);
 

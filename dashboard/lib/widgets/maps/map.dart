@@ -7,11 +7,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 class CustomMap extends StatefulWidget {
   final Event latestEvent;
+
   const CustomMap({Key? key, required this.latestEvent}) : super(key: key);
 
   @override
@@ -22,7 +24,7 @@ class _CustomMapState extends State<CustomMap> {
   late final double _defaultZoom;
   late final List<Marker> _markers;
   late final List<Marker> _rocketMarkers;
-  late LatLng? _current;
+  late LatLng _current;
   late double _currentHeading;
   late LatLng? _latestRocketPosition;
   late bool _moveToRocket;
@@ -36,7 +38,7 @@ class _CustomMapState extends State<CustomMap> {
     _rocketMarkers = [];
     _currentHeading = 0;
     _latestRocketPosition = null;
-    _current = LatLng(40.416775, -3.703790);
+    _current = const LatLng(40.416775, -3.703790);
     _determinePosition().then((value) {
       _current = LatLng(value.latitude, value.longitude);
       _markers.add(_createCompassMarker());
@@ -49,7 +51,7 @@ class _CustomMapState extends State<CustomMap> {
 
   @override
   Widget build(BuildContext context) {
-    if(_moveToRocket && _latestRocketPosition != null) {
+    if (_moveToRocket && _latestRocketPosition != null) {
       _moveToCurrentRocketPosition();
       setState(() {
         _moveToRocket = false;
@@ -62,35 +64,44 @@ class _CustomMapState extends State<CustomMap> {
         _rocketMarkers.add(_createRocketMarker());
       });
     }
-    return FlutterMap(
-      mapController: _mapController,
-      options: MapOptions(
-          center: _current, maxZoom: 18.2, zoom: _defaultZoom, minZoom: 0),
-      nonRotatedChildren: [
-        Positioned(
-            bottom: 16.0,
-            right: 16.0,
-            child: IconButton(
-                onPressed: _moveToCurrentRocketPosition,
-                icon: const Icon(Icons.rocket))),
-        Positioned(
-            bottom: 16.0,
-            right: 80.0,
-            child: IconButton(
-                onPressed: _moveToCurrentUserPosition,
-                icon: const Icon(Icons.location_searching)))
-      ],
+    return Stack(
       children: [
-        TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'),
-        MarkerLayer(
-          markers: _markers,
+        FlutterMap(
+          mapController: _mapController,
+          options: MapOptions(
+            initialCenter: _current,
+            maxZoom: 18.2,
+            initialZoom: _defaultZoom,
+            minZoom: 0,
+          ),
+          children: [
+            TileLayer(
+              tileProvider: CancellableNetworkTileProvider(),
+              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            ),
+            MarkerLayer(markers: _markers),
+            MarkerLayer(markers: _rocketMarkers),
+          ],
         ),
-        MarkerLayer(
-          markers: _rocketMarkers,
-        )
+        Positioned(
+          bottom: 16.0,
+          right: 16.0,
+          child: IconButton(
+            onPressed: _moveToCurrentRocketPosition,
+            icon: const Icon(Icons.rocket),
+          ),
+        ),
+        Positioned(
+          bottom: 16.0,
+          right: 80.0,
+          child: IconButton(
+            onPressed: _moveToCurrentUserPosition,
+            icon: const Icon(Icons.location_searching),
+          ),
+        ),
       ],
     );
+
   }
 
   void _moveToCurrentRocketPosition() {
@@ -100,10 +111,8 @@ class _CustomMapState extends State<CustomMap> {
   }
 
   void _moveToCurrentUserPosition() {
-    if (_current != null) {
-      _mapController.move(_current!, _defaultZoom);
+    _mapController.move(_current, _defaultZoom);
     }
-  }
 
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
@@ -134,8 +143,9 @@ class _CustomMapState extends State<CustomMap> {
     return Marker(
       width: 80,
       height: 80,
-      point: _current!,
-      builder: (context) => Transform.rotate(
+      point: _current,
+      rotate: true,
+      child: Transform.rotate(
         angle: (_currentHeading * (math.pi / 180)),
         child: const Icon(
           Icons.keyboard_arrow_up,
@@ -151,7 +161,8 @@ class _CustomMapState extends State<CustomMap> {
       width: 40,
       height: 40,
       point: widget.latestEvent.latLng()!,
-      builder: (context) => Transform.rotate(
+      rotate: true,
+      child: Transform.rotate(
         angle: (_currentHeading * (math.pi / 180)),
         child: const Icon(
           Icons.rocket,
