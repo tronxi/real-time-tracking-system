@@ -15,7 +15,7 @@ class SerialPortReader:
 
         self.logger = EventLogger(str(filepath))
         self._rabbitmq_connection_manager = rabbitmq_connection_manager
-        self._port = serial.Serial('/dev/serial0', 9600)
+        self._port = serial.Serial('/dev/ttyUSB0', 9600)
         self._last_position_data = {}
 
     def close(self):
