@@ -18,12 +18,14 @@ class _MetricsState extends State<Metrics> {
   late Map<String, String> latestAltitudePayload;
   late String logs;
   late String latestDatetime;
+  late String latestGPSDatetime;
 
   @override
   void initState() {
     super.initState();
     logs = "";
     latestDatetime = "Unknown";
+    latestGPSDatetime = "Unknown";
     latestLocationPayload = {};
     latestHeartbeatPayload = {};
     latestAltitudePayload = {};
@@ -41,7 +43,7 @@ class _MetricsState extends State<Metrics> {
       _Property(property: "Long", value: latestLocationPayload['long'] ?? "Unknown"),
       _Property(property: "GPS Altitude", value: latestLocationPayload['altitude'] ?? "Unknown"),
       _Property(property: "Speed", value: latestLocationPayload['speed'] ?? "Unknown"),
-      _Property(property: "Last GPS Connection", value: latestLocationPayload['datetime'] ?? "Unknown"),
+      _Property(property: "Last GPS Connection", value: latestGPSDatetime),
       _Property(property: "Last Connection", value: latestDatetime),
       _Property(property: "CPU Temp", value: latestHeartbeatPayload['cpuTemperature'] ?? "Unknown"),
       _Property(property: "Altitude", value: latestAltitudePayload['altitude'] ?? "Unknown"),
@@ -60,12 +62,12 @@ class _MetricsState extends State<Metrics> {
               SizedBox(
                 width: double.infinity,
                 child: Card(
-                  margin: const EdgeInsets.only(bottom: 10),
+                  margin: const EdgeInsets.only(bottom: 5),
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.only(left: 5, top: 5),
                     child: Wrap(
-                      spacing: 16,
-                      runSpacing: 10,
+                      spacing: 20,
+                      runSpacing: 0,
                       children: properties
                           .map((prop) => SizedBox(width: itemWidth, child: prop))
                           .toList(),
@@ -112,6 +114,7 @@ class _MetricsState extends State<Metrics> {
 
     if (widget.latestEvent.isPosition()) {
       setState(() {
+        latestGPSDatetime = widget.latestEvent.datetime;
         latestLocationPayload = widget.latestEvent.payload ?? {};
       });
     } else if (widget.latestEvent.isHeartBeat()) {
@@ -126,7 +129,6 @@ class _MetricsState extends State<Metrics> {
     }
   }
 }
-
 class _Property extends StatelessWidget {
   final String property;
   final String value;
@@ -135,21 +137,20 @@ class _Property extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "$property: ",
+          property,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
-        Expanded(
-          child: Text(
-            value,
-            style: const TextStyle(fontSize: 13),
-            overflow: TextOverflow.ellipsis,
-          ),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 13),
         ),
+        const SizedBox(height: 6),
       ],
     );
   }
 }
+
