@@ -21,6 +21,8 @@ class Event {
 
   bool isHeartBeat() => type == "HEARTBEAT";
 
+  bool isAltitude() => type == "ALTITUDE";
+
 
   LatLng? latLng() {
     if(!isPosition()) return null;

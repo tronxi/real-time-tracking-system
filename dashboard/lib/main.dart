@@ -1,6 +1,7 @@
 import 'package:dashboard/bloc/events_bloc.dart';
 import 'package:dashboard/models/event.dart';
 import 'package:dashboard/shared/responsive_query.dart';
+import 'package:dashboard/widgets/altitude/altitude.dart';
 import 'package:dashboard/widgets/attitude/attitude.dart';
 import 'package:dashboard/widgets/camera/camera.dart';
 import 'package:dashboard/widgets/maps/map.dart';
@@ -60,6 +61,7 @@ class _HomeBuilder extends StatelessWidget {
 
 class _DashboardViewMobile extends StatelessWidget {
   final Event latestEvent;
+
   const _DashboardViewMobile({Key? key, required this.latestEvent})
       : super(key: key);
 
@@ -70,10 +72,14 @@ class _DashboardViewMobile extends StatelessWidget {
         children: [
           Metrics(latestEvent: latestEvent),
           const SizedBox(height: 40),
+          const SizedBox(height: 300, child: Attitude()),
+          const SizedBox(height: 40),
+          Altitude(latestEvent: latestEvent),
+          const SizedBox(height: 40),
+          SizedBox(height: 300, child: CustomMap(latestEvent: latestEvent)),
+          const SizedBox(height: 40),
           const Camera(
               url: 'https://tronxi.ddns.net/players/players/hlsjs.html'),
-          const SizedBox(height: 40),
-          SizedBox(height: 300, child: CustomMap(latestEvent: latestEvent))
         ],
       ),
     );
@@ -82,6 +88,7 @@ class _DashboardViewMobile extends StatelessWidget {
 
 class _DashboardView extends StatelessWidget {
   final Event latestEvent;
+
   const _DashboardView({Key? key, required this.latestEvent}) : super(key: key);
 
   @override
@@ -102,13 +109,28 @@ class _DashboardView extends StatelessWidget {
   }
 }
 
-class _TopView extends StatelessWidget {
+class _TopView extends StatefulWidget {
   final Event latestEvent;
+
   const _TopView({Key? key, required this.latestEvent}) : super(key: key);
+
+  @override
+  State<_TopView> createState() => _TopViewState();
+}
+
+class _TopViewState extends State<_TopView> {
+  late SplitViewController _controller;
+
+  @override
+  void initState() {
+    _controller = SplitViewController(weights: [0.5, 0.5]);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SplitView(
+      controller: _controller,
       viewMode: SplitViewMode.Horizontal,
       indicator: const SplitIndicator(viewMode: SplitViewMode.Horizontal),
       activeIndicator: const SplitIndicator(
@@ -117,21 +139,36 @@ class _TopView extends StatelessWidget {
       ),
       gripSize: 5,
       children: [
-        Metrics(latestEvent: latestEvent),
+        Metrics(latestEvent: widget.latestEvent),
         const Camera(url: 'https://tronxi.ddns.net/players/players/hlsjs.html')
       ],
     );
   }
 }
 
-class _BottomView extends StatelessWidget {
+class _BottomView extends StatefulWidget {
   final Event latestEvent;
+
   const _BottomView({Key? key, required this.latestEvent}) : super(key: key);
+
+  @override
+  State<_BottomView> createState() => _BottomViewState();
+}
+
+class _BottomViewState extends State<_BottomView> {
+  late SplitViewController _controller;
+
+  @override
+  void initState() {
+    _controller = SplitViewController(weights: [0.2, 0.6, 0.2]);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SplitView(
       viewMode: SplitViewMode.Horizontal,
+      controller: _controller,
       indicator: const SplitIndicator(viewMode: SplitViewMode.Horizontal),
       activeIndicator: const SplitIndicator(
         viewMode: SplitViewMode.Horizontal,
@@ -140,7 +177,8 @@ class _BottomView extends StatelessWidget {
       gripSize: 5,
       children: [
         const Attitude(),
-        CustomMap(latestEvent: latestEvent)
+        Altitude(latestEvent: widget.latestEvent),
+        CustomMap(latestEvent: widget.latestEvent)
       ],
     );
   }

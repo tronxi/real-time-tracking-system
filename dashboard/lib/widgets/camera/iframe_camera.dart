@@ -20,7 +20,9 @@ class _DeviceCameraState extends State<DeviceCamera> {
         web.document.createElement('iframe') as web.HTMLIFrameElement
           ..src = widget.url
           ..id = 'iframe'
-          ..style.border = 'none';
+          ..style.border = 'none'
+          ..style.height = '100%'
+          ..style.width = '100%';
     registerViewFactory('iframeElement', (int viewId) => _iframeElement);
     super.initState();
   }

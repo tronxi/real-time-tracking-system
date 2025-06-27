@@ -15,111 +15,113 @@ class _MetricsState extends State<Metrics> {
   final ScrollController _controller = ScrollController();
   late Map<String, String> latestLocationPayload;
   late Map<String, String> latestHeartbeatPayload;
+  late Map<String, String> latestAltitudePayload;
   late String logs;
   late String latestDatetime;
 
   @override
   void initState() {
+    super.initState();
     logs = "";
     latestDatetime = "Unknown";
-    latestLocationPayload = <String, String>{};
-    latestHeartbeatPayload = <String, String>{};
-    super.initState();
+    latestLocationPayload = {};
+    latestHeartbeatPayload = {};
+    latestAltitudePayload = {};
   }
 
   @override
   Widget build(BuildContext context) {
     _setValues();
-    return Container(
-      color: Colors.white70,
-      padding: const EdgeInsets.all(10),
-      child: Stack(children: [
-        Wrap(
-          direction: Axis.vertical,
-          alignment: WrapAlignment.start,
-          runAlignment: WrapAlignment.start,
-          runSpacing: 20,
-          children: [
-            _Property(
-                property: "Lat",
-                value: latestLocationPayload['lat'] ?? "Unknown"),
-            _Property(
-                property: "Long",
-                value: latestLocationPayload['long'] ?? "Unknown"),
-            _Property(
-                property: "GPS Altitude",
-                value: latestLocationPayload['altitude'] ?? "Unknown"),
-            _Property(
-                property: "Speed",
-                value: latestLocationPayload['speed'] ?? "Unknown"),
-            _Property(
-                property: "Last GPS Connection",
-                value: latestLocationPayload['datetime'] ?? "Unknown"),
-            _Property(property: "Last Connection", value: latestDatetime),
-            _Property(
-                property: "Cpu Temperature",
-                value: latestHeartbeatPayload['cpuTemperature'] ?? "Unknown"),
-            SizedBox(
-              width: ResponsiveQuery.isDesktop(context) ? 640 : 380,
-              height: 220,
-              child: Card(
+
+    final isDesktop = ResponsiveQuery.isDesktop(context);
+    final int columns = isDesktop ? 3 : 1;
+
+    final properties = [
+      _Property(property: "Lat", value: latestLocationPayload['lat'] ?? "Unknown"),
+      _Property(property: "Long", value: latestLocationPayload['long'] ?? "Unknown"),
+      _Property(property: "GPS Altitude", value: latestLocationPayload['altitude'] ?? "Unknown"),
+      _Property(property: "Speed", value: latestLocationPayload['speed'] ?? "Unknown"),
+      _Property(property: "Last GPS Connection", value: latestLocationPayload['datetime'] ?? "Unknown"),
+      _Property(property: "Last Connection", value: latestDatetime),
+      _Property(property: "CPU Temp", value: latestHeartbeatPayload['cpuTemperature'] ?? "Unknown"),
+      _Property(property: "Altitude", value: latestAltitudePayload['altitude'] ?? "Unknown"),
+      _Property(property: "Pressure", value: latestAltitudePayload['pressure'] ?? "Unknown"),
+      _Property(property: "Temperature", value: latestAltitudePayload['temperature'] ?? "Unknown"),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double totalWidth = constraints.maxWidth;
+        final double itemWidth = totalWidth / columns - 16;
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Card(
+                  margin: const EdgeInsets.only(bottom: 10),
                   child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SingleChildScrollView(
-                  controller: _controller,
-                  scrollDirection: Axis.vertical,
-                  child: Text(
-                    logs,
-                    style: const TextStyle(fontSize: 11.0),
+                    padding: const EdgeInsets.all(12),
+                    child: Wrap(
+                      spacing: 16,
+                      runSpacing: 10,
+                      children: properties
+                          .map((prop) => SizedBox(width: itemWidth, child: prop))
+                          .toList(),
+                    ),
                   ),
-                ),
-              )),
-            )
-          ],
-        ),
-        Positioned(
-            bottom: 10,
-            right: 10,
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.redAccent,
-              child: SizedBox(
-                width: 40,
-                height: 40,
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.rocket_launch,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {},
                 ),
               ),
-            ))
-      ]),
+              SizedBox(
+                width: double.infinity,
+                height: 220,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SingleChildScrollView(
+                      controller: _controller,
+                      scrollDirection: Axis.vertical,
+                      child: Text(
+                        logs,
+                        style: const TextStyle(fontSize: 11.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   void _setValues() {
     logs += "${widget.latestEvent}\n\n";
     if (logs.length > 10000) {
-      logs = logs.substring(5000, logs.length - 1);
-      _controller.jumpTo(_controller.position.maxScrollExtent);
+      logs = logs.substring(5000);
     }
-    if (_controller.positions.isNotEmpty) {
+    if (_controller.hasClients) {
       _controller.animateTo(
         _controller.position.maxScrollExtent,
-        duration: const Duration(seconds: 1),
-        curve: Curves.fastOutSlowIn,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
       );
     }
+
     if (widget.latestEvent.isPosition()) {
       setState(() {
-        latestLocationPayload = widget.latestEvent.payload!;
+        latestLocationPayload = widget.latestEvent.payload ?? {};
       });
     } else if (widget.latestEvent.isHeartBeat()) {
       setState(() {
         latestDatetime = widget.latestEvent.datetime;
-        latestHeartbeatPayload = widget.latestEvent.payload!;
+        latestHeartbeatPayload = widget.latestEvent.payload ?? {};
+      });
+    } else if (widget.latestEvent.isAltitude()) {
+      setState(() {
+        latestAltitudePayload = widget.latestEvent.payload ?? {};
       });
     }
   }
@@ -129,18 +131,24 @@ class _Property extends StatelessWidget {
   final String property;
   final String value;
 
-  const _Property({Key? key, required this.property, required this.value})
-      : super(key: key);
+  const _Property({Key? key, required this.property, required this.value}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           "$property: ",
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
-        Text(value, style: const TextStyle(fontSize: 14))
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 13),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }

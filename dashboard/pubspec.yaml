@@ -24,6 +24,7 @@ dependencies:
   json_annotation: ^4.5.0
   web: ^1.1.1
   flutter_3d_controller: ^2.2.0
+  fl_chart: ^1.0.0
 
 dev_dependencies:
   flutter_test:
