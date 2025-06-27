@@ -1,4 +1,5 @@
 import serial
+import time
 import json
 import event
 import pynmea2
@@ -42,6 +43,7 @@ class GPSReader:
                             self._last_position_data["long"] = msg.longitude
                             self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852 if msg.spd_over_grnd is not None else None
                             self._publish_position_event()
+                            time.sleep(2)
 
                 except pynmea2.ParseError:
                     continue
