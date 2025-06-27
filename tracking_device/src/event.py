@@ -9,4 +9,4 @@ class Event:
         self.payload = payload
 
     def to_json(self):
-        return json.dumps(self.__dict__, default=str)
+        return json.dumps(self.__dict__, default=str, separators=(',', ':'))
