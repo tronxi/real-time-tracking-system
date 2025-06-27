@@ -24,7 +24,7 @@ class LoraSender:
         while self.running:
             body = self.queue.get()
             try:
-                self.ser.write((body + '\n').encode())
+                self.ser.write((body + '$').encode())
                 time.sleep(0.3)
             except Exception as e:
                 print("Error sending:", e)
