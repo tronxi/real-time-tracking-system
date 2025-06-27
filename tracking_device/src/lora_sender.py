@@ -25,7 +25,8 @@ class LoraSender:
             body = self.queue.get()
             try:
                 self.ser.write((body + '$').encode())
-                time.sleep(0.3)
+                self.ser.flush()
+                time.sleep(0.5)
             except Exception as e:
                 print("Error sending:", e)
 
