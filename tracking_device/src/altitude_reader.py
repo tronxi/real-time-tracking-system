@@ -24,13 +24,13 @@ class AltitudeReader:
     def start(self):
         while True:
             try:
-                self._last_altitude_data["altitude"] = self.bmp.altitude
-                self._last_altitude_data["pressure"] = self.bmp.pressure
-                self._last_altitude_data["temperature"] = self.bmp.temperature
+                self._last_altitude_data["altitude"] = round(self.bmp.altitude, 2)
+                self._last_altitude_data["pressure"] = round(self.bmp.pressure, 2)
+                self._last_altitude_data["temperature"] = round(self.bmp.temperature, 2)
                 self._publish_altitude_event()
             except Exception as e:
                 print(f"Error BMP388: {e}")
-            time.sleep(1)
+            time.sleep(2)
 
     def _publish_altitude_event(self):
         payload = {
