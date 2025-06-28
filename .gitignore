@@ -2,3 +2,6 @@
 __pycache__
 tracking_device/src/venv/
 .DS_Store
+graphics_tools/venv/
+graphics_tools/position_map.html
+graphics_tools/*.jsonl
