@@ -14,20 +14,18 @@ class Metrics extends StatefulWidget {
 class _MetricsState extends State<Metrics> {
   final ScrollController _controller = ScrollController();
   late Map<String, String> latestLocationPayload;
-  late Map<String, String> latestHeartbeatPayload;
   late Map<String, String> latestAltitudePayload;
   late String logs;
-  late String latestDatetime;
+  late String latestAltitudeDatetime;
   late String latestGPSDatetime;
 
   @override
   void initState() {
     super.initState();
     logs = "";
-    latestDatetime = "Unknown";
+    latestAltitudeDatetime = "Unknown";
     latestGPSDatetime = "Unknown";
     latestLocationPayload = {};
-    latestHeartbeatPayload = {};
     latestAltitudePayload = {};
   }
 
@@ -44,8 +42,8 @@ class _MetricsState extends State<Metrics> {
       _Property(property: "GPS Altitude", value: latestLocationPayload['altitude'] ?? "Unknown"),
       _Property(property: "Speed", value: latestLocationPayload['speed'] ?? "Unknown"),
       _Property(property: "Last GPS Connection", value: latestGPSDatetime),
-      _Property(property: "Last Connection", value: latestDatetime),
-      _Property(property: "CPU Temp", value: latestHeartbeatPayload['cpuTemperature'] ?? "Unknown"),
+      _Property(property: "Last Altitude Connection", value: latestAltitudeDatetime),
+      _Property(property: "CPU Temp", value: latestAltitudePayload['cpuTemperature'] ?? "Unknown"),
       _Property(property: "Altitude", value: latestAltitudePayload['altitude'] ?? "Unknown"),
       _Property(property: "Pressure", value: latestAltitudePayload['pressure'] ?? "Unknown"),
       _Property(property: "Temperature", value: latestAltitudePayload['temperature'] ?? "Unknown"),
@@ -117,13 +115,9 @@ class _MetricsState extends State<Metrics> {
         latestGPSDatetime = widget.latestEvent.datetime;
         latestLocationPayload = widget.latestEvent.payload ?? {};
       });
-    } else if (widget.latestEvent.isHeartBeat()) {
-      setState(() {
-        latestDatetime = widget.latestEvent.datetime;
-        latestHeartbeatPayload = widget.latestEvent.payload ?? {};
-      });
     } else if (widget.latestEvent.isAltitude()) {
       setState(() {
+        latestAltitudeDatetime = widget.latestEvent.datetime;
         latestAltitudePayload = widget.latestEvent.payload ?? {};
       });
     }

@@ -19,8 +19,6 @@ class Event {
 
   bool isPosition() => type == "POSITION";
 
-  bool isHeartBeat() => type == "HEARTBEAT";
-
   bool isAltitude() => type == "ALTITUDE";
 
 
