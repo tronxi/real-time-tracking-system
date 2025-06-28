@@ -26,7 +26,11 @@ class LoraSender:
             try:
                 self.ser.write((body + '$').encode())
                 self.ser.flush()
-                time.sleep(0.5)
+                start = time.time()
+                ack = ""
+                while "OK" not in ack and time.time() - start < 2:
+                    ack += self.ser.read(self.ser.in_waiting or 1).decode(errors='ignore')
+                    time.sleep(0.01)
             except Exception as e:
                 print("Error sending:", e)
 
