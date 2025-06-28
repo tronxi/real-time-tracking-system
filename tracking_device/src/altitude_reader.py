@@ -6,6 +6,7 @@ from event_logger import EventLogger
 import board
 import busio
 import adafruit_bmp3xx
+from gpiozero import CPUTemperature
 
 
 class AltitudeReader:
@@ -27,6 +28,7 @@ class AltitudeReader:
                 self._last_altitude_data["altitude"] = round(self.bmp.altitude, 2)
                 self._last_altitude_data["pressure"] = round(self.bmp.pressure, 2)
                 self._last_altitude_data["temperature"] = round(self.bmp.temperature, 2)
+                self._last_altitude_data["cpuTemperature"] = round(CPUTemperature().temperature, 2)
                 self._publish_altitude_event()
             except Exception as e:
                 print(f"Error BMP388: {e}")
@@ -37,6 +39,7 @@ class AltitudeReader:
             "altitude": self._last_altitude_data.get("altitude"),
             "pressure": self._last_altitude_data.get("pressure"),
             "temperature": self._last_altitude_data.get("temperature"),
+            "cpuTemperature": self._last_altitude_data.get("cpuTemperature")
         }
 
         ev = event.Event("ALTITUDE", datetime.now(), payload)

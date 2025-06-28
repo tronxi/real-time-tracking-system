@@ -3,7 +3,6 @@ try:
     import camera
 except ImportError:
     pass
-import heartbeat_sender as hs
 import signal
 import gps_reader
 import altitude_reader as ar
@@ -22,15 +21,12 @@ class Main:
         self.current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = Path.home() / self.current_date
         filepath.mkdir(parents=True, exist_ok=True)
-        self.connection_manager_heart = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.connection_manager_gps = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.connection_manager_altitude = rabbitmq_connection_manager.RabbitmqConnectionManager()
         self.lora_sender = LoraSender()
         self.cam = None
         self.spr = None
         self.thread_cam = Thread(target=self.start_cam)
-        self.thread_heartbeat_sender = Thread(
-            target=self.start_heartbeat_sender)
         self.thread_gps_reader = Thread(
             target=self.start_gps_reader)
         self.thread_altitude_reader = Thread(
@@ -47,10 +43,6 @@ class Main:
         self.spr = gps_reader.GPSReader(self.connection_manager_gps, self.current_date, self.lora_sender)
         self.spr.start()
 
-    def start_heartbeat_sender(self):
-        heartbeat_sender = hs.HeartbeatSender(self.connection_manager_heart, self.current_date, self.lora_sender)
-        heartbeat_sender.start()
-
     def start_altitude_reader(self):
         altitude_reader = ar.AltitudeReader(self.connection_manager_altitude, self.current_date, self.lora_sender)
         altitude_reader.start()
@@ -60,7 +52,6 @@ class Main:
             self.cam.close()
         if self.spr is not None:
             self.spr.close()
-        self.connection_manager_heart.close()
         self.connection_manager_gps.close()
         self.connection_manager_altitude.close()
         self.lora_sender.close()
@@ -69,15 +60,12 @@ class Main:
     def main(self, args):
         if args == "all":
             self.thread_cam.start()
-            self.thread_heartbeat_sender.start()
             self.thread_gps_reader.start()
             self.thread_altitude_reader.start()
         elif args == "cam":
             self.thread_cam.start()
         elif args == "gps":
             self.thread_gps_reader.start()
-        elif args == "heart":
-            self.thread_heartbeat_sender.start()
         elif args == "altitude":
             self.thread_altitude_reader.start()
 
