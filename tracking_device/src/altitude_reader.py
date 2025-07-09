@@ -43,6 +43,6 @@ class AltitudeReader:
         }
 
         ev = event.Event("ALTITUDE", datetime.now(), payload)
-        self._lora_sender.send(ev.to_json())
+        self._lora_sender.send(ev)
         self._rabbitmq_connection_manager.publish(ev.to_json())
         self.logger.log(ev)

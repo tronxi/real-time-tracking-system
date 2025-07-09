@@ -3,6 +3,7 @@ import time
 import json
 import RPi.GPIO as GPIO
 import rabbitmq_connection_manager
+from tracking_device.src.event import Event
 
 M0, M1 = 23, 24
 GPIO.setmode(GPIO.BCM)
@@ -25,12 +26,12 @@ try:
             if not message:
                 continue
             try:
-                parsed = json.loads(message)
-                print("✅ JSON recibido:", parsed)
-                rabbit.publish(message)
+                event = Event.from_csv(message)
+                print("✅ Valid CSV event received:", event.to_json())
+                rabbit.publish(event)
                 ser.write(b'OK\n')
-            except json.JSONDecodeError:
-                print("❌ JSON malformado:", repr(message))
+            except Exception as e:
+                print("❌ Malformed CSV event:", repr(message), "| Error:", str(e))
 
 except KeyboardInterrupt:
     pass

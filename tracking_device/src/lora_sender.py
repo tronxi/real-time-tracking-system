@@ -34,8 +34,8 @@ class LoraSender:
             except Exception as e:
                 print("Error sending:", e)
 
-    def send(self, body):
-        self.queue.put(body)
+    def send(self, event):
+        self.queue.put(event.to_csv())
 
     def close(self):
         self.running = False
