@@ -3,7 +3,7 @@ import time
 import json
 import RPi.GPIO as GPIO
 import rabbitmq_connection_manager
-import event
+import event as event_module
 
 M0, M1 = 23, 24
 GPIO.setmode(GPIO.BCM)
@@ -26,9 +26,9 @@ try:
             if not message:
                 continue
             try:
-                event = event.Event.from_csv(message)
+                event = event_module.Event.from_csv(message)
                 print("✅ Valid CSV event received:", event.to_json())
-                rabbit.publish(event)
+                rabbit.publish(event.to_json())
                 ser.write(b'OK\n')
             except Exception as e:
                 print("❌ Malformed CSV event:", repr(message), "| Error:", str(e))
