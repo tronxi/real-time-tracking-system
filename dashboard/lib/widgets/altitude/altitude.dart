@@ -24,8 +24,8 @@ class _AltitudeState extends State<Altitude> {
       height: 250,
       child: LineChart(
         LineChartData(
-          minY: 500,
-          maxY: 600,
+          minY: -5,
+          maxY: 50,
           lineTouchData: const LineTouchData(enabled: true),
           gridData: const FlGridData(show: true),
           borderData: FlBorderData(show: true),

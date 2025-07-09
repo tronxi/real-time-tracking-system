@@ -17,7 +17,7 @@ class Camera:
 
         self._picam2 = Picamera2()
         config = self._picam2.create_video_configuration(
-            main={"size": (self._width, self._height), "format": "YUV420"},
+            main={"size": (self._width, self._height), "format": "RGB888"},
             controls={"FrameDurationLimits": (int(1e6 / self._framerate), int(1e6 / self._framerate))}
         )
         self._picam2.configure(config)
@@ -25,11 +25,12 @@ class Camera:
         self._ffmpeg_cmd = [
             'ffmpeg',
             '-f', 'rawvideo',
-            '-pix_fmt', 'yuv420p',
+            '-pix_fmt', 'rgb24',
             '-s', f'{self._width}x{self._height}',
             '-r', str(self._framerate),
             '-i', '-',
-            '-c:v', 'libx264',
+            '-c:v', 'h264_v4l2m2m',
+            '-pix_fmt', 'yuv420p',
             '-preset', 'ultrafast',
             '-tune', 'zerolatency',
             '-f', 'flv',
@@ -47,8 +48,7 @@ class Camera:
                 frame = self._picam2.capture_array("main")
                 if ffmpeg.stdin:
                     ffmpeg.stdin.write(frame.tobytes())
-                bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
-                self.out.write(bgr)
+                self.out.write(frame)
         except BrokenPipeError:
             print("FFmpeg pipe broken.")
         finally:
