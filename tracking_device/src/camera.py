@@ -8,7 +8,7 @@ class Camera:
     def __init__(self, current_date):
         self._width = 640
         self._height = 480
-        self._framerate = 25
+        self._framerate = 15
         self._rtmp_url = "rtmp://tronxi.ddns.net:1935/live/test"
         fourcc = cv2.VideoWriter_fourcc(*'MJPG')
         filename = f"video_{current_date}.avi"
@@ -32,8 +32,8 @@ class Camera:
             '-i', '-',
             '-c:v', 'h264_v4l2m2m',
             '-pix_fmt', 'yuv420p',
-            '-preset', 'ultrafast',
-            '-tune', 'zerolatency',
+            # '-preset', 'ultrafast',
+            # '-tune', 'zerolatency',
             '-f', 'flv',
             self._rtmp_url
         ]
