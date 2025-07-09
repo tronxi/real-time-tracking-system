@@ -19,13 +19,16 @@ class AltitudeReader:
         self._lora_sender = lora_sender
         i2c = busio.I2C(board.SCL, board.SDA)
         self.bmp = adafruit_bmp3xx.BMP3XX_I2C(i2c, address=0x77)
-        self.bmp.sea_level_pressure = 1013.25
+        self._base_altitude = None
         self._last_altitude_data = {}
 
     def start(self):
         while True:
             try:
-                self._last_altitude_data["altitude"] = round(self.bmp.altitude, 2)
+                current_altitude = self.bmp.altitude
+                if self._base_altitude is None:
+                    self._base_altitude = current_altitude
+                self._last_altitude_data["altitude"] = round(current_altitude - self._base_altitude, 2)
                 self._last_altitude_data["pressure"] = round(self.bmp.pressure, 2)
                 self._last_altitude_data["temperature"] = round(self.bmp.temperature, 2)
                 self._last_altitude_data["cpuTemperature"] = round(CPUTemperature().temperature, 2)
