@@ -24,6 +24,7 @@ class Camera:
 
         self._ffmpeg_cmd = [
             'ffmpeg',
+            '-fflags', 'nobuffer',
             '-f', 'rawvideo',
             '-pix_fmt', 'rgb24',
             '-s', f'{self._width}x{self._height}',
