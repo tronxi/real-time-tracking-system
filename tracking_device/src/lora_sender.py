@@ -29,7 +29,8 @@ class LoraSender:
                 start = time.time()
                 ack = ""
                 while "OK" not in ack and time.time() - start < 2:
-                    ack += self.ser.read(self.ser.in_waiting or 1).decode(errors='ignore')
+                    if self.ser.in_waiting > 0:
+                        ack += self.ser.read(self.ser.in_waiting).decode(errors='ignore')
                     time.sleep(0.01)
                 if "OK" not in ack:
                     print("Error sending:", ack)
