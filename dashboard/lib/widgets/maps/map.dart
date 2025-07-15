@@ -57,7 +57,7 @@ class _CustomMapState extends State<CustomMap> {
         _moveToRocket = false;
       });
     }
-    if (widget.latestEvent.isPosition()) {
+    if (widget.latestEvent.isTm()) {
       setState(() {
         _latestRocketPosition = widget.latestEvent.latLng();
         _rocketMarkers.clear();

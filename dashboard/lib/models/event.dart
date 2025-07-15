@@ -17,15 +17,12 @@ class Event {
   const Event(
       {required this.type, required this.datetime, required this.payload});
 
-  bool isPosition() => type == "POSITION";
-
-  bool isAltitude() => type == "ALTITUDE";
-
+  bool isTm() => type == "TM";
 
   LatLng? latLng() {
-    if(!isPosition()) return null;
-    double lat = double.parse(payload!['lat']!);
-    double long = double.parse(payload!['long']!);
+    if(!isTm()) return null;
+    double lat = double.parse(payload!['lat'] ?? "0");
+    double long = double.parse(payload!['long'] ?? "0");
     return LatLng(lat, long);
   }
 

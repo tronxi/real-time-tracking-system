@@ -13,20 +13,16 @@ class Metrics extends StatefulWidget {
 
 class _MetricsState extends State<Metrics> {
   final ScrollController _controller = ScrollController();
-  late Map<String, String> latestLocationPayload;
-  late Map<String, String> latestAltitudePayload;
+  late Map<String, String> latestTMPayload;
   late String logs;
-  late String latestAltitudeDatetime;
-  late String latestGPSDatetime;
+  late String latestTMDatetime;
 
   @override
   void initState() {
     super.initState();
     logs = "";
-    latestAltitudeDatetime = "Unknown";
-    latestGPSDatetime = "Unknown";
-    latestLocationPayload = {};
-    latestAltitudePayload = {};
+    latestTMDatetime = "Unknown";
+    latestTMPayload = {};
   }
 
   @override
@@ -37,16 +33,15 @@ class _MetricsState extends State<Metrics> {
     final int columns = isDesktop ? 3 : 1;
 
     final properties = [
-      _Property(property: "Lat", value: latestLocationPayload['lat'] ?? "Unknown"),
-      _Property(property: "Long", value: latestLocationPayload['long'] ?? "Unknown"),
-      _Property(property: "GPS Altitude", value: latestLocationPayload['altitude'] ?? "Unknown"),
-      _Property(property: "Speed", value: latestLocationPayload['speed'] ?? "Unknown"),
-      _Property(property: "Last GPS Connection", value: latestGPSDatetime),
-      _Property(property: "Last Altitude Connection", value: latestAltitudeDatetime),
-      _Property(property: "CPU Temp", value: latestAltitudePayload['cpuTemperature'] ?? "Unknown"),
-      _Property(property: "Altitude", value: latestAltitudePayload['altitude'] ?? "Unknown"),
-      _Property(property: "Pressure", value: latestAltitudePayload['pressure'] ?? "Unknown"),
-      _Property(property: "Temperature", value: latestAltitudePayload['temperature'] ?? "Unknown"),
+      _Property(property: "Lat", value: latestTMPayload['lat'] ?? "Unknown"),
+      _Property(property: "Long", value: latestTMPayload['long'] ?? "Unknown"),
+      _Property(property: "GPS Altitude", value: latestTMPayload['gps_altitude'] ?? "Unknown"),
+      _Property(property: "Speed", value: latestTMPayload['speed'] ?? "Unknown"),
+      _Property(property: "Last Connection", value: latestTMDatetime),
+      _Property(property: "CPU Temp", value: latestTMPayload['cpuTemperature'] ?? "Unknown"),
+      _Property(property: "Altitude", value: latestTMPayload['altitude'] ?? "Unknown"),
+      _Property(property: "Pressure", value: latestTMPayload['pressure'] ?? "Unknown"),
+      _Property(property: "Temperature", value: latestTMPayload['temperature'] ?? "Unknown"),
     ];
 
     return LayoutBuilder(
@@ -110,15 +105,10 @@ class _MetricsState extends State<Metrics> {
       );
     }
 
-    if (widget.latestEvent.isPosition()) {
+    if (widget.latestEvent.isTm()) {
       setState(() {
-        latestGPSDatetime = widget.latestEvent.datetime;
-        latestLocationPayload = widget.latestEvent.payload ?? {};
-      });
-    } else if (widget.latestEvent.isAltitude()) {
-      setState(() {
-        latestAltitudeDatetime = widget.latestEvent.datetime;
-        latestAltitudePayload = widget.latestEvent.payload ?? {};
+        latestTMDatetime = widget.latestEvent.datetime;
+        latestTMPayload = widget.latestEvent.payload ?? {};
       });
     }
   }

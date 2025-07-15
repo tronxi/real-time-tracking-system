@@ -64,7 +64,7 @@ class _AltitudeState extends State<Altitude> {
   void didUpdateWidget(covariant Altitude oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.latestEvent != oldWidget.latestEvent &&
-        widget.latestEvent.isAltitude()) {
+        widget.latestEvent.isTm()) {
       final payload = widget.latestEvent.payload;
       final altitudeStr = payload?['altitude'];
       final altitude = double.tryParse(altitudeStr ?? '');
