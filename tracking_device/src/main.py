@@ -24,7 +24,8 @@ class Main:
         self.lora_sender = LoraSender()
         self.cam = None
         self.tmr = None
-        self.thread_cam = Thread(target=self.start_cam)
+        if self.internet:
+            self.thread_cam = Thread(target=self.start_cam)
         self.thread_telemetry_reader = Thread(
             target=self.start_telemetry_reader
         )
@@ -57,7 +58,7 @@ class Main:
         elif args == "tm":
             self.thread_telemetry_reader.start()
 
-    def wait_for_internet(self, timeout=120):
+    def wait_for_internet(self, timeout=30):
         print("Waiting for internet connection...")
         start = time.time()
         while time.time() - start < timeout:
