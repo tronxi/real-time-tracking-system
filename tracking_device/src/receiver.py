@@ -27,8 +27,9 @@ try:
                 continue
             try:
                 event = event_module.Event.from_csv(message)
-                print("✅ Valid CSV event received:", event.to_json())
-                rabbit.publish(event.to_json())
+                json_event = event.to_json()
+                rabbit.publish(json_event)
+                # print("✅ Valid CSV event received:", json_event)
                 ser.write(b'OK\n')
             except Exception as e:
                 print("❌ Malformed CSV event:", repr(message), "| Error:", str(e))
