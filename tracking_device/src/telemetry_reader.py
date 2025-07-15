@@ -12,10 +12,11 @@ import pynmea2
 
 class TelemetryReader:
 
-    def __init__(self, rabbitmq_connection_manager, current_date, lora_sender):
+    def __init__(self, rabbitmq_connection_manager, current_date, lora_sender, send_online):
         filename = f"telemetry_{current_date}.jsonl"
         filepath = Path.home() / current_date / filename
 
+        self.send_online = send_online
         self.logger = EventLogger(str(filepath))
         self._rabbitmq_connection_manager = rabbitmq_connection_manager
         self._lora_sender = lora_sender
@@ -72,7 +73,8 @@ class TelemetryReader:
 
         ev = event.Event("TM", datetime.now(), payload)
         self._lora_sender.send(ev)
-        # self._rabbitmq_connection_manager.publish(ev.to_json())
+        if self.send_online:
+            self._rabbitmq_connection_manager.publish(ev.to_json())
         self.logger.log(ev)
 
     def close(self):
