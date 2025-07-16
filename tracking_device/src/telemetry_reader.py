@@ -57,7 +57,6 @@ class TelemetryReader:
                 continue
             except Exception as e:
                 print(f"[ERROR] {e}")
-            time.sleep(2)
 
     def _publish_telemetry_event(self):
         payload = {
@@ -72,9 +71,12 @@ class TelemetryReader:
         }
 
         ev = event.Event("TM", datetime.now(), payload)
-        self._lora_sender.send(ev)
         if self.send_online:
             self._rabbitmq_connection_manager.publish(ev.to_json())
+            time.sleep(0.2)
+        else:
+            self._lora_sender.send(ev)
+            time.sleep(2)
         self.logger.log(ev)
 
     def close(self):
