@@ -33,7 +33,7 @@ class Main:
         self.cam.start()
 
     def start_telemetry_sender(self):
-        self.tmr = telemetry_sender.TelemetrySender(self.connection_manager_telemetry, self.current_date, self.lora_sender, False)
+        self.tmr = telemetry_sender.TelemetrySender(self.connection_manager_telemetry, self.current_date, self.lora_sender, self.internet)
         self.tmr.start()
 
     def exit_program(self, signum, frame):
