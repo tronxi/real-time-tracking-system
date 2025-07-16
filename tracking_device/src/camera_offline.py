@@ -16,7 +16,7 @@ class CameraOffline:
         self.picam2.configure(self.config)
 
     def start(self):
-        self.picam2.start_recording(H264Encoder(), self.filepath)
+        self.picam2.start_recording(H264Encoder(repeat=True), self.filepath)
 
     def close(self):
         self.picam2.stop_recording()
