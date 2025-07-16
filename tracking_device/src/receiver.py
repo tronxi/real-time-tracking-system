@@ -1,9 +1,9 @@
 import serial
 import time
-import json
 import RPi.GPIO as GPIO
 import rabbitmq_connection_manager
 import event as event_module
+import os
 
 M0, M1 = 23, 24
 GPIO.setmode(GPIO.BCM)
@@ -11,7 +11,22 @@ GPIO.setwarnings(False)
 GPIO.setup((M0, M1), GPIO.OUT, initial=GPIO.LOW)
 
 rabbit = rabbitmq_connection_manager.RabbitmqConnectionManager()
-ser = serial.Serial('/dev/serial0', 9600, timeout=1)
+
+start_time = time.time()
+ser = None
+PORT = '/dev/serial0'
+while time.time() - start_time < 30:
+    if os.path.exists(PORT) and os.access(PORT, os.R_OK | os.W_OK):
+        try:
+            ser = serial.Serial(PORT, 9600, timeout=1)
+            break
+        except Exception:
+            pass
+    time.sleep(1)
+
+if ser is None:
+    print(f"Failed to open port {PORT} after {30} seconds.")
+    exit(1)
 
 buffer = ""
 
