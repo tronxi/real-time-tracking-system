@@ -9,6 +9,9 @@ import adafruit_bmp3xx
 from gpiozero import CPUTemperature
 import serial
 import pynmea2
+import adafruit_hmc5883l
+import math
+
 
 class TelemetrySender:
 
@@ -27,6 +30,8 @@ class TelemetrySender:
         self._port = serial.Serial('/dev/ttyUSB0', 9600)
         self._last_position_data = {}
         self._last_lora_send = 0
+        self._compass = adafruit_hmc5883l.HMC5883L(i2c)
+        self._last_compass_data = {}
 
     def start(self):
         while True:
@@ -53,6 +58,8 @@ class TelemetrySender:
                         self._last_position_data["lat"] = msg.latitude
                         self._last_position_data["long"] = msg.longitude
                         self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852 if msg.spd_over_grnd is not None else None
+
+                self._last_compass_data["yaw"] = self._get_yaw(self._compass.magnetic[0], self._compass.magnetic[1])
                 self._publish_telemetry_event()
             except pynmea2.ParseError:
                 continue
@@ -69,7 +76,8 @@ class TelemetrySender:
             "lat": self._last_position_data.get("lat"),
             "long": self._last_position_data.get("long"),
             "gps_altitude": self._last_position_data.get("altitude"),
-            "speed": self._last_position_data.get("speed")
+            "speed": self._last_position_data.get("speed"),
+            "yaw": self._last_compass_data.get("yaw"),
         }
 
         ev = event.Event("TM", datetime.now(), payload)
@@ -82,6 +90,11 @@ class TelemetrySender:
                 self._last_lora_send = now
                 self._lora_sender.send(ev)
         self.logger.log(ev)
+
+    def _get_yaw(self, x, y):
+        angle = math.degrees(math.atan2(y, x))
+        angle = angle if angle >= 0 else angle + 360
+        return round(angle, 2)
 
     def close(self):
         self._port.close()

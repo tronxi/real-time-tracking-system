@@ -4,7 +4,7 @@ from io import StringIO
 
 class Event:
 
-    ALL_FIELDS = ['lat', 'long', 'gps_altitude', 'altitude', 'speed', 'roll', 'pitch', 'yaw', 'pressure', 'temperature', 'cpuTemperature']
+    ALL_FIELDS = ['lat', 'long', 'gps_altitude', 'altitude', 'speed', 'roll', 'pitch', 'yaw', 'pressure', 'temperature', 'cpuTemperature', 'yaw']
 
 
     def __init__(self, event_type, datetime, payload=None):
