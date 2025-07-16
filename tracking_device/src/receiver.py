@@ -12,23 +12,24 @@ GPIO.setup((M0, M1), GPIO.OUT, initial=GPIO.LOW)
 
 rabbit = rabbitmq_connection_manager.RabbitmqConnectionManager()
 
+print("Waiting for serial port to become available...")
 start_time = time.time()
 ser = None
 PORT = '/dev/serial0'
 while time.time() - start_time < 30:
+    print("Checking port access...")
     if os.path.exists(PORT) and os.access(PORT, os.R_OK | os.W_OK):
+        print("Port exists and is accessible, trying to open...")
         try:
             ser = serial.Serial(PORT, 9600, timeout=1)
+            print("Serial port opened.")
             break
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Error opening port: {e}")
+    else:
+        print(f"Port {PORT} not accessible or doesn't exist.")
     time.sleep(1)
 
-if ser is None:
-    print(f"Failed to open port {PORT} after {30} seconds")
-    exit(1)
-else:
-    print(f"Opened port {PORT} successfully")
 
 buffer = ""
 
