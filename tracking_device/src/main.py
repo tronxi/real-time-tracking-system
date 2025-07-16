@@ -1,8 +1,6 @@
 import sys
-try:
-    import camera
-except ImportError:
-    pass
+import camera
+import camera_offline
 import signal
 import telemetry_reader
 import rabbitmq_connection_manager
@@ -33,7 +31,10 @@ class Main:
         signal.signal(signal.SIGTSTP, self.exit_program)
 
     def start_cam(self):
-        self.cam = camera.Camera(self.current_date)
+        if self.internet:
+            self.cam = camera.Camera(self.current_date)
+        else:
+            self.cam = camera_offline.CameraOffline(self.current_date)
         self.cam.start()
 
     def start_telemetry_reader(self):
