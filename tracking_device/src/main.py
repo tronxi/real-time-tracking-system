@@ -22,8 +22,7 @@ class Main:
         self.lora_sender = LoraSender()
         self.cam = None
         self.tmr = None
-        if self.internet:
-            self.thread_cam = Thread(target=self.start_cam)
+        self.thread_cam = Thread(target=self.start_cam)
         self.thread_telemetry_reader = Thread(
             target=self.start_telemetry_reader
         )
