@@ -32,8 +32,6 @@ class Camera:
             '-i', '-',
             '-c:v', 'h264_v4l2m2m',
             '-pix_fmt', 'yuv420p',
-            # '-preset', 'ultrafast',
-            # '-tune', 'zerolatency',
             '-f', 'flv',
             self._rtmp_url
         ]
