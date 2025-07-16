@@ -4,11 +4,30 @@ import RPi.GPIO as GPIO
 import rabbitmq_connection_manager
 import event as event_module
 import os
+import socket
 
 M0, M1 = 23, 24
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup((M0, M1), GPIO.OUT, initial=GPIO.LOW)
+
+print("Waiting for internet connection...")
+start = time.time()
+internet_connected = False
+
+while time.time() - start < 30:
+    try:
+        socket.create_connection(("8.8.8.8", 53), timeout=3)
+        print("Internet connection detected.")
+        internet_connected = True
+        break
+    except OSError:
+        print("No internet yet, retrying...")
+        time.sleep(5)
+
+if not internet_connected:
+    print("Warning: No internet connection after timeout")
+    exit(1)
 
 rabbit = rabbitmq_connection_manager.RabbitmqConnectionManager()
 
@@ -57,3 +76,4 @@ except KeyboardInterrupt:
 finally:
     ser.close()
     rabbit.close()
+
