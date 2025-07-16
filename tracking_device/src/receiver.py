@@ -25,8 +25,10 @@ while time.time() - start_time < 30:
     time.sleep(1)
 
 if ser is None:
-    print(f"Failed to open port {PORT} after {30} seconds.")
+    print(f"Failed to open port {PORT} after {30} seconds")
     exit(1)
+else:
+    print(f"Opened port {PORT} successfully")
 
 buffer = ""
 
