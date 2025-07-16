@@ -1,8 +1,7 @@
 import sys
 import camera
-import camera_offline
 import signal
-import telemetry_reader
+import telemetry_sender
 import rabbitmq_connection_manager
 import socket
 import time
@@ -23,21 +22,18 @@ class Main:
         self.cam = None
         self.tmr = None
         self.thread_cam = Thread(target=self.start_cam)
-        self.thread_telemetry_reader = Thread(
-            target=self.start_telemetry_reader
+        self.thread_telemetry_sender = Thread(
+            target=self.start_telemetry_sender
         )
         signal.signal(signal.SIGINT, self.exit_program)
         signal.signal(signal.SIGTSTP, self.exit_program)
 
     def start_cam(self):
-        if self.internet:
-            self.cam = camera.Camera(self.current_date)
-        else:
-            self.cam = camera_offline.CameraOffline(self.current_date)
+        self.cam = camera.Camera(self.current_date, self.internet)
         self.cam.start()
 
-    def start_telemetry_reader(self):
-        self.tmr = telemetry_reader.TelemetryReader(self.connection_manager_telemetry, self.current_date, self.lora_sender, False)
+    def start_telemetry_sender(self):
+        self.tmr = telemetry_sender.TelemetrySender(self.connection_manager_telemetry, self.current_date, self.lora_sender, False)
         self.tmr.start()
 
     def exit_program(self, signum, frame):
@@ -52,11 +48,11 @@ class Main:
     def main(self, args):
         if args == "all":
             self.thread_cam.start()
-            self.thread_telemetry_reader.start()
+            self.thread_telemetry_sender.start()
         elif args == "cam":
             self.thread_cam.start()
         elif args == "tm":
-            self.thread_telemetry_reader.start()
+            self.thread_telemetry_sender.start()
 
     def wait_for_internet(self, timeout=30):
         print("Waiting for internet connection...")

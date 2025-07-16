@@ -10,13 +10,13 @@ from gpiozero import CPUTemperature
 import serial
 import pynmea2
 
-class TelemetryReader:
+class TelemetrySender:
 
     def __init__(self, rabbitmq_connection_manager, current_date, lora_sender, send_online):
         filename = f"telemetry_{current_date}.jsonl"
         filepath = Path.home() / current_date / filename
 
-        self.send_online = send_online
+        self._send_online = send_online
         self.logger = EventLogger(str(filepath))
         self._rabbitmq_connection_manager = rabbitmq_connection_manager
         self._lora_sender = lora_sender
@@ -26,6 +26,7 @@ class TelemetryReader:
         self._last_altitude_data = {}
         self._port = serial.Serial('/dev/ttyUSB0', 9600)
         self._last_position_data = {}
+        self._last_lora_send = 0
 
     def start(self):
         while True:
@@ -57,6 +58,7 @@ class TelemetryReader:
                 continue
             except Exception as e:
                 print(f"[ERROR] {e}")
+            time.sleep(0.2)
 
     def _publish_telemetry_event(self):
         payload = {
@@ -71,12 +73,14 @@ class TelemetryReader:
         }
 
         ev = event.Event("TM", datetime.now(), payload)
-        if self.send_online:
+        if self._send_online:
             self._rabbitmq_connection_manager.publish(event.Event.from_csv(ev.to_csv()).to_json())
-            time.sleep(0.2)
         else:
-            self._lora_sender.send(ev)
-            time.sleep(2)
+            now = time.time()
+            send_lora = (now - self._last_lora_send) >= 2.0
+            if send_lora:
+                self._last_lora_send = now
+                self._lora_sender.send(ev)
         self.logger.log(ev)
 
     def close(self):

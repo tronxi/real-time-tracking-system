@@ -5,7 +5,8 @@ from pathlib import Path
 
 class Camera:
 
-    def __init__(self, current_date):
+    def __init__(self, current_date, send_online):
+        self._send_online = send_online
         self._width = 640
         self._height = 480
         self._framerate = 15
@@ -41,11 +42,13 @@ class Camera:
 
     def start(self):
         self._picam2.start()
-        ffmpeg = subprocess.Popen(self._ffmpeg_cmd, stdin=subprocess.PIPE)
+        if self._send_online:
+            ffmpeg = subprocess.Popen(self._ffmpeg_cmd, stdin=subprocess.PIPE)
+        else: ffmpeg = None
         try:
             while True:
                 frame = self._picam2.capture_array("main")
-                if ffmpeg.stdin:
+                if ffmpeg and ffmpeg.stdin:
                     ffmpeg.stdin.write(frame.tobytes())
                 self.out.write(frame)
         except BrokenPipeError:
@@ -53,6 +56,7 @@ class Camera:
         finally:
             self._picam2.stop()
             self.out.release()
-            if ffmpeg.stdin:
-                ffmpeg.stdin.close()
-            ffmpeg.wait()
+            if ffmpeg:
+                if ffmpeg.stdin:
+                    ffmpeg.stdin.close()
+                ffmpeg.wait()
