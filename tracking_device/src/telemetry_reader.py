@@ -72,7 +72,7 @@ class TelemetryReader:
 
         ev = event.Event("TM", datetime.now(), payload)
         if self.send_online:
-            self._rabbitmq_connection_manager.publish(ev.to_json())
+            self._rabbitmq_connection_manager.publish(event.Event.from_csv(ev.to_csv()).to_json())
             time.sleep(0.2)
         else:
             self._lora_sender.send(ev)
