@@ -9,9 +9,7 @@ import adafruit_bmp3xx
 from gpiozero import CPUTemperature
 import serial
 import pynmea2
-from qmc5883l import QMC5883L
-import math
-
+from hmc5883l import hmc5883l
 
 class TelemetrySender:
 
@@ -30,7 +28,7 @@ class TelemetrySender:
         self._port = serial.Serial('/dev/ttyUSB0', 9600)
         self._last_position_data = {}
         self._last_lora_send = 0
-        self._compass = QMC5883L(i2c)
+        self._compass = hmc5883l()
         self._last_compass_data = {}
 
     def start(self):
@@ -59,7 +57,7 @@ class TelemetrySender:
                         self._last_position_data["long"] = msg.longitude
                         self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852 if msg.spd_over_grnd is not None else None
 
-                self._last_compass_data["yaw"] = self._compass.get_bearing()
+                self._last_compass_data["yaw"] = round(self._compass.heading(), 2)
                 self._publish_telemetry_event()
             except pynmea2.ParseError:
                 continue
