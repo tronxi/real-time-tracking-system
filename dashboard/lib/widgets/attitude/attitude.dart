@@ -1,9 +1,12 @@
+import 'package:dashboard/models/event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_3d_controller/flutter_3d_controller.dart';
 import 'dart:async';
 
 class Attitude extends StatefulWidget {
-  const Attitude({super.key});
+  final Event latestEvent;
+
+  const Attitude({super.key, required this.latestEvent});
 
   @override
   State<Attitude> createState() => _AttitudeState();
@@ -11,6 +14,7 @@ class Attitude extends StatefulWidget {
 
 class _AttitudeState extends State<Attitude> {
   final Flutter3DController _controller = Flutter3DController();
+  late Map<String, String> latestTMPayload;
 
   double yaw = 0;
   double pitch = 0;
@@ -18,22 +22,10 @@ class _AttitudeState extends State<Attitude> {
   Timer? _rotationTimer;
   bool _isModelLoaded = false;
 
-  void _startRotationLoop() {
-    _rotationTimer = Timer.periodic(const Duration(milliseconds: 100), (_) {
-      setState(() {
-        yaw = (yaw + 1) % 360;
-        pitch = (pitch + 0.5) % 360;
-        roll = (roll + 0.3) % 360;
-
-        if (_isModelLoaded) {
-          _controller.setCameraOrbit(
-            yaw,
-            pitch,
-            2.0,
-          );
-        }
-      });
-    });
+  @override
+  void initState() {
+    super.initState();
+    latestTMPayload = {};
   }
 
   @override
@@ -44,6 +36,7 @@ class _AttitudeState extends State<Attitude> {
 
   @override
   Widget build(BuildContext context) {
+    _setValues();
     return Center(
       child: Flutter3DViewer(
         controller: _controller,
@@ -52,12 +45,29 @@ class _AttitudeState extends State<Attitude> {
         progressBarColor: Colors.blue,
         onLoad: (String modelAddress) {
           _isModelLoaded = true;
-          // _startRotationLoop();
         },
         onError: (String error) {
           debugPrint('3D model failed to load: $error');
         },
       ),
     );
+  }
+
+  void _setValues() {
+    if (widget.latestEvent.isTm()) {
+      latestTMPayload = widget.latestEvent.payload ?? {};
+      final newYaw = double.tryParse(latestTMPayload['yaw']?.toString() ?? '') ?? 0.0;
+
+      if (_isModelLoaded) {
+        yaw = newYaw;
+        pitch = 0;
+        roll = 0;
+        _controller.setCameraOrbit(
+          newYaw,
+          0,
+          0
+        );
+      }
+    }
   }
 }

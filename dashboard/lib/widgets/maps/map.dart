@@ -163,7 +163,7 @@ class _CustomMapState extends State<CustomMap> {
       point: widget.latestEvent.latLng()!,
       rotate: true,
       child: Transform.rotate(
-        angle: (_currentHeading * (math.pi / 180)),
+        angle: double.tryParse(widget.latestEvent.payload!['yaw']?.toString() ?? '') ?? 0.0,
         child: const Icon(
           Icons.rocket,
           color: Colors.redAccent,

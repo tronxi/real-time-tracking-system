@@ -72,7 +72,7 @@ class _DashboardViewMobile extends StatelessWidget {
         children: [
           Metrics(latestEvent: latestEvent),
           const SizedBox(height: 40),
-          const SizedBox(height: 300, child: Attitude()),
+          SizedBox(height: 300, child: Attitude(latestEvent: latestEvent)),
           const SizedBox(height: 40),
           Altitude(latestEvent: latestEvent),
           const SizedBox(height: 40),
@@ -176,7 +176,7 @@ class _BottomViewState extends State<_BottomView> {
       ),
       gripSize: 5,
       children: [
-        const Attitude(),
+        Attitude(latestEvent: widget.latestEvent),
         Altitude(latestEvent: widget.latestEvent),
         CustomMap(latestEvent: widget.latestEvent)
       ],

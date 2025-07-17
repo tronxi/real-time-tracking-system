@@ -42,6 +42,9 @@ class _MetricsState extends State<Metrics> {
       _Property(property: "Altitude", value: latestTMPayload['altitude'] ?? "Unknown"),
       _Property(property: "Pressure", value: latestTMPayload['pressure'] ?? "Unknown"),
       _Property(property: "Temperature", value: latestTMPayload['temperature'] ?? "Unknown"),
+      _Property(property: "Yaw", value: latestTMPayload['yaw'] ?? "Unknown"),
+      _Property(property: "Pitch", value: latestTMPayload['yaw'] ?? "Unknown"),
+      _Property(property: "Roll", value: latestTMPayload['yaw'] ?? "Unknown"),
     ];
 
     return LayoutBuilder(
