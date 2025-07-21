@@ -1,8 +1,11 @@
 import time
 import event
+import math
 from datetime import datetime
 from pathlib import Path
 from event_logger import EventLogger
+from adafruit_bno08x.i2c import BNO08X_I2C
+from adafruit_bno08x import BNO_REPORT_ROTATION_VECTOR
 import board
 import busio
 import adafruit_bmp3xx
@@ -27,6 +30,8 @@ class TelemetrySender:
         self._port = serial.Serial('/dev/ttyUSB0', 9600)
         self._last_position_data = {}
         self._last_lora_send = 0
+        self._bno = BNO08X_I2C(i2c)
+        self._bno.enable_feature(BNO_REPORT_ROTATION_VECTOR)
 
     def start(self):
         while True:
@@ -54,6 +59,15 @@ class TelemetrySender:
                         self._last_position_data["long"] = msg.longitude
                         self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852 if msg.spd_over_grnd is not None else None
 
+                quat = self._bno.quaternion
+                if quat:
+                    pitch, roll, yaw = self._quaternion_to_euler(quat)
+                    self._last_position_data["roll"] = roll
+                    self._last_position_data["pitch"] = pitch
+                    self._last_position_data["yaw"] = yaw
+                else:
+                    print("No quaternion data")
+
                 self._publish_telemetry_event()
             except pynmea2.ParseError:
                 continue
@@ -71,7 +85,9 @@ class TelemetrySender:
             "long": self._last_position_data.get("long"),
             "gps_altitude": self._last_position_data.get("altitude"),
             "speed": self._last_position_data.get("speed"),
-            "yaw": "0",
+            "yaw": self._last_position_data.get("yaw"),
+            "roll": self._last_position_data.get("roll"),
+            "pitch": self._last_position_data.get("pitch"),
         }
 
         ev = event.Event("TM", datetime.now(), payload)
@@ -84,6 +100,29 @@ class TelemetrySender:
                 self._last_lora_send = now
                 self._lora_sender.send(ev)
         self.logger.log(ev)
+
+    def _quaternion_to_euler(self, q):
+        w, x, y, z = q
+        sinr_cosp = 2.0 * (w * x + y * z)
+        cosr_cosp = 1.0 - 2.0 * (x * x + y * y)
+        roll = math.atan2(sinr_cosp, cosr_cosp)
+
+        # Pitch (y-axis rotation)
+        sinp = 2.0 * (w * y - z * x)
+        if abs(sinp) >= 1:
+            pitch = math.copysign(math.pi / 2, sinp)
+        else:
+            pitch = math.asin(sinp)
+
+        # Yaw (z-axis rotation)
+        siny_cosp = 2.0 * (w * z + x * y)
+        cosy_cosp = 1.0 - 2.0 * (y * y + z * z)
+        yaw = math.atan2(siny_cosp, cosy_cosp)
+        return (
+            math.degrees(pitch),
+            math.degrees(roll),
+            math.degrees(yaw)
+        )
 
     def close(self):
         self._port.close()
