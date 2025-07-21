@@ -57,3 +57,5 @@ urllib3==1.26.12
 v4l2-python3==0.3.5
 webcolors==1.11.1
 smbus
+adafruit-circuitpython-bno08x
+

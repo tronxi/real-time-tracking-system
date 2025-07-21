@@ -59,14 +59,20 @@ class TelemetrySender:
                         self._last_position_data["long"] = msg.longitude
                         self._last_position_data["speed"] = float(msg.spd_over_grnd) * 1.852 if msg.spd_over_grnd is not None else None
 
-                quat = self._bno.quaternion
-                if quat:
-                    pitch, roll, yaw = self._quaternion_to_euler(quat)
-                    self._last_position_data["roll"] = roll
-                    self._last_position_data["pitch"] = pitch
-                    self._last_position_data["yaw"] = yaw
-                else:
-                    print("No quaternion data")
+                try:
+                    quat = self._bno.quaternion
+                    if quat:
+                        pitch, roll, yaw = self._quaternion_to_euler(quat)
+                        self._last_position_data["roll"] = roll
+                        self._last_position_data["pitch"] = pitch
+                        self._last_position_data["yaw"] = yaw
+                    else:
+                        print("No quaternion data")
+                except Exception as e:
+                    print(f"[WARNING] BNO085 error: {e}")
+                    i2c = busio.I2C(board.SCL, board.SDA)
+                    self._bno = BNO08X_I2C(i2c)
+                    self._bno.enable_feature(BNO_REPORT_ROTATION_VECTOR)
 
                 self._publish_telemetry_event()
             except pynmea2.ParseError:
