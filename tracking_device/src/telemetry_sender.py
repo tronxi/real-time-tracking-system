@@ -27,7 +27,7 @@ class TelemetrySender:
         self.bmp = adafruit_bmp3xx.BMP3XX_I2C(i2c, address=0x77)
         self._base_altitude = None
         self._last_altitude_data = {}
-        self._port = serial.Serial('/dev/ttyUSB0', 9600)
+        self._port = serial.Serial('/dev/serial0', 9600)
         self._last_position_data = {}
         self._last_lora_send = 0
         self._bno = BNO08X_I2C(i2c)
