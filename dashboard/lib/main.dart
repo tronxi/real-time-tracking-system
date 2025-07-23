@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
       title: 'Real Time Tracking System Dashboard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue, brightness: Brightness.dark),
         useMaterial3: true,
       ),
       home: const Scaffold(
