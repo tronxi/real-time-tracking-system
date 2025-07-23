@@ -27,7 +27,6 @@ class _MetricsState extends State<Metrics> {
 
   @override
   Widget build(BuildContext context) {
-    _setValues();
 
     final isDesktop = ResponsiveQuery.isDesktop(context);
     final int columns = isDesktop ? 3 : 1;
@@ -42,9 +41,9 @@ class _MetricsState extends State<Metrics> {
       _Property(property: "Altitude", value: latestTMPayload['altitude'] ?? "Unknown"),
       _Property(property: "Pressure", value: latestTMPayload['pressure'] ?? "Unknown"),
       _Property(property: "Temperature", value: latestTMPayload['temperature'] ?? "Unknown"),
+      _Property(property: "Pitch", value: latestTMPayload['pitch'] ?? "Unknown"),
+      _Property(property: "Roll", value: latestTMPayload['roll'] ?? "Unknown"),
       _Property(property: "Yaw", value: latestTMPayload['yaw'] ?? "Unknown"),
-      _Property(property: "Pitch", value: latestTMPayload['yaw'] ?? "Unknown"),
-      _Property(property: "Roll", value: latestTMPayload['yaw'] ?? "Unknown"),
     ];
 
     return LayoutBuilder(
@@ -95,24 +94,28 @@ class _MetricsState extends State<Metrics> {
     );
   }
 
-  void _setValues() {
-    logs += "${widget.latestEvent}\n\n";
-    if (logs.length > 10000) {
-      logs = logs.substring(5000);
-    }
-    if (_controller.hasClients) {
-      _controller.animateTo(
-        _controller.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
+  @override
+  void didUpdateWidget(covariant Metrics oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.latestEvent != oldWidget.latestEvent) {
+      logs += "${widget.latestEvent}\n\n";
+      if (logs.length > 10000) {
+        logs = logs.substring(5000);
+      }
+      if (_controller.hasClients) {
+        _controller.animateTo(
+          _controller.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
 
-    if (widget.latestEvent.isTm()) {
-      setState(() {
-        latestTMDatetime = widget.latestEvent.datetime;
-        latestTMPayload = widget.latestEvent.payload ?? {};
-      });
+      if (widget.latestEvent.isTm()) {
+        setState(() {
+          latestTMDatetime = widget.latestEvent.datetime;
+          latestTMPayload = widget.latestEvent.payload ?? {};
+        });
+      }
     }
   }
 }
