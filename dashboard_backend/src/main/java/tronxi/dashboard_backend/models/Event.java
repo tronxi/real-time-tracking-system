@@ -21,7 +21,7 @@ public class Event {
 
     private LocalDateTime datetime;
 
-    @Column(columnDefinition = "jsonb")
+    @Basic(fetch = FetchType.LAZY)
     @Convert(converter = MapToJsonConverter.class)
     private Map<String, String> payload = new HashMap<>();
 }

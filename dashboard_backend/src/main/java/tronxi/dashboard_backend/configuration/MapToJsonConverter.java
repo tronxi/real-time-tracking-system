@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Converter(autoApply = true)
+@Converter
 public class MapToJsonConverter implements AttributeConverter<Map<String, String>, String> {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
