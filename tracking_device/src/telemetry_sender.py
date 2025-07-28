@@ -96,7 +96,7 @@ class TelemetrySender:
             "pitch": self._last_position_data.get("pitch"),
         }
 
-        ev = event.Event("TM", datetime.now(), payload)
+        ev = event.Event("TM", datetime.now().isoformat(), payload)
         if self._send_online:
             self._rabbitmq_connection_manager.publish(event.Event.from_csv(ev.to_csv()).to_json())
         else:
