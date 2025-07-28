@@ -1,5 +1,16 @@
 version: '3.8'
 services:
+  cansat-postgresql:
+    container_name: cansat-postgresql
+    image: postgres:14.5
+    env_file: .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql:/var/lib/postgresql/data
+    networks:
+      - rocket-net
+
   rocket-rabbit-stomp:
     container_name: rocket-rabbit-stomp
     image: tronxi/rabbit-stomp
@@ -28,7 +39,7 @@ services:
 
   dashboard-backend:
     container_name: dashboard-backend
-    image: dashboard_backend:0.0.5-SNAPSHOT
+    image: dashboard_backend:0.0.6-SNAPSHOT
     ports:
        - "8070:8080"
     env_file: .env

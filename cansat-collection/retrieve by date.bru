@@ -1,0 +1,16 @@
+meta {
+  name: retrieve by date
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/events/range?from=2025-07-28T00:00:00&to=2025-07-28T23:59:59
+  body: none
+  auth: none
+}
+
+params:query {
+  from: 2025-07-28T00:00:00
+  to: 2025-07-28T23:59:59
+}

@@ -6,6 +6,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import tronxi.dashboard_backend.models.Event;
+import tronxi.dashboard_backend.persistence.jpa.EventJPA;
 import tronxi.dashboard_backend.producers.TrackingDeviceEventsProducer;
 
 import java.io.IOException;
@@ -20,13 +21,15 @@ public class TrackingDeviceEventsConsumer {
     private final ObjectMapper objectMapper;
     private final TrackingDeviceEventsProducer trackingDeviceEventsProducer;
 
+    private final EventJPA eventJPA;
+
     @RabbitHandler
-    public void deletedUser(byte[] eventBytes) {
+    public void consume(byte[] eventBytes) {
 
         try {
             Event event = objectMapper.readValue(eventBytes, Event.class);
             trackingDeviceEventsProducer.send(event);
-
+            eventJPA.save(event);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

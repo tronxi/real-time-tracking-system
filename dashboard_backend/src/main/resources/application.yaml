@@ -1,4 +1,13 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://${DB_URL}:5432/cansat
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
   rabbitmq:
     host: ${rabbitHost}
     port: ${rabbitPort}

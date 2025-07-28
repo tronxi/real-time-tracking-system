@@ -5,3 +5,5 @@ tracking_device/src/venv/
 graphics_tools/venv/
 graphics_tools/position_map.html
 graphics_tools/*.jsonl
+docker-compose/postgresql
+out/
