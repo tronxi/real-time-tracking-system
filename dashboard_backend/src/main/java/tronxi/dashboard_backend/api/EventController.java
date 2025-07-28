@@ -21,6 +21,7 @@ import tronxi.dashboard_backend.persistence.jpa.EventJPA;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class EventController {
         byte[] fileContent = jsonlBuilder.toString().getBytes(StandardCharsets.UTF_8);
         ByteArrayResource resource = new ByteArrayResource(fileContent);
 
-        String filename = String.format("events_%s_to_%s.jsonl", from.toLocalDate(), to.toLocalDate());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss-SSS");
+        String filename = String.format("events_%s_to_%s.jsonl", from.format(formatter), to.format(formatter));
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
