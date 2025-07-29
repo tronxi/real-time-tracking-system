@@ -122,9 +122,53 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
 
 \end{itemize}
 
+\begin{table}[h]
+    \centering
+    \footnotesize
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Característica} & \textbf{Raspberry Pi Zero 2} & \textbf{ESP32} & \textbf{Arduino Nano} \\
+        \hline
+        Procesador & ARM Cortex-A53 (4×, 1 GHz) & Xtensa LX6 (2×, 240 MHz) & ATmega328P (1×, 16 MHz) \\
+        \hline
+        Memoria & 512 MB SDRAM & 520 KB SRAM + 4 MB Flash & 2 KB SRAM + 32 KB Flash \\
+        \hline
+        Wi-Fi & Sí & Sí & No \\
+        \hline
+        Bluetooth & 4.2 + BLE & 4.2 + BLE & No \\
+        \hline
+        SPI & 1 & 4 & 1 \\
+        \hline
+        I²C & 2 & 2 & 1 \\
+        \hline
+        UART & 1 & 3 & 1 \\
+        \hline
+        Compatibilidad cámara & CSI (cámara oficial) & OV2640 (ESP32-CAM) & No \\
+        \hline
+        Consumo típico & 0.7--1.5 W & 0.2--0.6 W & 0.05--0.2 W \\
+        \hline
+        Precio estimado & 15--20 € & 4--8 € & 25--30 € \\
+        \hline
+    \end{tabular}
+    \caption{Comparativa de microcontroladores y microcomputadores}
+    \label{tab:comparativa-mcus}
+\end{table}
 
-\section{Protocolos de comunicación: I2C y UART}
 
+
+
+
+
+\section{Interfaces de comunicación serie}
+Una vez analizados sobre los distintos microcontroladores y microprocesadores que existen en el mercado para este tipo de proyectos,
+es importante entender los distintos tipos de interfaces de comunicación que utilizan para interactuar con sensores y otros módulos externos y como funcionan.
+En esta sección se presentan tres de los más relevantes: SPI, I²C y UART
+
+\begin{itemize}
+\item SPI
+\item I²C
+\item UART
+\end{itemize}
 
 \section{Transmisión de datos mediante LoRa}
 
