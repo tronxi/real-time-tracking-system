@@ -48,7 +48,7 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
     \begin{figure}[h]
         \centering
         \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/pizero2gpio}
-        \caption{Pines GPIO de la Raspberry Pi Zero 2}
+        \caption{Distribución de pines GPIO en Raspberry Pi Zero 2}
         \label{fig:pizer2_gpio}
     \end{figure}
     Como se puede ver en las características la Raspberry Pi Zero 2 cumple con los requisitos necesarios para este proyecto,
@@ -79,7 +79,7 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
     \begin{figure}[h]
         \centering
         \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/esp32gpio}
-        \caption{Pines GPIO de la Raspberry Pi Zero 2}
+        \caption{Distribución de pines GPIO en ESP32}
         \label{fig:esp32gpio}
     \end{figure}
 
@@ -112,7 +112,7 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
     \begin{figure}[h]
         \centering
         \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/arduinoNanogpio}
-        \caption{Distribución de pines en el Arduino Nano}
+        \caption{Distribución de pines en Arduino Nano}
         \label{fig:arduino_nano_gpio}
     \end{figure}
 
@@ -127,36 +127,32 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
     \footnotesize
     \begin{tabular}{|l|l|l|l|}
         \hline
-        \textbf{Característica} & \textbf{Raspberry Pi Zero 2} & \textbf{ESP32} & \textbf{Arduino Nano} \\
+        \textbf{Característica} & \textbf{Raspberry Pi Zero 2} & \textbf{ESP32}           & \textbf{Arduino Nano}   \\
         \hline
-        Procesador & ARM Cortex-A53 (4×, 1 GHz) & Xtensa LX6 (2×, 240 MHz) & ATmega328P (1×, 16 MHz) \\
+        Procesador              & ARM Cortex-A53 (4×, 1 GHz)   & Xtensa LX6 (2×, 240 MHz) & ATmega328P (1×, 16 MHz) \\
         \hline
-        Memoria & 512 MB SDRAM & 520 KB SRAM + 4 MB Flash & 2 KB SRAM + 32 KB Flash \\
+        Memoria                 & 512 MB SDRAM                 & 520 KB SRAM + 4 MB Flash & 2 KB SRAM + 32 KB Flash \\
         \hline
-        Wi-Fi & Sí & Sí & No \\
+        Wi-Fi                   & Sí                           & Sí                       & No                      \\
         \hline
-        Bluetooth & 4.2 + BLE & 4.2 + BLE & No \\
+        Bluetooth               & 4.2 + BLE                    & 4.2 + BLE                & No                      \\
         \hline
-        SPI & 1 & 4 & 1 \\
+        SPI                     & 1                            & 4                        & 1                       \\
         \hline
-        I²C & 2 & 2 & 1 \\
+        I²C                     & 2                            & 2                        & 1                       \\
         \hline
-        UART & 1 & 3 & 1 \\
+        UART                    & 1                            & 3                        & 1                       \\
         \hline
-        Compatibilidad cámara & CSI (cámara oficial) & OV2640 (ESP32-CAM) & No \\
+        Compatibilidad cámara   & CSI (cámara oficial)         & OV2640 (ESP32-CAM)       & No                      \\
         \hline
-        Consumo típico & 0.7--1.5 W & 0.2--0.6 W & 0.05--0.2 W \\
+        Consumo típico          & 0.7--1.5 W                   & 0.2--0.6 W               & 0.05--0.2 W             \\
         \hline
-        Precio estimado & 15--20 € & 4--8 € & 25--30 € \\
+        Precio estimado         & 15--20 €                     & 4--8 €                   & 25--30 €                \\
         \hline
     \end{tabular}
     \caption{Comparativa de microcontroladores y microcomputadores}
     \label{tab:comparativa-mcus}
 \end{table}
-
-
-
-
 
 
 \section{Interfaces de comunicación serie}
@@ -165,10 +161,109 @@ es importante entender los distintos tipos de interfaces de comunicación que ut
 En esta sección se presentan tres de los más relevantes: SPI, I²C y UART
 
 \begin{itemize}
-\item SPI
-\item I²C
-\item UART
+    \item \textbf{SPI:} La interfaz SPI (Serial Peripheral Interface)~\cite{dhaker_spi} es una interfaz síncrona y full dúplex basada en una arquitectura maestro-esclavo,
+    los dos dispositivos, maestro y esclavo pueden transmitir datos simultáneamente sincronizados con una señal de reloj.
+    La interfaz SPI utiliza cuatro señales:
+    \begin{itemize}
+        \item Señal de reloj (CLK)
+        \item Selección de chip (CS)
+        \item Salida del maestro hacia el esclavo (MOSI)
+        \item Salida del esclavo hacia el maestro (MISO)
+    \end{itemize}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/spi}
+        \caption{Configuración SPI con un maestro y un esclavo}
+        \label{fig:spi}
+    \end{figure}
+    El maestro genera la señal de reloj y controla el intercambio de datos.
+    El pin CS selecciona el estado activo y los pines MISO y MOSI transportan datos en ambas direcciones.
+    Para iniciar la comunicación, el maestro activa el pin CS y empieza a emitir la señal de reloj, al ser una interfaz full dúplex,
+    maestro y esclavo pueden enviar y recibir datos simultáneamente.
+    Esta interfaz tiene un solo maestro y puede tener uno o múltiples esclavos.
+    En configuraciones con múltiples esclavos se pueden conectar de dos modos:
+    \begin{itemize}
+        \item \textbf{Modo regular:} Cada nodo tiene su propia línea de CS
+        \item \textbf{Modo cadena (daisy-chain):} Todos los nodos comparten el mismo reloj y CS y los datos se propagan de un esclavo al siguiente.
+        De esta manera se reduce el número de GPIO necesarios en el maestro, aunque aumenta el número de ciclos de reloj requeridos para llegar a cada esclavo.
+    \end{itemize}
+    La velocidad de transferencia puede variar dependiendo del hardware utilizado, lo habitual es entre 1 y 10Mbps, aunque algunos dispositivos permiten velocidades superiores.
+
+    \item \textbf{I²C:} La interfaz I²C (Inter-Integrated Circuit)~\cite{i2c_specification} es un bus de comunicación síncrono y half dúplex basado en una arquitectura maestro-esclavo, que utiliza solo dos líneas para comunicarse con múltiples dispositivos,
+    originalmente fue desarrollada por Philips Semiconductors en 1982.
+    Esta interfaz utiliza solo dos señales:
+    \begin{itemize}
+        \item Línea de datos (SDA)
+        \item Línea de reloj (SCL)
+    \end{itemize}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/i2c}
+        \caption{Configuración I²C con un maestro y varios esclavos}
+        \label{fig:i2c}
+    \end{figure}
+    Ambas líneas son bidireccionales aunque al ser half dúplex la comunicación se realiza en un sentido a la vez.
+    Un dispositivo actúa como maestro, iniciando la comunicación y generando la señal de reloj, mientras que uno o más esclavos responden.
+    Cada dispositivo conectado al bus tiene una dirección única.
+
+    La comunicación se inicia cuando el maestro envía una condición de inicio, la dirección de uno de los dispositivos conectados al bus y un bit indicando si va a leer o escribir.
+    Después de transmitir cada byte, el receptor envía una señal de reconocimiento (ACK). La transmisión termina cuando se envía una condición de parada.
+
+    El bus I²C permite velocidades de transferencia de hasta 100 kbit/s en modo estándar (Standard-mode), 400 kbit/s en modo rápido (Fast-mode), 1 Mbit/s en modo fast-mode plus (Fm+), y hasta 3.4 Mbit/s en modo high-speed (Hs-mode), dependiendo de las capacidades del hardware.
+
+    \item \textbf{UART:} La interfaz UART (Universal Asynchronous Receiver-Transmitter)~\cite{infineon_uart} es una interfaz de comunicación asíncrona basada en una arquitectura punto a punto,
+    que permite la transmisión de datos en serie entre dos dispositivos.
+    A diferencia de las interfaces anteriores, que eran síncronas, UART es asíncrona, por lo que no utiliza una señal de reloj compartida,
+    sino que cada dispositivo funciona con una velocidad de transmisión acordada previamente y común para los dos (baud rate).
+    UART emplea dos líneas de comunicación:
+    \begin{itemize}
+        \item Transmisión de datos (TX)
+        \item Recepción de datos (RX)
+    \end{itemize}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/uart}
+        \caption{Ejemplo de conexión UART}
+        \label{fig:uart}
+    \end{figure}
+    La línea TX de un dispositivo debe ir conectada a la línea RX del otro dispositivo, y la línea RX a TX.
+
+    La comunicación es full dúplex, permitiendo la transmisión y recepción de datos de forma simultánea.
+    Cada byte se transmite en una trama que incluye un bit de inicio (start bit), los bits de datos (normalmente 8), un bit opcional de paridad, y uno o más bits de parada (stop bits).
+
+    Las velocidades de transmisión habituales van desde 9600 hasta 115200 baudios, aunque se pueden alcanzar velocidades de hasta 1 o 2 Mbps, dependiendo del hardware.
+
 \end{itemize}
+
+\begin{table}[h]
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Característica}  & \textbf{SPI}               & \textbf{I²C}               & \textbf{UART}       \\
+        \hline
+        Tipo de comunicación     & Síncrona                   & Síncrona                   & Asíncrona           \\
+        \hline
+        Arquitectura             & Maestro-esclavo            & Maestro-esclavo            & Punto a punto       \\
+        \hline
+        Número de líneas         & 4 (CLK, CS, MOSI, MISO)    & 2 (SDA, SCL)               & 2 (TX, RX)          \\
+        \hline
+        Full/Half dúplex         & Full dúplex                & Half dúplex                & Full dúplex         \\
+        \hline
+        Número de dispositivos   & 1 maestro, varios esclavos & 1 maestro, varios esclavos & Solo dos            \\
+        \hline
+        Velocidad típica         & 1–10 Mbps                  & 100 kbit/s – 3.4 Mbit/s    & 9.6 kbit/s – 3 Mbps \\
+        \hline
+        Control de dirección     & Señal CS por esclavo       & Dirección en el protocolo  & No necesario        \\
+        \hline
+        Complejidad del hardware & Media                      & Baja                       & Muy baja            \\
+        \hline
+    \end{tabular}
+    \caption{Comparativa entre las interfaces SPI, I²C y UART}
+    \label{tab:comparativa_interfaces}
+\end{table}
+
 
 \section{Transmisión de datos mediante LoRa}
 
