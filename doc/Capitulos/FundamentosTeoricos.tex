@@ -354,7 +354,7 @@ Las tres opciones de comunicación por radiofrecuencia que vamos a estudiar son:
 \end{table}
 
 
-\section{Sensores empleados para telemetría: presión barométrica, IMU y GPS}
+\section{Sensores empleados para telemetría: presión barométrica, IMU y GNSS}
 A continuación se describen de los distintos tipos sensores empleados para cumplir con los requisitos del CanSat.
 Estos sensores son los encargados de tomar mediciones precisas sobre distintas variables del entorno.
 Para cumplir con estos requisitos se requiere la integración de tres tipos distintos de sensores:
@@ -431,7 +431,66 @@ Para cumplir con estos requisitos se requiere la integración de tres tipos dist
         \label{tab:imu_comparison}
     \end{table}
 
-    \item \textbf{GPS:}
+    \item \textbf{GNSS:} Global Navigation Satellite System~\cite{inertiallabs_gnss} es un sistema de navegación por satélite que engloba las siguientes constelaciones de satélites:
+    GPS (Estados Unidos)~\cite{gps_system}, Galileo (Europa)~\cite{galileo_system}, GLONASS (Rusia)~\cite{glonass_system}y BeiDou (China)~\cite{beidou_system}.
+    \begin{table}[h]
+        \centering
+        \footnotesize
+        \begin{tabular}{|l|c|c|c|c|}
+            \hline
+            \textbf{Sistema} & \textbf{País / Región} & \textbf{Satélites operativos} & \textbf{Precisión típica (civil)} & \textbf{Frecuencias principales} \\
+            \hline
+            GPS              & Estados Unidos         & 31                            & 5–10 metros                       & L1, L2, L5                       \\
+            \hline
+            Galileo          & Unión Europea          & 28                            & <1 metro (con E5 AltBOC)          & E1, E5a, E5b, E6                 \\
+            \hline
+            GLONASS          & Rusia                  & 24                            & 5–10 metros                       & L1, L2                           \\
+            \hline
+            BeiDou           & China                  & 45                            & 2.5–5 metros                      & B1, B2, B3                       \\
+            \hline
+        \end{tabular}
+        \caption{Comparativa de las principales constelaciones GNSS}
+        \label{tab:gnss_constellations}
+    \end{table}
+
+
+    Estos sistemas se utilizan para determinar la posición geográfica y la velocidad de un objeto en cualquier parte del planeta utilizando estas constelaciones de satélites.
+    Para determinar la posición y velocidad se necesita un receptor GNSS que recibe las señales emitidas por los satélites que contienen información sobre su posición y la fecha exacta en la que fueron enviadas.
+    Cuando el receptor recibe señales de al menos tres satélites, puede calcular su posición usando una técnica geometrica llamada trilateración~\cite{trilateracion}.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/trilateracion}
+        \caption{Ejemplo de cálculo de la posición usando la técnica trilateración}
+        \label{fig:trilateracion}
+    \end{figure}
+
+    Esta técnica permite conocer la posición de un objeto conociendo su distancia a tres puntos de referencia,
+    en este caso, estos tres puntos son las posiciones de los satélites.
+
+    Actualmente, en el mercado existe una gran variedad de receptores GNSS diseñados para aplicaciones embebidas, que varían en su precisión, consumo, constelaciones soportadas y coste.
+    A continuación se muestra una comparativa entre algunos de los receptores GNSS más comunes.
+    \begin{table}[h]
+        \centering
+        \footnotesize
+        \resizebox{1.15\textwidth}{!}{
+            \begin{tabular}{|l|c|c|c|c|c|}
+                \hline
+                \textbf{Módulo} & \textbf{Constelaciones soportadas}      & \textbf{Precisión típica} & \textbf{Frecuencia de actualización} & \textbf{Consumo} & \textbf{Precio aprox.} \\
+                \hline
+                BN-880          & GPS, GLONASS, Galileo, BeiDou           & ~2m CEP                   & 1--10Hz                              & ~50mA a 5V       & ~15--25€               \\
+                \hline
+                NEO-M8N         & GPS, GLONASS, Galileo, BeiDou           & ~2m CEP                   & hasta 18Hz                           & <150mA a 5V      & ~35--40€               \\
+                \hline
+                NEO-F9P         & GPS, GLONASS, Galileo, BeiDou (con RTK) & cm-level con RTK          & hasta 20Hz                           & ~100mA a 3.3V & ~110--130€ \\
+                \hline
+            \end{tabular}
+        }
+        \caption{Comparativa de receptores GNSS comunes en sistemas embebidos}
+        \label{tab:gnss_modules}
+    \end{table}
+
+
 \end{itemize}
 
 
