@@ -125,31 +125,32 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
 \begin{table}[h]
     \centering
     \footnotesize
-    \begin{tabular}{|l|l|l|l|}
-        \hline
-        \textbf{Característica} & \textbf{Raspberry Pi Zero 2} & \textbf{ESP32}           & \textbf{Arduino Nano}   \\
-        \hline
-        Procesador              & ARM Cortex-A53 (4×, 1 GHz)   & Xtensa LX6 (2×, 240 MHz) & ATmega328P (1×, 16 MHz) \\
-        \hline
-        Memoria                 & 512 MB SDRAM                 & 520 KB SRAM + 4 MB Flash & 2 KB SRAM + 32 KB Flash \\
-        \hline
-        Wi-Fi                   & Sí                           & Sí                       & No                      \\
-        \hline
-        Bluetooth               & 4.2 + BLE                    & 4.2 + BLE                & No                      \\
-        \hline
-        SPI                     & 1                            & 4                        & 1                       \\
-        \hline
-        I²C                     & 2                            & 2                        & 1                       \\
-        \hline
-        UART                    & 1                            & 3                        & 1                       \\
-        \hline
-        Compatibilidad cámara   & CSI (cámara oficial)         & OV2640 (ESP32-CAM)       & No                      \\
-        \hline
-        Consumo típico          & 0.7--1.5 W                   & 0.2--0.6 W               & 0.05--0.2 W             \\
-        \hline
-        Precio estimado         & 15--20 €                     & 4--8 €                   & 25--30 €                \\
-        \hline
-    \end{tabular}
+    \resizebox{1.1\textwidth}{!}{
+        \begin{tabular}{|l|l|l|l|}
+            \hline
+            \textbf{Característica} & \textbf{Raspberry Pi Zero 2} & \textbf{ESP32}           & \textbf{Arduino Nano}   \\
+            \hline
+            Procesador              & ARM Cortex-A53 (4×, 1 GHz)   & Xtensa LX6 (2×, 240 MHz) & ATmega328P (1×, 16 MHz) \\
+            \hline
+            Memoria                 & 512 MB SDRAM                 & 520 KB SRAM + 4 MB Flash & 2 KB SRAM + 32 KB Flash \\
+            \hline
+            Wi-Fi                   & Sí                           & Sí                       & No                      \\
+            \hline
+            Bluetooth               & 4.2 + BLE                    & 4.2 + BLE                & No                      \\
+            \hline
+            SPI                     & 1                            & 4                        & 1                       \\
+            \hline
+            I²C                     & 2                            & 2                        & 1                       \\
+            \hline
+            UART                    & 1                            & 3                        & 1                       \\
+            \hline
+            Compatibilidad cámara   & CSI (cámara oficial)         & OV2640 (ESP32-CAM)       & No                      \\
+            \hline
+            Consumo típico          & 0.7--1.5 W                   & 0.2--0.6 W               & 0.05--0.2 W             \\
+            \hline
+            Precio estimado         & 15--20 €                     & 4--8 €                   & 25--30 €                \\
+            \hline
+        \end{tabular}}
     \caption{Comparativa de microcontroladores y microcomputadores}
     \label{tab:comparativa-mcus}
 \end{table}
@@ -241,23 +242,21 @@ En esta sección se presentan tres de los más relevantes: SPI, I²C y UART
     \renewcommand{\arraystretch}{1.1}
     \begin{tabular}{|l|c|c|c|}
         \hline
-        \textbf{Característica}  & \textbf{SPI}               & \textbf{I²C}               & \textbf{UART}       \\
+        \textbf{Característica} & \textbf{SPI}               & \textbf{I²C}               & \textbf{UART}       \\
         \hline
-        Tipo de comunicación     & Síncrona                   & Síncrona                   & Asíncrona           \\
+        Tipo de comunicación    & Síncrona                   & Síncrona                   & Asíncrona           \\
         \hline
-        Arquitectura             & Maestro-esclavo            & Maestro-esclavo            & Punto a punto       \\
+        Arquitectura            & Maestro-esclavo            & Maestro-esclavo            & Punto a punto       \\
         \hline
-        Número de líneas         & 4 (CLK, CS, MOSI, MISO)    & 2 (SDA, SCL)               & 2 (TX, RX)          \\
+        Número de líneas        & 4 (CLK, CS, MOSI, MISO)    & 2 (SDA, SCL)               & 2 (TX, RX)          \\
         \hline
-        Full/Half dúplex         & Full dúplex                & Half dúplex                & Full dúplex         \\
+        Full/Half dúplex        & Full dúplex                & Half dúplex                & Full dúplex         \\
         \hline
-        Número de dispositivos   & 1 maestro, varios esclavos & 1 maestro, varios esclavos & Solo dos            \\
+        Número de dispositivos  & 1 maestro, varios esclavos & 1 maestro, varios esclavos & Solo dos            \\
         \hline
-        Velocidad típica         & 1–10 Mbps                  & 100 kbit/s – 3.4 Mbit/s    & 9.6 kbit/s – 3 Mbps \\
+        Velocidad típica        & 1–10 Mbps                  & 100 kbit/s – 3.4 Mbit/s    & 9.6 kbit/s – 3 Mbps \\
         \hline
-        Control de dirección     & Señal CS por esclavo       & Dirección en el protocolo  & No necesario        \\
-        \hline
-        Complejidad del hardware & Media                      & Baja                       & Muy baja            \\
+        Control de dirección    & Señal CS por esclavo       & Dirección en el protocolo  & No necesario        \\
         \hline
     \end{tabular}
     \caption{Comparativa entre las interfaces SPI, I²C y UART}
@@ -265,16 +264,178 @@ En esta sección se presentan tres de los más relevantes: SPI, I²C y UART
 \end{table}
 
 
-\section{Transmisión de datos mediante LoRa}
+\section{Tecnologías de comunicación por radiofrecuencia en sistemas embebidos}
+Dentro de los sistemas embebidos y en particular en sistemas tipo CanSat es muy importante la comunicación inalámbrica entre el satélite y la estación de tierra.
+De entre las diversas opciones de comunicación inalámbrica, en este apartado vamos a estudiar las distintas opciones que hay en el mercado de comunicación por radiofrecuencia.
+Este tipo de comunicación nos ofrece un largo alcance manteniendo el bajo consumo, un aspecto muy relevante en un CanSat.
+
+Las tres opciones de comunicación por radiofrecuencia que vamos a estudiar son:
+
+\begin{itemize}
+    \item \textbf{LoRa:} La tecnología (Long Range)~\cite{augustin_lora} permite una comunicación inalámbrica de largo alcance con un bajo consumo energético,
+    forma parte de las LPWAN (Low-Power Wide-Area Network) redes orientadas a aplicaciones de internet de las Cosas (IoT).
+
+    Técnicamente, Lora funciona utilizando una tecnología de modulación de espectro ensanchado basada en chirp spread spectrum (CSS).
+    Cada símbolo(conjunto de bits transmitidos como una única unidad) se transmite mediante un único chirp, es decir,
+    una señal cuya frecuencia varía linealmente (aumentando o disminuyendo) a lo largo del tiempo.
+    El número de bits por símbolo se determina por el Spreading Factor (SF), de modo que un SF de 7 bits codifica 7 bits por símbolo,
+    un SF de 10 codifica 10 bits, y así sucesivamente.
+
+    Además, LoRa incorpora un esquema de corrección de errores hacia adelante (Forward Error Correction, FEC), que mejora la fiabilidad de la comunicación en entornos con ruido o interferencias.
+    Este sistema añade bits redundantes a los datos transmitidos, permitiendo al receptor detectar y corregir errores sin necesidad de retransmisión.
+    La cantidad de redundancia depende de la tasa de codificación (Coding Rate, CR), que puede configurarse entre 4/5 y 4/8.
+    Esta tasa indica cuántos bits útiles se transmiten por cada bloque de bits totales.
+    Por ejemplo, una tasa de 4/5 significa que por cada 5 bits enviados, 4 contienen información útil y 1 es redundante para corrección de errores.
+    De forma similar, una tasa de 4/8 implica que solo 4 de cada 8 bits son datos útiles y los 4 restantes son bits de corrección.
+    Cuanto menor es la tasa, mayor es la redundancia y, por tanto, mayor la robustez frente a errores, aunque la velocidad efectiva de transmisión es menor.
+
+    Opera en bandas de frecuencia no licenciadas, como 433 MHz, 868 MHz (Europa) o 915 MHz (América),
+    esto permite su uso sin coste dentro de este espectro.
+
+    El alcance varía dependiendo del entorno, desde cientos de metros en entornos urbanos con muchas interferencias hasta más de 15 kilómetros en entornos abiertos y despejados.
+
+    \item  \textbf{XBee:} Los módulos XBee ~\cite{digi_xbee_15_4} han sido desarrollados por Digi International y permiten establecer comunicaciones inalámbricas de corto a medio alcance
+    con bajo consumo energético.
+    Utilizan el estándar IEEE 802.15.4 para las capas física y MAC, lo que les proporciona interoperabilidad con otros dispositivos compatibles con este estándar.
+
+    Estos módulos operan en la banda ISM de 2.4GHz utilizando modulación DSSS (Direct Sequence Spread Spectrum) con O-QPSK (Offset Quadrature Phase Shift Keying), alcanzando una tasa de transferencia aérea de 250kbps.
+
+    La técnica \textit{DSSS} consiste en dispersar cada bit de datos sobre una secuencia de mayor ancho de banda mediante una secuencia pseudoaleatoria (chipping code), lo que proporciona robustez frente a interferencias y permite que múltiples transmisiones compartan el mismo canal sin colisiones significativas.
+
+    Por su parte, \textit{O-QPSK} es una variante de la modulación por desplazamiento de fase en cuadratura (QPSK), que introduce un desfase temporal entre las componentes en fase y en cuadratura para reducir los cambios bruscos en la señal transmitida,
+    mejorando así la eficiencia espectral y reduciendo la probabilidad de errores durante la demodulación.
+
+    Digi ha desarrollado interfaces de configuración y modos de operación propios, como el modo API, que encapsula datos y comandos en tramas estructuradas para control avanzado,
+    además del modo transparente, que permite una comunicación directa punto a punto.
+
+    XBee permite topologías de red como punto a punto o estrella.
+    Cada módulo tiene una dirección MAC única de 64 bits y puede asignarse una dirección corta de 16 bits para identificación dentro de la red.
+    La comunicación con el microcontrolador suele realizarse mediante UART, con velocidades configurables de hasta 1Mbps.
+
+    En condiciones óptimas, el alcance puede variar entre 30 y 100 metros en interiores, y superar los 300 metros en exteriores.
+    \item \textbf{APC220:} El módulo APC220~\cite{apc220_datasheet} es un transceptor de radiofrecuencia desarrollado por Appcon Technologies que permite establecer comunicaciones inalámbricas punto a punto en sistemas embebidos de bajo consumo.
+    Este módulo opera en la banda ISM de 433 MHz lo que hace que no necesite licencia para funcionar.
+
+    El APC220 emplea modulación GFSK (Gaussian Frequency Shift Keying), una variante de FSK (Frequency Shift Keying) en la que las transiciones de frecuencia entre los niveles binarios (0 y 1) se suavizan usando un filtro gaussiano aplicado previamente a la señal digital.
+    Esta técnica reduce la anchura de banda de la señal transmitida y minimiza las emisiones fuera de banda, lo que se traduce en menor interferencia con otros sistemas y una mayor eficiencia espectral.
+    Además, GFSK mejora la robustez frente al ruido, mejorando su eficiencia en entornos con interferencias.
+
+    La tasa de transmisión es configurable entre 1200 bps y 19200 bps, utilizando UART como interfaz con el microcontrolador.
+
+    El módulo integra un amplificador de potencia y un receptor de alta sensibilidad, permitiendo un alcance de hasta 1000 metros en condiciones óptimas con línea de visión clara.
+    Además, incluye un circuito interno de corrección de errores y control automático de ganancia (AGC), que mejoran la fiabilidad de la comunicación.
+
+    Su configuración puede ajustarse mediante comandos AT o mediante una herramienta software proporcionada por el fabricante, conectando el módulo a través de un convertidor USB-UART
+\end{itemize}
+\begin{table}[h]
+    \centering
+    \footnotesize
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Característica} & \textbf{LoRa}                   & \textbf{XBee (802.15.4)} & \textbf{APC220}    \\
+        \hline
+        Frecuencia de operación & 433/868/915 MHz                 & 2.4 GHz                  & 433 MHz            \\
+        \hline
+        Modulación              & CSS (Chirp Spread Spectrum)     & DSSS + O-QPSK            & GFSK               \\
+        \hline
+        Velocidad de datos      & 0.3–27 kbps                     & 250 kbps                 & 1.2–19.2 kbps      \\
+        \hline
+        Alcance típico          & Hasta 15 km (entornos abiertos) & 30–300 m                 & Hasta 1 km         \\
+        \hline
+        Corrección de errores   & FEC configurable (CR 4/5–4/8)   & No especificado          & FEC + AGC internos \\
+        \hline
+        Interfaz con MCU        & UART                            & UART                     & UART               \\
+        \hline
+        Topología de red        & Punto a punto                   & Punto a punto / estrella & Punto a punto      \\
+        \hline
+    \end{tabular}
+    \caption{Comparativa de tecnologías de comunicación por radiofrecuencia}
+    \label{tab:comparativa_rf}
+\end{table}
 
 
-\section{Sensores embarcados: presión, orientación y GPS}
+\section{Sensores empleados para telemetría: presión barométrica, IMU y GPS}
+A continuación se describen de los distintos tipos sensores empleados para cumplir con los requisitos del CanSat.
+Estos sensores son los encargados de tomar mediciones precisas sobre distintas variables del entorno.
+Para cumplir con estos requisitos se requiere la integración de tres tipos distintos de sensores:
+\begin{itemize}
+    \item \textbf{Presión barométrica:} Los sensores de presión barométrica se utilizan para medir la presión atmosférica y de esta forma estimar la altura sobre el nivel del mar mediante modelos estándar como el ISA (International Standard Atmosphere)~\cite{skybrary_isa}.
+
+    La presión atmosférica es la fuerza que ejerce el peso de una columna de aire sobre un área determinada,
+    por ello, al medir la presión sobre un punto de la tierra con mayor altitud la presión será menor por ser menor la cantidad de aire sobre ese punto.
+
+    Distintos factores meteorológicos pueden hacer variar la presión atmosférica, principalmente con los cambios de temperatura,
+    al variar la temperatura, varía la densidad del aire y, por lo tanto, varía su peso, afectando a la presión.
+
+    Otros factores como la humedad relativa o el viento también influyen aunque de menor manera y pueden ser obviados.
+
+    En el mercado se pueden encontrar distintos modelos de estos sensores, que varían entre ellos en función de su precisión, interfaz de conexión con el microcontrolador, consumo energético y precio.
+    \begin{table}[h]
+        \centering
+        \footnotesize
+        \begin{tabular}{|l|c|c|c|c|c|}
+            \hline
+            \textbf{Sensor} & \textbf{Rango de presión} & \textbf{Precisión} & \textbf{Interfaz}          & \textbf{Consumo típico} & \textbf{Precio (€)} \\
+            \hline
+            BMP388          & 300–1250 hPa              & ±8 Pa (±0.66 m)    & I\textsuperscript{2}C, SPI & 3.4 µA                  & \textasciitilde3.50 \\
+            \hline
+            BME280          & 300–1100 hPa              & ±12 Pa (±1 m)      & I\textsuperscript{2}C, SPI & 2.7 µA                  & \textasciitilde4.00 \\
+            \hline
+            MPL3115A2       & 50–1100 hPa               & ±0.04 hPa (±0.3 m) & I\textsuperscript{2}C      & 40 µA                   & \textasciitilde6.00 \\
+            \hline
+        \end{tabular}
+        \caption{Comparativa de sensores de presión barométrica}
+        \label{tab:barometric_sensors}
+    \end{table}
+
+
+    \item \textbf{IMU:} Una unidad de medición inercial o IMU, es un dispositivo que mide la velocidad, orientación y fuerzas gravitacionales de un aparato,
+    para hacerlo generalmente utiliza una combinación de sensores, acelerómetros y giroscopios.
+
+    Para su funcionamiento utiliza tres acelerómetros colocados de tal forma que sus ejes de medición queden de manera ortogonal entre sí,
+    estos acelerómetros se utilizan para medir las fuerzas de aceleración (fuerzas G) que actúan en cada eje.
+
+    También cuenta con tres giróscopios colocados en un patrón ortogonal similar, estos giróscopios miden la velocidad angular alrededor de cada eje, permitiendo conocer los cambios en la orientación del objeto respecto a un sistema de referencia.
+
+    Algunos modelos también pueden contar con un magnetómetro, que mide el campo magnético terrestre y permite estimar el rumbo respecto al norte magnético.
+
+    La combinación de estos sensores nos permite conocer la orientación en el espacio de un objeto en términos de los tres ángulos de Euler: pitch, yaw, y roll muy utilizados en aplicaciones aeronáuticas y espaciales.
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/pitch_yaw_roll}
+        \caption{Sistema de referencia basado en los ángulos de pitch, yaw y roll}
+        \label{fig:pitch_yaw_roll}
+    \end{figure}
+
+    En algunos modelos de sensores disponibles en el mercado, esta combinación de sensores viene acompañada de un procesador interno que realiza fusión sensorial,
+    permitiendo obtener directamente la orientación del dispositivo sin necesidad de cálculos externos.
+
+    \begin{table}[h]
+        \centering
+        \resizebox{1.15\textwidth}{!}{
+            \begin{tabular}{|l|c|c|c|c|c|}
+                \hline
+                \textbf{Sensor} & \textbf{Componentes}                     & \textbf{Salida de orientación}        & \textbf{Interfaz} & \textbf{Consumo típico} & \textbf{Precio (€)} \\
+                \hline
+                MPU6050         & Acelerómetro + Giroscopio                & No (requiere procesamiento externo)   & I\textsuperscript{2}C & 3.9 mA & \textasciitilde1.50 \\
+                \hline
+                BNO055          & Acelerómetro + Giroscopio + Magnetómetro & Sí (procesamiento interno con fusión) & I\textsuperscript{2}C / UART & 12 mA & \textasciitilde9.00 \\
+                \hline
+                BNO085          & Acelerómetro + Giroscopio + Magnetómetro & Sí (mejor precisión que BNO055)       & I\textsuperscript{2}C / UART / SPI & 3.5 mA & \textasciitilde14.00 \\
+                \hline
+                LSM9DS1         & Acelerómetro + Giroscopio + Magnetómetro & No (requiere fusión externa)          & I\textsuperscript{2}C / SPI & 1.0 mA & \textasciitilde5.00 \\
+                \hline
+            \end{tabular}
+        }
+        \caption{Comparativa de sensores IMU}
+        \label{tab:imu_comparison}
+    \end{table}
+
+    \item \textbf{GPS:}
+\end{itemize}
 
 
 \section{Captura y transmisión de vídeo en tiempo real}
 
 
 \section{Visualización de datos en tiempo real: arquitecturas orientadas a eventos}
-
-
-\section{Modelado 3D de orientación con cuaterniones}
