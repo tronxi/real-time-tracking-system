@@ -495,6 +495,130 @@ Para cumplir con estos requisitos se requiere la integración de tres tipos dist
 
 
 \section{Captura y transmisión de vídeo en tiempo real}
+Como parte de los requisitos para este proyecto CanSat se encuentra la transmisión de vídeo, pudiendo ser visualizada en tiempo real desde una plataforma web.
+
+Para llevar a cabo esto, estudiaremos los fundamentos técnicos de la captura digital de video, las distintas maneras de códificarla, los distintos formatos de contenedor y los principales protocolos de transmisión en tiempo real.
+
+\subsection{Captura digital de vídeo}
+La captura digital de vídeo es el proceso mediante el cual una cámara convierte la luz del entorno en información digital que puede ser procesada y almacenada.
+Este proceso se realiza mediante un sensor de imágen, que transforma la luz en señales eléctricas.
+
+Existen principalmente dos tipos de sensores usados en este tipo de sistemas de este tipo:
+\begin{itemize}
+    \item \textbf{CMOS:} Los sensores CMOS (Complementary Metal-Oxide-Semiconductor)~\citep{cmos}, fueron desarrollados en 1993 como una alternativa más eficiente y económica a los sensores CCD
+
+    Funcionan mediante una matriz de fotodiodos que convierten la luz incidente en carga eléctrica.
+    Cada píxel del sensor incorpora circuitos activos que amplifican y digitalizan la señal generada, lo que permite leer simultáneamente múltiples píxeles en paralelo.
+
+    Los sensores CMOS actuales cuentan con conversores analógico-digitales (ADC) y procesado de imagen incluídos en el propio chip, lo que disminuye el ruido y mejora el rendimiento en condiciones de baja iluminación.
+    \item \textbf{CCD:}Los sensores CCD (Charge-Coupled Device)~\citep{blanc2001ccd} fueron desarrollados en 1969 por Willard Boyle y George E. Smith.
+
+    A diferencia de los sensores CMOS, en los CCD la luz incide sobre una matriz de fotodiodos que convierte los fotones en carga eléctrica, pero esta carga no se convierte inmediatamente en una señal digital.
+    En su lugar, se transfiere secuencialmente a lo largo del chip mediante registros de desplazamiento hasta llegar a una única etapa de conversión analógico-digital
+
+    Esto lo convierte en un proceso más lento y con mayor consumo energético.
+\end{itemize}
+Dentro de la cáptura de video encontramos algunos parámetros importantes:
+\begin{itemize}
+    \item \textbf{Resolución:} número de píxeles de cada fotograma (por ejemplo, 640x480 o 1920x1080) y determina el nivel de detalle de la imagen.
+    \item \textbf{Tasa de fotogramas (fps):} indica el número de fotogramas por segundo, y afecta a la fluidez del vídeo.
+\end{itemize}
+
+Una vez obtenidos los datos del sensor, se sigue un proceso de codificación del vídeo, en este proceso se comprime los datos brutos para reducir su tamaño pero manteniendo una buena calidad de imagen.
+
+Estos son los codecs (formatos de compresión) más comunes:
+\begin{itemize}
+    \item \textbf{H.264 (AVC):} El códec H.264 (también conocido como AVC, Advanced Video Coding)\cite{H.264} es un estándar de compresión de vídeo con pérdida,
+
+    Divide cada fotograma en macrobloques, que se analizan para aprovechar redundancias temporales (entre fotogramas) y espaciales (dentro de un mismo fotograma).
+
+    Usando esta técnica, puede alcanzar una alta relación de compresion sin comprometer demasiado la calidad de imagen.
+
+    \item \textbf{H.265 (HEVC):} El códec H.265 o HEVC (High Efficiency Video Coding)~\cite{hevc_h265} es el sucesor directo de H.264, está diseñado para ofrecer el mismo nivel de calidad que su antecesor,
+    utilizando aproximadamente la mitad del bitrate.
+
+    Para ello utiliza bloques de compresión más grandes y mayor profundidad de predicción, además soporta resoluciones de hasta 8K, para lograr esto necesita mayor capacidad de procesamiento, tanto al codificar como al decodificar.
+
+    \item \textbf{MJPEG (Motion JPEG):}~\cite{mjpeg_codec}, Codifica cada fotograma de vídeo como una imagen JPEG independiente.
+
+    A diferencia de los códecs anteriores no se beneficia de las redundancias entre fotogramas, sin embargo, es más simple y rápido, por lo que necesita menos capacidad de procesamiento y provoca una menor latencia.
+
+\end{itemize}
+\begin{table}[h]
+    \centering
+    \footnotesize
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{Códec} & \textbf{Compresión} & \textbf{Requiere procesamiento elevado} & \textbf{Latencia} \\
+        \hline
+        H.264 (AVC)    & Alta                & Media                                   & Baja              \\
+        \hline
+        H.265 (HEVC)   & Muy alta            & Alta                                    & Media             \\
+        \hline
+        MJPEG          & Baja                & Baja                                    & Muy baja          \\
+        \hline
+    \end{tabular}
+    \caption{Comparativa entre códecs de vídeo comunes}
+    \label{tab:video_codecs}
+\end{table}
+
+Los codecs definen como se comprime la imagen, pero no como se almacenan esos datos, para ello se utilizan formatos contenedores.
+
+Un formato contenedor es un formato de archivo que encapsula uno o m/as flujos de datos codificados, normalmente video y audio, junto con la información necesaria para sincronizarlos y reproducirlos correctamente.
+
+Algunos de los formatos contenedores más comunes incluyen:
+
+\begin{itemize}
+    \item \textbf{AVI (Audio Video Interleave):} Formato contenedor desarrollado por Microsoft en 1992.
+    Presenta limitaciones para la transmisión en tiempo leal y no soporta bien múltiples pistas de audio o subtítulos.
+
+    \item \textbf{MP4 (MPEG-4 Part 14):} Uno de los formatos más utilizados actualmente.
+    Soporta vídeo (principalmente H.264/H.265), audio, subtítulos y metadatos.
+    Es ideal para transmisión y almacenamiento, y es compatible con casi todos los navegadores y plataformas.
+
+    \item \textbf{MKV (Matroska):} Formato contenedor libre y flexible, capaz de contener múltiples flujos de vídeo, audio y subtítulos en un solo archivo.
+    Es muy utilizado para contenidos de alta calidad, aunque su compatibilidad es más limitada.
+
+    \item \textbf{FLV (Flash Video):} Fue diseñado originalmente para la transmisión de vídeo a través de Adobe Flash.
+    Soporta códecs como H.264 y es ampliamente utilizado en plataformas streaming.
+    Se utiliza sobre todo en sistemas que emplean el protocolo RTMP debido a su baja latencia.
+\end{itemize}
+
+\begin{table}[h]
+    \centering
+    \footnotesize
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Formato} & \textbf{Códecs comunes}  & \textbf{Soporte multitrack} & \textbf{Uso típico}                  \\
+        \hline
+        AVI              & H.264, MJPEG, DivX       & Limitado                    & Almacenamiento local                 \\
+        \hline
+        MP4              & H.264, H.265 (HEVC), AAC & Sí                          & Transmisión y almacenamiento         \\
+        \hline
+        MKV              & H.264, H.265, VP9, Opus  & Sí                          & Contenido multimedia de alta calidad \\
+        \hline
+        FLV              & H.264, MP3, AAC          & Limitado                    & Transmisión en tiempo real (RTMP)    \\
+        \hline
+    \end{tabular}
+    \caption{Comparativa de formatos contenedores de vídeo}
+    \label{tab:video_containers}
+\end{table}
+
+\subsection{Procolos de transmisión de vídeo en tiempo real}
+Los protocolos en tiempo real permiten enviar vídeo y audio a través de redes IP de manera continua,
+permitiendo la visualización del contenido con la menor latencia posible.
+
+A continuación se describen los principales protocolos utilizados en este contexto:
+
+\begin{itemize}
+    \item \textbf{RTMP (Real-Time Messaging Protocol):} Desarrollado originalmente por Adobe para transmitir vídeo, audio y datos sobre TCP. Es un protocolo robusto con baja latencia, ideal para transmisiones en directo. Aunque fue diseñado para Flash, aún se utiliza ampliamente con servidores como Nginx RTMP o Wowza, y es compatible con servicios como YouTube o Facebook Live.
+
+    \item \textbf{HLS (HTTP Live Streaming):} Protocolo desarrollado por Apple. Divide el vídeo en fragmentos pequeños (.ts) y los entrega a través de HTTP, permitiendo la adaptación dinámica a distintos anchos de banda (streaming adaptativo). Es altamente compatible con navegadores y dispositivos, pero tiene mayor latencia.
+
+    \item \textbf{MPEG-DASH (Dynamic Adaptive Streaming over HTTP):} Estándar abierto similar a HLS, pero no propietario. Divide el contenido en segmentos y permite el streaming adaptativo según el ancho de banda disponible. Su adopción está creciendo, especialmente en sistemas modernos y plataformas abiertas.
+
+    \item \textbf{WebRTC:} Protocolo diseñado para la comunicación en tiempo real entre navegadores, muy utilizado para videollamadas. Ofrece una latencia extremadamente baja, pero su configuración e implementación son más complejas en entornos embebidos o personalizados.
+\end{itemize}
 
 
 \section{Visualización de datos en tiempo real: arquitecturas orientadas a eventos}
