@@ -604,7 +604,7 @@ Algunos de los formatos contenedores más comunes incluyen:
     \label{tab:video_containers}
 \end{table}
 
-\subsection{Procolos de transmisión de vídeo en tiempo real}
+\subsection{Protocolos de transmisión de vídeo en tiempo real}
 Los protocolos en tiempo real permiten enviar vídeo y audio a través de redes IP de manera continua,
 permitiendo la visualización del contenido con la menor latencia posible.
 
@@ -672,3 +672,72 @@ A continuación se describen los principales protocolos utilizados en este conte
 
 
 \section{Visualización de datos en tiempo real: arquitecturas orientadas a eventos}
+
+Para permitir la visualización en tiempo real de los datos de telemetría del CanSat desde una interfaz web, es necesario diseñar una arquitectura orientada a eventos que gestione el flujo de datos de forma asíncrona y con baja latencia.
+
+\subsection{Definición de arquitecturas orientadas a eventos}
+
+Una arquitectura orientada a eventos es un sistema en el que los distintos componentes se comunican entre sí mediante mensajes transmitidos de manera asíncrona.
+
+
+En lugar de realizar peticiones constantes para consultar el estado del sistema (como ocurre en arquitecturas basadas en polling), los consumidores de eventos esperan a que el sistema les notifique cuando hay nuevos datos disponibles.
+Esto permite reducir la latencia y el consumo de recursos, sobre todo en aplicaciones que requieren actualizaciones en tiempo real.
+
+Frente a las arquitecturas monolíticas, donde todos los componentes están fuertemente acoplados, las arquitecturas orientadas a eventos fomentan un diseño desacoplado, en el que los emisores y receptores de eventos pueden evolucionar de manera independiente.
+
+\subsection{Flujo típico de eventos hacia el cliente web}
+
+En una arquitectura orientada a eventos, es habitual que los datos generados por dispositivos o servicios se publiquen primero en un sistema de mensajería como una cola o un bus de eventos.
+
+El flujo habitual de eventos suele incluir los siguientes pasos:
+
+\begin{enumerate}
+    \item El evento es generado por un productor (por ejemplo, un sensor o sistema embebido) y publicado en un sistema de mensajería (como RabbitMQ, MQTT o Kafka).
+
+    \item Un servidor backend actúa como consumidor del sistema de mensajería, recibiendo los eventos conforme se generan.
+
+    \item El backend reenvía estos eventos al cliente web en tiempo real utilizando un protocolo de comunicación asíncrona entre cliente-servidor como Websockets.
+\end{enumerate}
+
+Este enfoque desacopla la generación de eventos del consumo en el navegador y permite una visualización en tiempo real con baja latencia.
+
+\subsection{RabbitMQ}
+
+RabbitMQ es un sistema de mensajería basado en colas que implementa el protocolo AMQP (Advanced Message Queuing Protocol)~\cite{rabbitmq_docs}.
+Su función principal es desacoplar la comunicación entre productores y consumidores de datos, permitiendo que los mensajes se almacenen temporalmente en una cola hasta que el consumidor esté listo para procesarlos.
+
+
+En este modelo, los productores publican mensajes en una exchange, que se encarga de enrutar esos mensajes a una o varias colas dependiendo del tipo de intercambio (direct, topic, fanout...). Los consumidores, por su parte, se suscriben a una o varias colas para recibir los mensajes.
+
+RabbitMQ soporta distintos tipos de exchange, que determinan cómo se enrutan los mensajes a las colas:
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/rabbitmq}
+    \caption{Ejemplo de los distintos tipos de exchange de RabbitMQ}
+    \label{fig:rabbit}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Direct:} envía el mensaje solo a las colas que tienen una clave de enrutamiento (routing key) que coincide exactamente con la del mensaje.
+
+    \item \textbf{Topic:} permite un enrutamiento más flexible usando patrones con comodines en la clave de enrutamiento. Útil para suscripciones parciales (ej., sensors.temperature.*).
+
+    \item \textbf{Fanout:} reenvía el mensaje a todas las colas enlazadas, sin considerar la clave de enrutamiento. Ideal para difusiones o broadcasts.
+
+    \item \textbf{Headers:} usa los campos del encabezado del mensaje en lugar de la clave de enrutamiento para decidir el destino.
+\end{itemize}
+
+Este sistema garantiza la entrega ordenada, confiable y asíncrona de los datos, siendo especialmente útil en arquitecturas orientadas a eventos donde los distintos componentes pueden fallar o estar temporalmente desconectados.
+
+\subsection{WebSockets}
+
+WebSocket es un protocolo de comunicación definido por el estándar RFC 6455~\citep{rfc6455_websocket} que permite establecer una conexión persistente y bidireccional entre un cliente (normalmente un navegador) y un servidor.
+
+
+A diferencia del modelo HTTP tradicional basado en peticiones-respuestas, WebSocket permite que ambos extremos envíen datos en cualquier momento, lo que lo hace ideal para aplicaciones en tiempo real.
+Una vez establecida la conexión, los datos se transmiten en forma de frames ligeros.
+
+Gracias a esta arquitectura full-duplex, WebSocket es ampliamente utilizado en aplicaciones que requieran actualización inmediata sin recurrir a técnicas como polling.
+
+
