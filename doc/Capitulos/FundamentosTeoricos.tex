@@ -611,14 +611,64 @@ permitiendo la visualización del contenido con la menor latencia posible.
 A continuación se describen los principales protocolos utilizados en este contexto:
 
 \begin{itemize}
-    \item \textbf{RTMP (Real-Time Messaging Protocol):} Desarrollado originalmente por Adobe para transmitir vídeo, audio y datos sobre TCP. Es un protocolo robusto con baja latencia, ideal para transmisiones en directo. Aunque fue diseñado para Flash, aún se utiliza ampliamente con servidores como Nginx RTMP o Wowza, y es compatible con servicios como YouTube o Facebook Live.
+    \item \textbf{RTMP (Real-Time Messaging Protocol):} El protocolo RTMP~\citep{rtmp_adobe} funciona sobre TCP, normalmente usando el puerto 1935 y establece una conexión persistente entre cliente y servidor.
 
-    \item \textbf{HLS (HTTP Live Streaming):} Protocolo desarrollado por Apple. Divide el vídeo en fragmentos pequeños (.ts) y los entrega a través de HTTP, permitiendo la adaptación dinámica a distintos anchos de banda (streaming adaptativo). Es altamente compatible con navegadores y dispositivos, pero tiene mayor latencia.
+    Utiliza multiplexación a nivel de protocolo para dividir el flujo continuo en pequeños (chunks) de datos que intercalan vídeo, audio y comandos de control,
+    lo que permite mantener una única conexión TCP
+    Este diseño permite mantener una latencia baja, normalmente entre 3 y 5 segundos.
 
-    \item \textbf{MPEG-DASH (Dynamic Adaptive Streaming over HTTP):} Estándar abierto similar a HLS, pero no propietario. Divide el contenido en segmentos y permite el streaming adaptativo según el ancho de banda disponible. Su adopción está creciendo, especialmente en sistemas modernos y plataformas abiertas.
+    La conexión comienza con un intercambio de mensajes (handshake) entre cliente y servidor, seguido por comandos codificados en formato AMF para controlar la transmisión.
 
-    \item \textbf{WebRTC:} Protocolo diseñado para la comunicación en tiempo real entre navegadores, muy utilizado para videollamadas. Ofrece una latencia extremadamente baja, pero su configuración e implementación son más complejas en entornos embebidos o personalizados.
+    A diferencia de protocolos como HLS o DASH que segmentan el vídeo en archivos, RTMP divide el flujo en chunks internos multiplexados con vídeo, audio y control.
+
+    \item \textbf{HLS (HTTP Live Streaming):} El protocolo HLS~\citep{hls_ietf} fue desarrollado por Apple para transmitir vídeo sobre HTTP.
+
+    Divide el contenido en pequeños fragmentos de vídeo (por defecto de unos 6 segundos), que se almacenan como archivos independientes y se listan en un archivo de índice (playlist) en formato M3U8.
+    Los clientes descargan y reproducen estos fragmentos secuencialmente, permitiendo el streaming adaptativo según el ancho de banda disponible.
+
+    Al utilizar HTTP, HLS es altamente compatible con servidores web estándar, aunque introduce mayor latencia (típicamente entre 6 y 30 segundos) que otros protocolos como RTMP.
+
+    \item \textbf{MPEG-DASH (Dynamic Adaptive Streaming over HTTP):} MPEG‑DASH~\citep{dash_iso} es un estándar internacional (ISO/IEC 23009‑1:2012) para streaming adaptativo sobre HTTP.
+
+    Funciona fragmentando el contenido de vídeo o audio en segmentos pequeños junto con un archivo de manifiesto (MPD) que describe las diferentes versiones de bitrate disponibles.
+    El cliente descarga estos fragmentos secuencialmente y ajusta dinámicamente la calidad según el ancho de banda disponible.
+
+    Como funciona sobre HTTP, funciona bien con todos los navegadores web.
+    Aunque introduce más latencia que RTMP, permite ajustar la calidad del vídeo en función la conexión, lo que mejora el rendimiento en redes con ancho de banda variable.
+
+    A diferencia de HLS, no está ligado a una implementación concreta como la de Apple.
+
+    \item \textbf{WebRTC (Web Real-Time Communication):} WebRTC~\citep{webrtc_w3c} es un conjunto de tecnologías desarrolladas por el W3C y el IETF que permite la comunicación en tiempo real directamente entre navegadores.
+
+    Funciona sobre UDP y está diseñado para ofrecer baja latencia en aplicaciones como videollamadas, transmisión en directo o compartición de pantalla.
+    Utiliza protocolos como SRTP para cifrar el contenido y ICE/STUN/TURN para gestionar la conexión punto a punto incluso a través de NAT o firewalls.
+
+    A diferencia de otros protocolos como HLS o DASH, WebRTC no usa HTTP ni archivos fragmentados, sino que transmite los datos como un flujo continuo mediante canales de comunicación directos entre pares (peer-to-peer).
+    Esto le permite alcanzar latencias muy bajas, típicamente inferiores a 500ms, pero es más complejo de usar en sistemas embebidos.
+
 \end{itemize}
+
+\begin{table}[h]
+    \centering
+    \footnotesize
+    \resizebox{1.15\textwidth}{!}{
+        \begin{tabular}{|l|c|c|c|c|}
+            \hline
+            \textbf{Protocolo} & \textbf{Transporte} & \textbf{Latencia típica} & \textbf{Segmentación}             \\
+            \hline
+            RTMP               & TCP (puerto 1935)   & 3–5 s                    & Chunks multiplexados              \\
+            \hline
+            HLS                & HTTP (TCP)          & 5–15 s                   & Archivos segmentados (.ts, .m3u8) \\
+            \hline
+            DASH               & HTTP (TCP)          & 4–10 s                   & Archivos segmentados (MP4, .mpd)  \\
+            \hline
+            WebRTC             & UDP                 & <500 ms                  & Flujo continuo peer-to-peer       \\
+            \hline
+        \end{tabular}
+    }
+    \caption{Comparativa de protocolos de transmisión de vídeo en tiempo real}
+    \label{tab:video_streaming_protocols}
+\end{table}
 
 
 \section{Visualización de datos en tiempo real: arquitecturas orientadas a eventos}
