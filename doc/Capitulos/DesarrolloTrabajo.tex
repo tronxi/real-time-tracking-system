@@ -101,10 +101,48 @@ La selección se ha basado en los requisitos técnicos del proyecto y en las con
 
 
 \section{Arquitectura general del sistema}
+La arquitectura del sistema se organiza en tres bloques principales: el CanSat, la estación de tierra y la infraestructura de backend y visualización web.
 
+Esta arquitectura sigue un enfoque orientado a eventos, en el que los datos generados por el CanSat son publicados y transmitidos hacia los consumidores mediante mecanismos de mensajería asincrónica.
+
+Los tres componentes principales son:
+
+\begin{itemize}
+    \item \textbf{CanSat: }integra sensores, módulo GNSS, cámara y comunicaciones.
+
+    Una Raspberry Pi Zero 2 W adquiere y empaqueta los datos de telemetría para su envío.
+    Cuando hay red Wi‑Fi disponible, los eventos se publican directamente en un broker RabbitMQ. En caso contrario, los datos se transmiten mediante LoRa a la estación de tierra.
+
+    Todos los datos de telemetría adquiridos por los sensores se guardan de manera local en formato JSON.
+    En cuanto a la retransmisión de vídeo en tiempo real, solo se realiza cuando está conectado a una red Wi-Fi, en caso contrario, el vídeo se guarda en la memoria de la Raspberry Pi.
+
+    \item \textbf{Estación de tierra: }compuesta por una Raspberry Pi 4 conectada al receptor LoRa mediante UART.
+
+    Ejecuta un script en Python que interpreta los paquetes recibidos y los reenvía al broker RabbitMQ a través de la red.
+
+    Esta estación actúa como pasarela cuando no hay conectividad directa entre el CanSat y la infraestructura de backend en los casos en los que no existe conexión directa mediante red.
+
+    \item \textbf{Infraestructura de visualización: } esta infraestructura está formada por varios componentes:
+    \begin{itemize}
+        \item \textbf{RabbitMQ: } recibe los eventos de telemetría desde la estación de tierra o directamente desde el CanSat y los transmite al backend.
+        \item \textbf{Backend: } se encarga de consumir los eventos con los datos de telemetría que llegan desde RabbitMQ,
+        guardarlos en la base de datos para su posterior descarga, y emitir los eventos hasta el frontend utilizando websockets.
+        \item \textbf{Base de datos: } se trata de una base de datos relacional PostgreSQL, en ella se guardan todos los eventos de telemetría asociados a su fecha de recepción.
+        \item \textbf{Frontend: } es una aplicación web desarrollada en Flutter, cuenta con distintos tipos de gráficas para visualizar los datos del CanSat en tiempo real a través de WebSockets.
+        \item \textbf{Servidor de vídeo en tiempo real:} recibe el flujo de vídeo codificado desde el CanSat mediante el protocolo RTMP y lo adapta para su reproducción en navegadores web.
+        La transmisión solo se realiza cuando hay conectividad Wi‑Fi disponible.
+    \end{itemize}
+    Para mejorar la portabilidad y facilitar el despliegue de la infraestructura en distintos entornos, todos los servicios del backend, la base de datos, el broker de mensajería y el servidor de vídeo se han contenerizado utilizando Docker.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.51\textwidth]{Imagenes/Bitmap/cansat_architecture}
+    \caption{Arquitectura general del sistema}
+    \label{fig:cansat_architecture}
+\end{figure}
 
 \section{Montaje electrónico del CanSat}
-
+aqui hay texto
 
 \section{Código embebido en la Raspberry Pi}
 

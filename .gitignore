@@ -7,3 +7,4 @@ graphics_tools/position_map.html
 graphics_tools/*.jsonl
 docker-compose/postgresql
 out/
+doc/venv/
