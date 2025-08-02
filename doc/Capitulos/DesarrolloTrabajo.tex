@@ -68,6 +68,15 @@ La selección se ha basado en los requisitos técnicos del proyecto y en las con
         \label{fig:lorae32}
     \end{figure}
 
+    \item \textbf{Antena LoRa:} se utiliza una antena externa de 868–915~MHz, con conector SMA macho, ganancia de 3~dBi e impedancia de 50~\(\Omega\).
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/antena_lora}
+        \caption{Antena LoRa U.FL a SMA 868–915~MHz, 3~dBi}
+        \label{fig:antena_lora}
+    \end{figure}
+
     \item \textbf{Alimentación:} el sistema se alimenta mediante una batería recargable de ion de litio (Li-ion) tipo 18650 de 3{,}7~V conectada a un cargador MCP73871~\cite{mcp73871Datasheet}, que permite la recarga mediante panel solar y proporciona protección frente a sobrecarga, descarga profunda y cortocircuitos.
 
     Para obtener los 5~V requeridos por la Raspberry Pi, se emplea un convertidor elevador DC-DC ajustable (modelo VISSQH), que incrementa la tensión de entrada hasta una salida estabilizada.
@@ -141,11 +150,191 @@ Los tres componentes principales son:
     \label{fig:cansat_architecture}
 \end{figure}
 
+
 \section{Montaje electrónico del CanSat}
-aqui hay texto
+El montaje electrónico se realizó inicialmente sobre una protoboard, con el objetivo de validar las conexiones y el funcionamiento de los distintos módulos durante la fase de desarrollo.
+
+Cada componente fue integrado mediante cableado directo a la Raspberry Pi Zero 2 W, usando las interfaces específicas de cada uno (UART, I\textsuperscript{2}C).
+
+A continuación, se describen las conexiones realizadas entre los distintos periféricos y la Raspberry Pi, incluyendo los pines utilizados y las interfaces empleadas.
+
+\begin{itemize}
+    \item \textbf{Sensor de presión BMP388:} utiliza la interfaz I\textsuperscript{2}C.
+    \begin{itemize}
+        \item SDA: GPIO~2 (pin físico~3)
+        \item SCL: GPIO~3 (pin físico~5)
+        \item Alimentación: 5~V (pin físico~2)
+        \item GND: pin físico~6
+    \end{itemize}
+
+    \item \textbf{IMU BNO085:} también conectada por I\textsuperscript{2}C en el mismo bus que el BMP388.
+    \begin{itemize}
+        \item SDA: GPIO~2 (pin físico~3)
+        \item SCL: GPIO~3 (pin físico~5)
+        \item Alimentación: 5~V (pin físico~2)
+        \item GND: pin físico~6
+    \end{itemize}
+
+    \item \textbf{Módulo LoRa E32-900T20D:} comunica por UART.
+    \begin{itemize}
+        \item TX del módulo → RX de la Pi: GPIO~15 (pin físico~10)
+        \item RX del módulo ← TX de la Pi: GPIO~14 (pin físico~8)
+        \item Alimentación: 5~V (pin físico~2)
+        \item GND: pin físico~6
+        \item Pines M0 y M1: conectados respectivamente a los GPIO~23 (pin físico~16) y GPIO~24 (pin físico~18) de la Raspberry Pi, lo que permite gestionar el modo de operación del módulo desde software.
+        \item Conexión de antena: la antena externa se conecta al conector SMA hembra del módulo LoRa, permitiendo la comunicación en la banda de 868–915~MHz.
+    \end{itemize}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/conexion_sensores}
+        \caption{Diagrama de conexión de los sensores y módulo LoRa}
+        \label{fig:conexion_sensores}
+    \end{figure}
+    \item \textbf{GNSS BN-880:} comunica por UART. Dado que la Raspberry Pi Zero 2~W solo dispone de un puerto UART hardware accesible por GPIO (usado en este caso por el módulo LoRa),
+    se ha optado por conectar el BN-880 a través de un adaptador USB a UART.
+
+    El módulo utilizado es un conversor basado en el chip CP2102, que se conecta al puerto micro-USB de la Raspberry Pi y proporciona una interfaz UART adicional accesible desde el sistema operativo como un puerto /dev/ttyUSB0.
+
+    Dado el espacio reducido disponible, se ha modificado el adaptador CP2102 retirando el conector USB macho original y sustituyéndolo por un conector micro-USB macho, soldado directamente a la placa.
+    Esto permite conectarlo al puerto micro-USB de datos de la Raspberry Pi de forma más compacta, sin necesidad de adaptadores adicionales.
+
+    \begin{itemize}
+        \item TX del GNSS → RX del adaptador
+        \item RX del GNSS ← TX del adaptador
+        \item Alimentación: 5~V conectado al pin VCC del adaptador
+        \item GND: pin físico~14 conectado al GND del adaptador
+        \item Conexión de datos: vía micro-USB del adaptador al puerto USB de la Raspberry Pi
+    \end{itemize}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/conexion_gps}
+        \caption{Diagrama de conexión del módulo GNSS BN-880 mediante el adaptador CP2102 }
+        \label{fig:conexion_gps}
+    \end{figure}
+    \item \textbf{Cargador MCP73871:} es el encargado de gestionar la alimentación del sistema y la recarga de la batería.
+
+    Este módulo permite cargar una batería de ion de litio y, simultáneamente, alimentar el sistema, conmutando automáticamente entre la entrada de alimentación externa y la batería según su disponibilidad.
+
+
+    \begin{itemize}
+        \item \textbf{Entrada de carga:} al conector USB-C hembra del módulo se conecta una entrada de alimentación externa.
+
+        En este caso, se utilizan tres paneles solares de 2~V conectados en serie, cuyo cableado termina en un conector USB-C macho compatible con la entrada del cargador.
+
+        \item \textbf{Conexión de la batería:} una batería de ion de litio de 3{,}7~V (tipo 18650) se conecta directamente a los terminales BAT+ y BAT- del módulo.
+
+        Esta conexión permite tanto la carga de la batería como el suministro de energía al sistema cuando no hay entrada externa disponible.
+
+        \item \textbf{Salida VBUS:} el terminal VBUS proporciona la tensión de salida activa en cada momento (procedente de la entrada USB-C o de la batería).
+
+        Esta salida no está regulada y puede variar entre 3{,}7~V y 5{,}5~V, por lo que se conecta a un convertidor elevador (boost converter) que estabiliza la tensión a 5~V.
+
+        La salida del boost se conecta al pin físico~2 (5~V) de la Raspberry Pi, y su masa al pin físico~39 (GND), proporcionando alimentación estable a todo el sistema.
+    \end{itemize}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/conexion_cargador}
+        \caption{Diagrama de conexión del cargador MCP73871 y booster}
+        \label{fig:conexion_cargador}
+    \end{figure}
+    \item \textbf{Cámara CSI:} conectada directamente al puerto CSI (Camera Serial Interface) de la Raspberry Pi Zero 2 W mediante un cable plano.
+
+    El puerto CSI es una interfaz específica para cámaras que permite transmitir vídeo sin utilizar pines GPIO.
+    Además, proporciona tanto la alimentación como la señal de datos a través del propio conector.
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Módulo}     & \textbf{Función}     & \textbf{GPIO} & \textbf{Pin físico} \\ \hline
+        BMP388              & SDA                  & GPIO 2        & 3                   \\ \cline{2-4}
+        & SCL                  & GPIO 3        & 5                   \\ \cline{2-4}
+        & VCC                  & -             & 1 (3.3 V)           \\ \cline{2-4}
+        & GND                  & -             & 6                   \\ \hline
+        BNO085              & SDA                  & GPIO 2        & 3                   \\ \cline{2-4}
+        & SCL                  & GPIO 3        & 5                   \\ \cline{2-4}
+        & VCC                  & -             & 1 (3.3 V)           \\ \cline{2-4}
+        & GND                  & -             & 6                   \\ \hline
+        LoRa E32-900T20D    & TX                   & GPIO 15       & 10                  \\ \cline{2-4}
+        & RX                   & GPIO 14       & 8                   \\ \cline{2-4}
+        & M0                   & GPIO 23       & 16                  \\ \cline{2-4}
+        & M1                   & GPIO 24       & 18                  \\ \cline{2-4}
+        & VCC                  & -             & 1 (5 V)             \\ \cline{2-4}
+        & GND                  & -             & 6                   \\ \hline
+        GNSS BN-880         & TX → RX del CP2102   & -             & -                   \\ \cline{2-4}
+        & RX ← TX del CP2102   & -             & -                   \\ \cline{2-4}
+        & VCC → VCC del CP2102 & -             & -                   \\ \cline{2-4}
+        & GND → GND del CP2102 & -             & -                   \\ \hline
+        Adaptador CP2102    & UART USB             & -             & Puerto USB (micro)  \\ \hline
+        MCP73871 (cargador) & Entrada (USB-C)      & -             & -                   \\ \cline{2-4}
+        & Salida a booster     & -             & -                   \\ \cline{2-4}
+        & Boost out → Pi       & -             & 2 (5 V), 39 (GND)   \\ \hline
+        Cámara CSI          & Datos + alimentación & -             & CSI                 \\ \hline
+    \end{tabular}
+    \caption{Resumen de conexiones de los periféricos a la Raspberry Pi Zero 2 W}
+    \label{tab:resumen_conexiones}
+\end{table}
+
+
+
+A continuación se describe también el montaje de la estación de tierra, formada por un módulo LoRa conectado a una Raspberry Pi 4 a través de la interfaz UART:
+
+\begin{itemize}
+    \item TX del módulo → RX de la Pi: GPIO~15 (pin físico~10)
+    \item RX del módulo ← TX de la Pi: GPIO~14 (pin físico~8)
+    \item Pines M0 y M1: conectados respectivamente a los GPIO~23 (pin físico~16) y GPIO~24 (pin físico~18) de la Raspberry Pi, lo que permite gestionar el modo de operación del módulo desde software.
+    \item Alimentación: 5~V (pin físico~2)
+    \item GND: pin físico~6
+    \item Conexión de antena: la antena externa se conecta al conector SMA hembra del módulo LoRa, permitiendo la comunicación en la banda de 868–915~MHz.
+
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/conexion_ground}
+    \caption{Diagrama de conexión de la estación de tierra con Raspberry Pi 4 y módulo LoRa}
+    \label{fig:conexion_ground}
+\end{figure}
+
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.2}
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Elemento} & \textbf{Función} & \textbf{GPIO} & \textbf{Pin físico} \\ \hline
+        LoRa E32-900T20D  & TX → RX de la Pi & GPIO 15       & 10                  \\ \cline{2-4}
+        & RX ← TX de la Pi & GPIO 14       & 8                   \\ \cline{2-4}
+        & M0               & GPIO 23       & 16                  \\ \cline{2-4}
+        & M1               & GPIO 24       & 18                  \\ \cline{2-4}
+        & VCC              & --            & 2 (5 V)             \\ \cline{2-4}
+        & GND              & --            & 6                   \\ \hline
+    \end{tabular}
+    \caption{Conexiones del módulo LoRa a la Raspberry Pi 4 en la estación de tierra}
+    \label{tab:conexiones_ground_pi4}
+\end{table}
+
+
+Tras verificar el correcto funcionamiento de todas las conexiones en la protoboard, se procedió a su traslado a una placa PCB,
+diseñada específicamente teniendo en cuenta las dimensiones y restricciones del CanSat.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{Imagenes/Bitmap/pcb_montaje_frontal}
+    \caption{Montaje final del sistema en la PCB (vista frontal)}
+    \label{fig:pcb_montaje_frontal}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Imagenes/Bitmap/pcb_montaje_trasero}
+    \caption{Montaje final del sistema en la PCB (vista superior)}
+    \label{fig:montaje_trasero}
+\end{figure}
+
 
 \section{Código embebido en la Raspberry Pi}
-
+text
 
 \section{Backend con Spring Boot}
 
