@@ -68,19 +68,4 @@ public class EventController {
                 .contentLength(fileContent.length)
                 .body(resource);
     }
-
-
-    @GetMapping("/save")
-    public ResponseEntity<Void> save() {
-        Event event = new Event();
-        event.setType("test");
-        Map<String, String> payload = new HashMap<>();
-        payload.put("test", "test");
-        payload.put("test2", "test2");
-        event.setPayload(payload);
-        event.setDatetime(LocalDateTime.now());
-        eventJPA.save(event);
-        return ResponseEntity.ok().build();
-    }
-
 }

@@ -425,6 +425,42 @@ El software de la estación de tierra está desarrollado en python y se encarga 
 
 \section{Backend con Spring Boot}
 
+El backend del sistema está desarrollado en Java utilizando el framework Spring Boot, es el encargado de recibir los eventos mediante RabbitMq, guardarlos en PostgreSQL y reenviarlos mediante WebSockets.
+
+\subsection{Recepción de eventos}
+
+Los eventos generados por el CanSat son enviados a RabbitMQ utilizando un exchange de tipo fanout llamado tracking\_device\_events.
+El backend está suscrito a este exchange a través de una queue denominada tracking\_device\_events.dashboard\_backend, tal y como se configura en la clase \texttt{RabbitmqConfiguration}:
+
+Cada vez que se recibe un mensaje en esta cola, el componente \texttt{TrackingDeviceEventsConsumer} se encarga de:
+\begin{enumerate}
+    \item Deserializar el evento desde JSON a un objeto \texttt{Event}.
+    \item Guardar el evento en la base de datos a través del repositorio \texttt{EventJPA}.
+    \item Publicar el evento a través de WebSocket mediante la clase \texttt{TrackingDeviceEventsProducer}.
+\end{enumerate}
+
+\subsection{Persistencia de eventos}
+
+Los eventos se almacenan en una base de datos relacional mediante Spring Data JPA. Cada evento se representa con la clase \texttt{Event}, la cual contiene:
+\begin{itemize}
+    \item Un identificador único (id).
+    \item El tipo de evento (type).
+    \item La fecha y hora del evento (datetime).
+    \item Un payload genérico como mapa clave-valor (Map<String, String>), almacenado como JSON en la base de datos.
+\end{itemize}
+
+\subsection{Acceso a eventos}
+
+Se proporciona un endpoint REST para consultar eventos entre dos fechas:
+\begin{itemize}
+    \item \texttt{/events/range}: devuelve una lista de eventos como JSON.
+    \item \texttt{/events/range/download}: permite descargar los eventos en formato JSONL.
+\end{itemize}
+
+\subsection{Distribución en tiempo real}
+
+El backend incluye soporte para WebSocket, los eventos almacenados se reenvían al canal \texttt{/topic/events} a través de la clase \texttt{TrackingDeviceEventsProducer}.
+
 
 \section{Frontend con Flutter para visualización en tiempo real}
 
