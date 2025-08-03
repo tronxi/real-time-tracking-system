@@ -369,9 +369,10 @@ La clase \texttt{TelemetrySender} recopila información de múltiples sensores c
 Estos datos se agregan en un evento del tipo TM con la fecha en la que se genera, este evento realiza el siguiente flujo:
 
 \begin{itemize}
-    \item Publica en una cola RabbitMQ si hay conexión a internet.
-    \item Envía por LoRa mediante la clase LoraSender si no hay conexión a internet.
-    \item Almacena localmente en un fichero .jsonl.
+    \item Se generan cada 200~ms, agregando los datos más recientes de los sensores.
+    \item Se publican en una cola RabbitMQ si hay conexión a internet.
+    \item Se envían por LoRa mediante la clase \texttt{LoraSender} si no hay conexión a internet (máximo un evento cada 2 segundos).
+    \item Se almacenan localmente en un fichero .jsonl.
 \end{itemize}
 
 \subsection{Envío por LoRa}
