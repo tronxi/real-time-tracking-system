@@ -464,6 +464,69 @@ El backend incluye soporte para WebSocket, los eventos almacenados se reenvían 
 
 \section{Frontend con Flutter para visualización en tiempo real}
 
+El frontend ha sido desarrollado utilizando Flutter, permitiendo desplegar una aplicación web responsive capaz de visualizar los eventos emitidos por el CanSat.
+La comunicación con el backend se realiza a través de WebSocket, suscribiéndose al canal /topic/events.
+
+La interfaz ha sido diseñada con el objetivo de ser lo más genérica posible, facilitando la visualización de métricas y gráficas sin atarse a una configuración de sensores específica o a un diseño de CanSat concreto.
+Esto permite adaptar fácilmente la plataforma a otros proyectos con diferentes sensores o estructuras.
+
+\subsection{Arquitectura general}
+
+La aplicación se estructura en torno a un patrón BLoC (Business Logic Component), donde el estado del último evento recibido se propaga de forma reactiva a los distintos widgets encargados de representar la telemetría.
+
+El componente principal TrackingDeviceEventBloc inicializa el cliente de WebSocket, gestiona la conexión y parsea los mensajes entrantes desde el backend,
+convirtiéndolos en instancias de la clase \texttt{Event}.
+Esta clase encapsula tanto la fecha como el tipo de evento y su carga útil (payload).
+
+\subsection{Visualización modular}
+
+La interfaz gráfica se divide en varios componentes:
+
+\begin{itemize}
+    \item \textbf{Metrics:} muestra el último valor de todos los parámetros y una lista de todos los eventos de telemetría recibidos.
+
+    También permite la descarga de eventos históricos en formato .jsonl especificando un rango de fechas.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/metrics}
+        \caption{Ejemplo del Componente Metrics}
+        \label{fig:metrics}
+    \end{figure}
+    \item \textbf{Attitude:} renderiza un modelo tridimensional que rota en tiempo real según los valores de yaw, pitch y roll incluidos en cada evento, de esta manera es posible ver la orientación actual del CanSat.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/attitude}
+        \caption{Ejemplo del Componente Attitude}
+        \label{fig:attitude}
+    \end{figure}
+    \item \textbf{TelemetryChart:} representa todos los valores de los parámetros recibidos como gráficas temporales utilizando, permitiendo observar la evolución de múltiples variables simultáneamente.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/telemetry_chart}
+        \caption{Ejemplo del Componente TelemetryChart}
+        \label{fig:telemetry_chart}
+    \end{figure}
+    \item \textbf{Map:} muestra un mapa con la última ubicación recibida del CanSat.
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/map}
+        \caption{Ejemplo del Componente Map}
+        \label{fig:map}
+    \end{figure}
+    \item \textbf{Camera:} muestra la retransmisión de vídeo en directo.
+\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Bitmap/initerfaz_general}
+    \caption{Interfaz en modo escritorio}
+    \label{fig:interfaz_general}
+\end{figure}
+
+\subsection{Adaptabilidad}
+
+El diseño de la interfaz se adapta automáticamente a la resolución de pantalla.
+En escritorio el espacio se divide en secciones horizontales y verticales que pueden ser redimensionadas de manera independiente, mientras que en móviles los elementos se muestran uno debajo de otro.
+
 
 \section{Pruebas de integración y validación}
 
