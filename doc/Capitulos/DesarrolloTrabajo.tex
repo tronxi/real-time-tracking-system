@@ -334,7 +334,93 @@ diseñada específicamente teniendo en cuenta las dimensiones y restricciones de
 
 
 \section{Código embebido en la Raspberry Pi}
-text
+
+El código embebido desarrollado para la Raspberry Pi Zero 2~W está implementado en Python y se encarga de gestionar de forma concurrente la captura de vídeo, la adquisición de datos de sensores, el envío de eventos de telemetría por LoRa, y la publicación online a través de RabbitMQ.
+
+El flujo de inicialización del sistema embebido sigue los siguientes pasos:
+
+\begin{itemize}
+    \item Esperar una conexión a internet durante 30 segundos para saber si debe enviar los datos mediante LoRa o publicarlos directamente en la cola de RabbitMQ.
+    \item Crear una carpeta local donde se almacenarán los datos y vídeos generados, con nombre basado en la fecha y hora de arranque.
+    \item Iniciar los módulos de captura de vídeo y envío de telemetría en hilos independientes.
+\end{itemize}
+
+\subsection{Captura de vídeo en tiempo real}
+
+La clase \texttt{Camera} gestiona la captura de vídeo a través de la interfaz CSI usando la librería Picamera2.
+
+El vídeo se guarda localmente y, si hay internet disponible, también se retransmite en directo mediante ffmpeg a un servidor RTMP externo.
+
+El flujo de vídeo se configura con una resolución de 640x480 a 15~FPS, y se codifica en tiempo real con h264\_v4l2m2m para su emisión.
+
+\subsection{Adquisición y envío de telemetría}
+
+La clase \texttt{TelemetrySender} recopila información de múltiples sensores conectados a la Raspberry Pi:
+
+\begin{itemize}
+    \item \textbf{BMP388:} mide presión y temperatura atmosférica.
+    Se accede a través de la librería adafruit\_bmp3xx.
+    \item \textbf{BNO085:} proporciona la orientación del dispositivo (pitch, roll, yaw) a partir de cuaterniones.
+    Se utiliza la librería adafruit\_bno08x.
+    \item \textbf{BN-880 GNSS:} ofrece la posición geográfica, altitud GPS, velocidad y número de satélites.
+    La información se decodifica a través de las librerías pyserial y pynmea2.
+\end{itemize}
+
+Estos datos se agregan en un evento del tipo TM con la fecha en la que se genera, este evento realiza el siguiente flujo:
+
+\begin{itemize}
+    \item Publica en una cola RabbitMQ si hay conexión a internet.
+    \item Envía por LoRa mediante la clase LoraSender si no hay conexión a internet.
+    \item Almacena localmente en un fichero .jsonl.
+\end{itemize}
+
+\subsection{Envío por LoRa}
+
+La clase \texttt{LoraSender} se encarga del envío de eventos en modo texto (CSV) a través del módulo LoRa.
+Este envío se realiza en un hilo dedicado para no bloquear la adquisición de datos.
+
+Después de envíar un evento sistema espera una confirmación OK durante un máximo de 2 segundos para considerar el envío exitoso y envíar el siguiente,
+si no ese evento se descarta y se procede a envíar el siguiente, para ello se hace uso de una cola local.
+
+\subsection{Conexión con RabbitMQ}
+
+La clase \texttt{RabbitmqConnectionManager} crea y mantiene la conexión con el servidor RabbitMQ.
+
+Publica los eventos codificados en JSON en el exchange tracking\_device\_events de tipo fanout.
+Si la conexión se pierde, intenta restablecerla automáticamente.
+
+\subsection{Formato de los eventos}
+
+Cada evento tiene los siguientes campos principales:
+
+\begin{itemize}
+    \item \textbf{type:} tipo de evento (actualmente sólo TM para telemetría).
+    \item \textbf{datetime:} fecha de la generación del evento formato ISO.
+    \item \textbf{payload:} contiene todos los datos de sensores disponibles en ese instante.
+\end{itemize}
+
+Los eventos se serializan en formato JSON o CSV, en función del canal de transmisión utilizado (RabbitMQ o LoRa, respectivamente)
+
+
+\section{Software de la estación de tierra}
+
+El software de la estación de tierra está desarrollado en python y se encarga de realizar las siguientes acciones:
+
+\begin{itemize}
+    \item Intenta detectar si hay conexión a internet durante 30 segundos.
+    Si se detecta conexión, el código continúa, en caso contrario, finaliza con un mensaje de error.
+    \item Establece la conexión con el broker de RabbitMQ utilizando la clase \texttt{RabbitmqConnectionManager}.
+    \item Espera hasta 30 segundos a que el puerto serie /dev/serial0 esté disponible y sea accesible.
+
+    Una vez disponible, abre el puerto a una velocidad de 9600 baudios, este es el puerto en el que recibe los mensajes del módulo LoRa.
+    \item Lee continuamente desde el puerto serie, acumulando los datos en un búfer hasta que detecta el delimitador \$, que indica el final de un mensaje.
+    \item Intenta parsear el mensaje como un evento válido en formato CSV, usando la clase \texttt{Event}.
+
+    Si el parseo se produce sin errores, convierte el evento a JSON y lo publica en RabbitMQ y responde por LoRa con un OK para confirmar la recepción.
+    \item En caso de que el mensaje recibido está mal formado, lo descarta y registra el error sin interrumpir la ejecución.
+    \item El sistema se puede detener mediante una interrupción por teclado (ctrl+C). Al cerrarse, libera el puerto serie y cierra la conexión con RabbitMQ de forma segura.
+\end{itemize}
+
 
 \section{Backend con Spring Boot}
 
