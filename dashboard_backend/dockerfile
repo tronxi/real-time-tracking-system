@@ -1,0 +1,4 @@
+FROM maven:3.9.11-ibm-semeru-17-noble
+COPY . .
+RUN mvn package spring-boot:repackage
+CMD ["java", "-jar", "/target/dashboard_backend-0.0.6-SNAPSHOT.jar"]

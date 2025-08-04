@@ -1,8 +1,36 @@
 \chapter{Conclusiones y Trabajo Futuro}
 \label{cap:conclusiones}
 
-Conclusiones del trabajo y líneas de trabajo futuro.
+El objetivo principal que se planteaba al inicio del trabajo de crear una plataforma de visualización de datos en tiempo real, reutilizable y desacoplada de hardware específico ha sido cumplido.
+Esto se ha conseguido gracias al análisis de otras soluciones existentes y al diseño de una arquitectura centrada, desde sus primeras fases, en la independencia del hardware y en su integración sencilla en otros proyectos.
 
-Antes de la entrega de actas de cada convocatoria, en el plazo que se indica en el calendario de los trabajos de fin de máster, el estudiante entregará en el Campus Virtual la versión final de la memoria en PDF. En la portada de la misma deberán figurar, como se ha señalado anteriormente, la convocatoria y la calificación obtenida. Asimismo, el estudiante también entregará todo el material que tenga concedido en préstamo a lo largo del curso.
+La arquitectura modular del sistema facilita su mantenimiento y evolución.
+Cada componente (captura de datos, transmisión, backend, frontend) puede modificarse de manera independiente sin afectar al resto del sistema, lo que permite su reutilización parcial.
+
+La construcción de un CanSat ha servido como caso ejemplo para validar la plataforma, confirmando que no existen dependencias entre el sistema de visualización y el hardware.
+Este ejemplo demuestra que la solución puede adaptarse fácilmente a configuraciones de sensores, protocolos o arquitecturas de CanSat distintas.
+
+Además, el desarrollo del flujo completo, desde la adquisición de datos hasta su visualización en tiempo real, ha permitido identificar puntos críticos,
+permitiendo optimizar los tiempos de transmisión y garantizar la sincronización de eventos en entornos reales.
+
+En conjunto, el trabajo ha generado una plataforma flexible, útil no solo como solución cerrada,
+sino como punto de partida para futuros desarrollos en proyectos con necesidades similares de visualización de datos.
+
+A pesar de haber alcanzado los objetivos inicialmente propuestos, se han identificado
+varias líneas de mejora en las que trabajar en el futuro:
+
+\begin{itemize}
+    \item Aumentar el número de gráficas disponibles en la aplicación web, incorporando visualizaciones específicas para determinados parámetros.
+    \item Implementar un sistema de envío de telecomandos al CanSat para manejar su configuración de manera remota, esto permitiría activar o desactivar sensores o modificar parámetros como el intervalo de envío de datos directamente en tiempo de ejecución.
+    \item Implementar un sistema de autenticación en la aplicación web para proteger posibles datos sensibles.
+    \item Añadir soporte para visualizar múltiples CanSat al mismo tiempo. Actualmente no se distingue el origen de los eventos, por lo que no es posible monitorizar varios dispositivos simultáneamente.
+    \item El desarrollo del CanSat se ha centrado en la parte electrónica y de software, se podría crear una carcasa 3D y un paracaídas para poder usarlo en lanzamientos reales.
+\end{itemize}
+
+
+
+
+
+
 
 

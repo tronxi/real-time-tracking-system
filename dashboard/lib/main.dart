@@ -9,8 +9,18 @@ import 'package:dashboard/widgets/metrics/metrics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:split_view/split_view.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  String profile = const String.fromEnvironment(
+    "PROFILE",
+    defaultValue: "local",
+  );
+  if (profile == "docker") {
+    await dotenv.load(fileName: "environments/.env.docker");
+  } else {
+    await dotenv.load(fileName: "environments/.env");
+  }
   runApp(const MyApp());
 }
 
@@ -79,8 +89,7 @@ class _DashboardViewMobile extends StatelessWidget {
           const SizedBox(height: 40),
           SizedBox(height: 300, child: CustomMap(latestEvent: latestEvent)),
           const SizedBox(height: 40),
-          const Camera(
-              url: 'https://tronxi.ddns.net/players/players/hlsjs.html'),
+          Camera(url: dotenv.env['RTMP_URL']!),
         ],
       ),
     );
@@ -141,7 +150,7 @@ class _TopViewState extends State<_TopView> {
       gripSize: 5,
       children: [
         Metrics(latestEvent: widget.latestEvent),
-        const Camera(url: 'https://tronxi.ddns.net/players/players/hlsjs.html')
+        Camera(url: dotenv.env['RTMP_URL']!)
       ],
     );
   }

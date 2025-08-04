@@ -320,7 +320,7 @@ diseñada específicamente teniendo en cuenta las dimensiones y restricciones de
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\textwidth]{Imagenes/Bitmap/pcb_montaje_frontal}
+    \includegraphics[width=0.5\textwidth]{Imagenes/Bitmap/pcb_montaje_frontal}
     \caption{Montaje final del sistema en la PCB (vista frontal)}
     \label{fig:pcb_montaje_frontal}
 \end{figure}
@@ -328,7 +328,7 @@ diseñada específicamente teniendo en cuenta las dimensiones y restricciones de
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{Imagenes/Bitmap/pcb_montaje_trasero}
-    \caption{Montaje final del sistema en la PCB (vista superior)}
+    \caption{Montaje final del sistema en la PCB (vista trasera)}
     \label{fig:montaje_trasero}
 \end{figure}
 
@@ -337,7 +337,7 @@ diseñada específicamente teniendo en cuenta las dimensiones y restricciones de
 
 El código embebido desarrollado para la Raspberry Pi Zero 2~W está implementado en Python y se encarga de gestionar de forma concurrente la captura de vídeo, la adquisición de datos de sensores, el envío de eventos de telemetría por LoRa, y la publicación online a través de RabbitMQ.
 
-El flujo de inicialización del sistema embebido sigue los siguientes pasos:
+El flujo de inicialización del CanSat sigue los siguientes pasos:
 
 \begin{itemize}
     \item Esperar una conexión a internet durante 30 segundos para saber si debe enviar los datos mediante LoRa o publicarlos directamente en la cola de RabbitMQ.
@@ -530,3 +530,13 @@ En escritorio el espacio se divide en secciones horizontales y verticales que pu
 
 \section{Pruebas de integración y validación}
 
+Después de la realización de todo el desarrollo del sistema, se realizaron pruebas para comprobar su correcto funcionamiento, desde la adquisición de datos en el CanSat hasta su visualización en el aplicación web.
+
+Durante estas pruebas se validó:
+\begin{itemize}
+    \item La generación y envío de eventos de telemetría por LoRa y RabbitMQ según la disponibilidad de internet.
+    \item El almacenamiento de los eventos en la base de datos del backend y su retransmisión por WebSocket.
+    \item La correcta actualización en tiempo real de las métricas, gráficas y visualizaciones en el frontend.
+    \item La duración de la batería en condiciones reales, confirmando que el sistema puede operar de forma autónoma durante aproximadamente 4 horas.
+    \item El alcance de la antena LoRa, validando la recepción de datos a más de 500 metros en campo abierto.
+\end{itemize}

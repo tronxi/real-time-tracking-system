@@ -3,6 +3,7 @@ import 'package:dashboard/shared/responsive_query.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
 import 'package:web/web.dart' as web;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Metrics extends StatefulWidget {
   final Event latestEvent;
@@ -215,7 +216,7 @@ class _MetricsState extends State<Metrics> {
     final fromStr = from.toIso8601String();
     final toStr = to.toIso8601String();
     final url =
-        'https://tronxi.ddns.net/dashboard_backend/events/range/download?from=$fromStr&to=$toStr';
+    '${dotenv.env['DOWNLOAD_URL']!}/events/range/download?from=$fromStr&to=$toStr';
 
     final anchor = web.document.createElement('a') as web.HTMLAnchorElement;
     anchor.href = url;

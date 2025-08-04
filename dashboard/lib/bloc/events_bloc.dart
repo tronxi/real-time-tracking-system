@@ -4,6 +4,7 @@ import 'package:stomp_dart_client/stomp.dart';
 import 'package:stomp_dart_client/stomp_config.dart';
 import 'package:stomp_dart_client/stomp_frame.dart';
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 abstract class TrackingDeviceEvent {}
 
@@ -17,7 +18,7 @@ class TrackingDeviceEventBloc extends Bloc<TrackingDeviceEvent, Event> {
   TrackingDeviceEventBloc() : super(Event.empty()) {
     client = StompClient(
         config: StompConfig(
-      url: 'wss://tronxi.ddns.net/dashboard_backend/ws',
+      url: dotenv.env['STOMP_URL']!,
       onConnect: _onConnect,
       onWebSocketError: (dynamic error) => print(error.toString()),
     ));

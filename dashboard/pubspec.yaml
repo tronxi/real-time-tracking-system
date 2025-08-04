@@ -27,6 +27,7 @@ dependencies:
   three_js: ^0.1.7
   three_js_math: ^0.1.3
   flutter_cupertino_datetime_picker: ^3.0.0
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -40,4 +41,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/cube.glb
+    - environments/
 

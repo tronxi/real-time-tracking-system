@@ -43,6 +43,21 @@ services:
     ports:
        - "8070:8080"
     env_file: .env
+    build:
+      context: ../dashboard_backend
+      dockerfile: dockerfile
+    networks:
+      - rocket-net
+
+  dashboard:
+    container_name: dashboard-app
+#    platform: linux/amd64
+    image: dashboard-app:latest
+    build:
+      context: ../dashboard
+      dockerfile: dockerfile
+    ports:
+      - "80:80"
     networks:
       - rocket-net
 
