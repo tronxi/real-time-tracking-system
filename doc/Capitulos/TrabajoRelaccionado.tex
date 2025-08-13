@@ -2,24 +2,24 @@
 \label{cap:trabajorRelacionado}
 En este capítulo vamos a contextualizar el concepto CanSat y se revisarán trabajos relacionados con este tipo de sistemas.
 
-Primero se describirá en detalle que es un CanSat y las principales iniciativas educativas que los promueven,
+Primero se describirá en detalle qué es un CanSat y las principales iniciativas educativas que los promueven,
 algunas competiciones educativas y normativa para participar.
-
+%
 A continuación, se presentarán las soluciones más habituales de adquisición y transmisión de datos, así como las herramientas existentes para visualización de telemetría en tiempo real.
 
 
 \section{Proyectos educativos y competiciones CanSat}
 Desde su creación en 1998 por Robert J. Twiggs, el concepto CanSat ha sido muy utilizado para referirse a satélites suborbitales de bajo coste,
 ligeros y de tamaño contenido.
-El objetivo de estos satélites está mayormente asociado al ámbito educativo, donde se usan para dar una introducción a los estudiantes al desarrollo real de una misión espacial,
-teniendo en cuenta todas las fases de una misión científica real, definición de los objetivos científicos, elección de los componentes, diseño de la arquitectura, ensamblaje de los componentes,
+El objetivo de estos satélites está principalmente asociado al ámbito educativo, donde se usan para dar una introducción a los estudiantes al desarrollo real de una misión espacial,
+teniendo en cuenta todas las fases de una misión científica real: definición de los objetivos científicos, elección de los componentes, diseño de la arquitectura, ensamblaje de los componentes,
 diseño de la estación de tierra y visualización y procesado de los datos.
 
 En la actualidad, varias instituciones y agencias espaciales realizan competiciones anuales dirigidas a estudiantes de todas las edades para desarrollar sus propios CanSat.
-Estas competiciones se basan en lanzar el CanSat con un cohete a escala, desde un drone o globo aerostático y recibir datos durante el tiempo de descenso.
+Estas competiciones se basan en lanzar el CanSat con un cohete a escala, un dron o un globo aerostático y recibir datos durante el tiempo de descenso.
 
-Algunas de estas competiciones son la \cite{cansatcompetition2025}, organizada por la \cite{american_astronautical_society2025} dirigida a estudiantes universitarios
-y \cite{esa_cansat2025} organizada por la \cite{esa2025} y dirigida a grupos de estudiantes de entre 14 y 19 años.
+Algunas de estas competiciones son la~\cite{cansatcompetition2025}, organizada por la American Astronautical Society, dirigida a estudiantes universitarios
+y~\cite{esa_cansat2025} organizada por la Agencia Espacial Europea y dirigida a grupos de estudiantes de entre 14 y 19 años.
 Esta competición organiza torneos regionales y una final a nivel europeo con los mejores representantes de cada país.
 
 \begin{figure}
@@ -31,8 +31,8 @@ Esta competición organiza torneos regionales y una final a nivel europeo con lo
 
 Los requisitos que debe cumplir un CanSat para participar en una competición europea son:
 \begin{itemize}
-    \item Deben tener una altura máxima de 115mm y un diámetro máximo de 66mm.
-    \item Un peso entre 300 y 350 gramos.
+    \item Deben tener una altura máxima de 115 mm y un diámetro máximo de 66 mm.
+    \item El peso debe estar entre 300 y 350 gramos.
     \item Deben cumplir una misión principal basada en medir la presión y temperatura del aire y enviarlo a la estación de tierra al menos una vez por segundo.
     \item Una misión secundaria elegida por cada equipo.
     \item No deben incluir materiales inflamables, explosivos o peligrosos para el medio ambiente.
@@ -40,9 +40,9 @@ Los requisitos que debe cumplir un CanSat para participar en una competición eu
     \item La batería debe ser accesible y fácil de reemplazar o cargar.
     \item Incluir un interruptor de encendido y apagado accesible.
     \item Incluir un paracaídas que facilite la recuperación del CanSat después del lanzamiento y que garantice un tiempo de vuelo máximo de 120 segundos.
-    \item El ratio de descenso debe estar entre 8 y 11m/s.
-    \item Soportar una aceleración de hasta 20g.
-    \item El coste total del CanSat no puede superar los 500€.
+    \item El ratio de descenso debe estar entre 8 y 11 m/s.
+    \item Soportar una aceleración de hasta 20 g.
+    \item El coste total del CanSat no puede superar los 500 €.
 \end{itemize}
 
 
@@ -76,10 +76,10 @@ Estos componentes forman la base mínima que un CanSat necesita para poder lleva
 \section{Soluciones existentes para telemetría y visualización de datos}
 Normalmente, los proyectos CanSat están más enfocados en el diseño electrónico y la comunicación por radio,
 por lo que se suele desarrollar menos la parte de visualización de datos, utilizando por lo general herramientas genéricas
-o limitadas al ordenador en el que está corriendo la estación de tierra, algunas de estas herramientas son:
+o limitadas al ordenador en el que está corriendo la estación de tierra. Algunas de estas herramientas son:
 
 \begin{itemize}
-    \item \textbf{\cite{serialplot}}:herramienta ligera que permite graficar en tiempo real los datos recibidos por puerto serie.
+    \item \textbf{\cite{serialplot}}: herramienta ligera que permite graficar en tiempo real los datos recibidos por puerto serie.
     Es muy usada durante el desarrollo por su sencillez y rapidez para validar sensores, aunque no permite guardar datos ni personalizar la interfaz.
     \item \textbf{Matplotlib}~\cite{matplotlib}, ~\textbf{\cite{pyqtgraph}} o~\textbf{\cite{tkinter}}: librerías desarrolladas en python, permiten construir interfaces personalizadas, pero no están pensadas para ser accesibles a través de una interfaz web y requieren conocimientos de programación hasta para los casos más simples.
     \item \textbf{\cite{excel}} o~\textbf{\cite{googlesheets}}: se utilizan exportando directamente los datos recibidos, no requieren conocimientos de programación pero no permiten la visualización en tiempo real.

@@ -1,10 +1,10 @@
 \chapter{Introducción}
 
 \label{cap:introduccion}
-Este Trabajo de Fin de Máster presenta el diseño e implementación de un sistema completo de adquisición, transmisión y visualización de datos en tiempo real inspirado en el concepto CanSat.
+Este trabajo de fin de máster presenta el diseño e implementación de un sistema completo de adquisición, transmisión y visualización de datos en tiempo real inspirado en el concepto CanSat.
 
-El proyecto está formado por la construcción de un dispositivo tipo CanSat, con diferentes sensores, GNSS, cámara y comunicación por wifi o radio,
-además, una plataforma web opensource encargada de visualizar los datos recogidos en tiempo real.
+El proyecto está formado por la construcción de un dispositivo tipo CanSat, con diferentes sensores, un sistema de posicionamiento global por satélite (GNSS), cámara y comunicación por wifi o radio y,
+además, una plataforma web de código abierto encargada de visualizar los datos recogidos en tiempo real.
 
 Esta plataforma se ha diseñado como una herramienta genérica y reutilizable de forma que se pueda adaptar fácilmente a otros proyectos similares.
 A lo largo del documento se describen el contexto del trabajo, la motivación, los objetivos planteados, la planificación seguida y la estructura de la memoria.
@@ -18,32 +18,32 @@ A lo largo del documento se describen el contexto del trabajo, la motivación, l
 
 
 \section{Contexto}
-El proyecto CanSat propuesto por el profesor Robert J. Twiggs en 1998~\cite{jaxa_cansat} comienza como un proyecto educativo basado en la simulación de un nanosatélite del tamaño de una lata de refresco y de un peso alrededor de los 350 gramos,
-el objetivo es ayudar a los alumnos de distintos niveles a entender todas las fases de desarrollo de un satélite, desde la elección de la misión científica hasta la integración del sistema completo,
-incluyendo los sensores necesarios para obtener los datos necesarios para dicha misión, la electronica necesaria para usar dichos sensores y enviarlos por radio a una estación de tierra,
+El proyecto CanSat, cuyo nombre proviene de la combinación de las palabras \emph{can} (lata) y \emph{satellite} (satélite), fue propuesto por el profesor Robert J. Twiggs en 1998~\cite{jaxa_cansat} comienza como un proyecto educativo basado en la simulación de un nanosatélite del tamaño de una lata de refresco y de un peso alrededor de los 350 gramos.
+Su objetivo es ayudar a los alumnos de distintos niveles a entender todas las fases de desarrollo de un satélite, desde la elección de la misión científica hasta la integración del sistema completo, incluyendo los sensores requeridos para la recogida de datos, la electrónica que permite su funcionamiento y la transmisión por radio a una estación de tierra,
 la visualización de los datos, el diseño de una carcasa 3D capaz de aguantar la fuerza del lanzamiento y el diseño de un paracaídas.
 
 Los CanSat no son puestos en órbita, pero son lanzados por cohetes a escala, globos aerostáticos o drones,
-esto los somete a distintas fuerzas externas como aceleración, vibraciones o posibles impactos, lo que hace que el CanSat tenga que tener una estructura resistente.
+siendo, por tanto, sometidos a distintas fuerzas externas como aceleración, vibraciones o posibles impactos, lo que hace que el CanSat tenga que tener una estructura resistente.
 La misión del CanSat es usar los sensores para recoger datos durante el descenso y transmitirlos a la estación de tierra.
 
-Durante los últimos años la popularidad del proyecto ha ido aumentando, llegando a crear competiciones nacionales e internacionales lideradas por agencias espaciales como la agencia espacial europea~\cite{esa_cansat2024}
+Durante los últimos años, la popularidad del proyecto ha ido aumentando, llegando a crear competiciones nacionales e internacionales lideradas por agencias espaciales como la Agencia Espacial Europea~\cite{esa_cansat2024}
 con el objetivo de promover el interés por el sector aeroespacial y por las carreras STEM en general desde pequeños.
 
 
 \section{Motivación}
-Debido a que estos proyectos suelen estar más enfocados en la parte electronica(recogida y transmisión de datos) y no tanto en la visualización de datos,
-esta última parte suele quedar más descuidada, implementandose solo soluciones básicas como visualización de datos por consola o gráficas simples.
-Además, estas soluciones son específicas para un CanSat concreto, lo que obliga a implementar soluciones desde cero.
+Debido a que estos proyectos suelen estar más enfocados en la parte electrónica (recogida y transmisión de datos) y no tanto en la visualización de datos,
+esta última parte suele quedar más descuidada, implementándose solo soluciones básicas como visualización de datos por consola o gráficas simples.
+Además, estas soluciones son específicas para un CanSat concreto, lo que obliga a implementar soluciones desde cero en cada proyecto.
 
-Por ello, surge la necesidad de crear una plataforma común y reutilizable que permita visualizar en tiempo real los datos enviados por el CanSat y recibidos por la antena de manera más visual y profesional sin depender de un hardware concreto.
-Con la creación de esta plataforma se facilitaría el análisis de los datos durante las pruebas y el lanzamiento,
-además puede servir como base para futuras implementaciones específicas, ayudando a que los alumnos integren gráficas avanzadas sin tener que desarrollar una plataforma completa.
+Por ello, surge la necesidad de crear una plataforma común y reutilizable que permita visualizar en tiempo real los datos enviados por el CanSat y recibidos por la antena de la manera más visual y profesional sin depender de un hardware concreto.
+Con la creación de esta plataforma se facilitaría el análisis de los datos durante las pruebas y el lanzamiento.
+Asimismo, puede servir como base para futuras implementaciones específicas, ayudando a que los alumnos integren gráficas avanzadas sin tener que desarrollar una plataforma completa.
 
 
 \section{Objetivos}
-El objetivo principal de este proyecto consiste en diseñar y desarrollar desde cero un satélite tipo CanSat y la implementación una plataforma de visualización de datos reutilizable.
-Para ello se han dividido los objetivos en dos partes diferenciadas: investigación de las tecnologías actuales y desarrollo del CanSat.
+El objetivo principal de este proyecto consiste en diseñar y desarrollar desde cero un satélite tipo CanSat e implementar una plataforma de visualización de datos reutilizable.
+Para ello, se han dividido los objetivos en dos partes diferenciadas: investigación de las tecnologías actuales y desarrollo del CanSat.
+A continuación, se describen los pasos seguidos en cada una de estas partes.
 
 \begin{itemize}
     \item \textbf{Investigación}
@@ -57,8 +57,8 @@ Para ello se han dividido los objetivos en dos partes diferenciadas: investigaci
     \begin{itemize}
         \item CanSat
         \begin{itemize}
-            \item Creación de un CanSat que cumpla con las medidas básicas (66mm x 115mm) y peso (entre 300g y 350g).
-            \item Integración de receptor GPS
+            \item Creación de un CanSat que cumpla con las medidas básicas (66 mm x 115 mm) y peso (entre 300 g y 350 g).
+            \item Integración de receptor GPS.
             \item Cámara para transmisión de video en tiempo real.
             \item Sensor de presión, temperatura y altitud.
             \item Giroscopio para obtener la orientación del dispositivo.
@@ -87,7 +87,7 @@ Este plan de trabajo se ha dividido en los siguientes puntos:
 
 \begin{itemize}
     \item Revisión y comparación de los microprocesadores Arduino y ESP32 y del microcomputador Raspberry Pi Zero 2 en función de sus capacidades y compatibilidad con los sensores y módulos de comunicación.
-    \item Selección de los sensores (GPS, altímetro y giroscopio), módulo de comunicación (LoRa), cámara y sistema de alimentación.
+    \item Selección de los sensores (GNSS, altímetro y giroscopio), módulo de comunicación, cámara y sistema de alimentación.
     \item Ensamblaje inicial de los distintos componentes electrónicos usando placas de prototipado, lo que facilita las pruebas individuales de cada componente.
     \item Definición de la arquitectura general del sistema compuesta por tres componentes principales:
     \begin{itemize}
@@ -106,9 +106,9 @@ Este plan de trabajo se ha dividido en los siguientes puntos:
 \section{Código fuente y licencia}
 
 Todo el código desarrollado para este proyecto se encuentra disponible en un único repositorio público bajo la licencia MIT.
-
+%
 Incluye el backend, frontend y los scripts embebidos tanto en el CanSat como en la estación de tierra.
-
+%
 El repositorio está alojado en GitHub:
 
 \url{https://github.com/tronxi/real-time-tracking-system}

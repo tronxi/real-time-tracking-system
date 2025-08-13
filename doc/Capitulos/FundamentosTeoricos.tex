@@ -8,9 +8,9 @@ Por último, se exploran soluciones para la visualización de los datos a travé
 
 
 \section{Comparativa de microcontroladores y microcomputadores}
-Uno de los componentes principales de un CanSat o de cualquier sistema embebido en general es su microcontrolador o microcomputador,
-es el encargado de comunicarse con los sensores, procesar los datos y transmitirlo a través del módulo de comunicación,
-también es el encargado de procesar el video y retransmitirlo en tiempo real(si el hardware lo permite).
+Uno de los componentes principales de un CanSat, y de cualquier sistema embebido en general, es su microcontrolador o microcomputador. Este componente
+es el encargado de comunicarse con los sensores, procesar los datos y transmitirlo a través del módulo de comunicación;
+además, es el encargado de procesar el video y retransmitirlo en tiempo real (si el hardware lo permite).
 
 Primero conviene aclarar la diferencia entre microcontrolador y microcomputador:
 \begin{itemize}
@@ -43,7 +43,7 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
         \item 2 × interfaces I²C
         \item 1 × UART
         \item Consumo típico de energía: entre 0.7\,W y 1.5\,W dependiendo de la carga de trabajo.
-        \item Precio aproximado: 15–20€.
+        \item Precio aproximado: 15–20 €.
     \end{itemize}
     \begin{figure}[h]
         \centering
@@ -52,7 +52,7 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
         \label{fig:pizer2_gpio}
     \end{figure}
     Como se puede ver en las características la Raspberry Pi Zero 2 cumple con los requisitos necesarios para este proyecto,
-    cuenta con un procesador y memoria adecuados, soporte para cámara (útil para la retransmisión de video en tiempo real), conectividad inalámbrica mediante WiFi
+    cuenta con un procesador y memoria adecuados, soporte para cámara (útil para la retransmisión de video en tiempo real), conectividad inalámbrica mediante wifi
     y compatibilidad con los protocolos I\textsuperscript{2}C y UART mediante los pines GPIO necesarios para la conexión directa de sensores.
 
     \item \textbf{\cite{esp32}:}
@@ -69,12 +69,12 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
         \item Memoria flash externa: normalmente 4\,MB (dependiendo del modelo).
         \item Conectividad Wi-Fi 802.11 b/g/n.
         \item Bluetooth 4.2 y BLE.
-        \item 4 × SPI
-        \item 2 × interfaces I²C
-        \item 3 × UART
+        \item 4 × SPI.
+        \item 2 × interfaces I²C.
+        \item 3 × UART.
         \item Hasta 34 pines GPIO (según versión del módulo).
         \item Consumo típico: entre 0.2\,W y 0.6\,W, dependiendo del modo de operación.
-        \item Precio aproximado: 4–8€~\cite{esp32}.
+        \item Precio aproximado: 4–8 €~\cite{esp32}.
     \end{itemize}
     \begin{figure}[h]
         \centering
@@ -106,7 +106,7 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
         \item 1 × UART.
         \item 1 × SPI.
         \item Consumo típico: entre 0.05\,W y 0.2\,W.
-        \item Precio aproximado: 27€ en la web oficial.
+        \item Precio aproximado: 27 € en la web oficial.
     \end{itemize}
 
     \begin{figure}[H]
@@ -160,7 +160,7 @@ En esta sección nos vamos a centrar en el análisis de tres de las opciones má
 Una vez analizados sobre los distintos microcontroladores y microprocesadores que existen en el mercado para este tipo de proyectos,
 es importante entender los distintos tipos de interfaces de comunicación que utilizan para interactuar con sensores y otros módulos externos y como funcionan.
 
-En esta sección se presentan tres de los más relevantes: SPI, I²C y UART
+En esta sección se presentan tres de los más relevantes: SPI, I²C y UART:
 
 \begin{itemize}
     \item \textbf{SPI:} La interfaz SPI (Serial Peripheral Interface)~\cite{dhaker_spi} es una interfaz síncrona y full dúplex basada en una arquitectura maestro-esclavo,
@@ -326,7 +326,7 @@ Las tres opciones de comunicación por radiofrecuencia que vamos a estudiar son:
     El módulo integra un amplificador de potencia y un receptor de alta sensibilidad, permitiendo un alcance de hasta 1000 metros en condiciones óptimas con línea de visión clara.
     Además, incluye un circuito interno de corrección de errores y control automático de ganancia (AGC), que mejoran la fiabilidad de la comunicación.
 
-    Su configuración puede ajustarse mediante comandos AT o mediante una herramienta software proporcionada por el fabricante, conectando el módulo a través de un convertidor USB-UART
+    Su configuración puede ajustarse mediante comandos AT o mediante una herramienta software proporcionada por el fabricante, conectando el módulo a través de un convertidor USB-UART.
 \end{itemize}
 \begin{table}[h]
     \centering
@@ -506,17 +506,17 @@ Este proceso se realiza mediante un sensor de imágen, que transforma la luz en 
 
 Existen principalmente dos tipos de sensores usados en este tipo de sistemas de este tipo:
 \begin{itemize}
-    \item \textbf{CMOS:} Los sensores CMOS (Complementary Metal-Oxide-Semiconductor)~\citep{cmos}, fueron desarrollados en 1993 como una alternativa más eficiente y económica a los sensores CCD
+    \item \textbf{CMOS:} Los sensores CMOS (Complementary Metal-Oxide-Semiconductor)~\citep{cmos}, fueron desarrollados en 1993 como una alternativa más eficiente y económica a los sensores CCD.
 
     Funcionan mediante una matriz de fotodiodos que convierten la luz incidente en carga eléctrica.
     Cada píxel del sensor incorpora circuitos activos que amplifican y digitalizan la señal generada, lo que permite leer simultáneamente múltiples píxeles en paralelo.
 
     Los sensores CMOS actuales cuentan con conversores analógico-digitales (ADC) y procesado de imagen incluídos en el propio chip, lo que disminuye el ruido y mejora el rendimiento en condiciones de baja iluminación.
-    \item \textbf{CCD:}Los sensores CCD (Charge-Coupled Device)~\citep{blanc2001ccd} fueron desarrollados en 1969 por Willard Boyle y George E. Smith.
+    \item \textbf{CCD:} Los sensores CCD (Charge-Coupled Device)~\citep{blanc2001ccd} fueron desarrollados en 1969 por Willard Boyle y George E. Smith.
 
     A diferencia de los sensores CMOS, en los CCD la luz incide sobre una matriz de fotodiodos que convierte los fotones en carga eléctrica, pero esta carga no se convierte inmediatamente en una señal digital.
-    En su lugar, se transfiere secuencialmente a lo largo del chip mediante registros de desplazamiento hasta llegar a una única etapa de conversión analógico-digital
-
+    En su lugar, se transfiere secuencialmente a lo largo del chip mediante registros de desplazamiento hasta llegar a una única etapa de conversión analógico-digital.
+%
     Esto lo convierte en un proceso más lento y con mayor consumo energético.
 \end{itemize}
 Dentro de la cáptura de video encontramos algunos parámetros importantes:
@@ -526,7 +526,6 @@ Dentro de la cáptura de video encontramos algunos parámetros importantes:
 \end{itemize}
 
 Una vez obtenidos los datos del sensor, se sigue un proceso de codificación del vídeo, en este proceso se comprime los datos brutos para reducir su tamaño pero manteniendo una buena calidad de imagen.
-
 Estos son los codecs (formatos de compresión) más comunes:
 \begin{itemize}
     \item \textbf{H.264 (AVC):} El códec H.264 (también conocido como AVC, Advanced Video Coding)\cite{H.264} es un estándar de compresión de vídeo con pérdida,

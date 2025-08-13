@@ -30,11 +30,11 @@ clean:
 	@rm -f *.aux
 	@rm -f *.out
 	@rm -f *.exa
-	@echo Borrando los ficheros de generación de índices de palabras...
+	@echo Borrando los ficheros de generaciÃ³n de Ã­ndices de palabras...
 	@rm -f *.idx
 	@rm -f *.ilg
 	@rm -f *.ind
-	@echo Borrando los ficheros de generación de tablas de contenidos...
+	@echo Borrando los ficheros de generaciÃ³n de tablas de contenidos...
 	@rm -f *.toc
 	@rm -f *.lof
 	@rm -f *.lot

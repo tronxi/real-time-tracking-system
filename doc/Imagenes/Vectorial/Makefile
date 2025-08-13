@@ -19,9 +19,9 @@
 #----------------------------------------------------------
 
 #
-# Convierte las im·genes .pdf de todos los subdirectorios
-# de nivel 1 de Èste a .eps.
-# Hace uso del guiÛn updateAll.sh (que a su vez usa
+# Convierte las im√°genes .pdf de todos los subdirectorios
+# de nivel 1 de √©ste a .eps.
+# Hace uso del gui√≥n updateAll.sh (que a su vez usa
 # update-eps.sh) que aparecen en este directorio.
 #
 convert:
@@ -40,4 +40,4 @@ clean:
 # y los ficheros generados
 #
 distclean: clean
-#	TODO: no sÈ... quiz· haya que borrar alg˙n backup o algo :-m
+#	TODO: no s√©... quiz√° haya que borrar alg√∫n backup o algo :-m
