@@ -6,7 +6,7 @@ import matplotlib.dates as mdates
 from datetime import datetime
 import numpy as np
 
-filename = "events_2025-08-23_07-00-00-000_to_2025-08-23_11-36-26-000.jsonl"
+filename = "events_2025-08-24_00-00-00-000_to_2025-08-25_02-54-00-000.jsonl"
 
 timestamps = []
 series = {}  # campo -> list[float]
