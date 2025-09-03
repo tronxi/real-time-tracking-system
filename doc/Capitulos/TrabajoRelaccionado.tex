@@ -18,14 +18,16 @@ diseño de la estación de tierra y visualización y procesado de los datos.
 En la actualidad, varias instituciones y agencias espaciales realizan competiciones anuales dirigidas a estudiantes de todas las edades para desarrollar sus propios CanSat.
 Estas competiciones se basan en lanzar el CanSat con un cohete a escala, un dron o un globo aerostático y recibir datos durante el tiempo de descenso.
 
-Algunas de estas competiciones son la~\cite{cansatcompetition2025}, organizada por la American Astronautical Society, dirigida a estudiantes universitarios
-y~\cite{esa_cansat2025} organizada por la Agencia Espacial Europea y dirigida a grupos de estudiantes de entre 14 y 19 años.
+Algunas de estas competiciones son la American CanSat Competition~\cite{cansatcompetition2025}, organizada por la American Astronautical Society, dirigida a estudiantes universitarios
+y la European CanSat Competition~\cite{esa_cansat2025}, organizada por la Agencia Espacial Europea y dirigida a grupos de estudiantes de entre 14 y 19 años.
 Esta competición organiza torneos regionales y una final a nivel europeo con los mejores representantes de cada país.
+Las medidas máximas de un CanSat para la European CanSat Competition se muestran en la figura~\ref{fig:cansat_Size}. 
+
 
 \begin{figure}
     \centering
     \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/cansat_size}
-    \caption{Medidas máximas de un CanSat para una competición europea}
+    \caption{Medidas máximas de un CanSat para una competición europea. Fuente: \cite{esa_cansat_project}}
     \label{fig:cansat_Size}
 \end{figure}
 
@@ -36,35 +38,37 @@ Los requisitos que debe cumplir un CanSat para participar en una competición eu
     \item Deben cumplir una misión principal basada en medir la presión y temperatura del aire y enviarlo a la estación de tierra al menos una vez por segundo.
     \item Una misión secundaria elegida por cada equipo.
     \item No deben incluir materiales inflamables, explosivos o peligrosos para el medio ambiente.
-    \item Debe estar alimentado por batería o paneles solares que lo mantengan encendido durante al menos cuatro horas.
+    \item Debe estar alimentado por batería o paneles solares que lo mantengan encendido durante al menos 2 horas.
     \item La batería debe ser accesible y fácil de reemplazar o cargar.
     \item Incluir un interruptor de encendido y apagado accesible.
     \item Incluir un paracaídas que facilite la recuperación del CanSat después del lanzamiento y que garantice un tiempo de vuelo máximo de 120 segundos.
     \item El ratio de descenso debe estar entre 8 y 11 m/s.
     \item Soportar una aceleración de hasta 20 g.
-    \item El coste total del CanSat no puede superar los 500 €.
+    \item El coste total del CanSat no puede superar los 500 \euro.
+    \item Debe mantener la comunicación con la estación de tierra hasta una altura de 1 km.
 \end{itemize}
 
 
 \section{Sistemas de adquisición y transmisión de datos para CanSat}
 Los sistemas de adquisición y transmisión de datos utilizados en los CanSat siguen una arquitectura similar a la empleada en las misiones espaciales reales.
-Esta arquitectura se basa en dos flujos de comunicación realizados entre el satélite y la estación de tierra:
+La figura~\ref{fig:uplink_downlink} muestra esta arquitectura, basada en dos flujos de comunicación entre el satélite y la estación de tierra:
+
 \begin{itemize}
-    \item \textbf{Uplink:} Enviar telecomandos al satélite desde tierra, en el caso de los CanSat esto es poco común.
-    \item \textbf{Downlink:} Recibir telemetría desde el satélite a la estación de tierra.
+    \item \textbf{\emph{Uplink}:} Enviar telecomandos al satélite desde tierra, en el caso de los CanSat esto es poco común.
+    \item \textbf{\emph{Downlink}:} Recibir telemetría desde el satélite a la estación de tierra.
 \end{itemize}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/upling_downlink}
-    \caption{Ejemplo de comunicación Uplink/Downlink}
+    \caption{Ejemplo de comunicación \emph{Uplink}/\emph{Downlink.} Fuente: \cite{satnow_uplink}} 
     \label{fig:uplink_downlink}
 \end{figure}
 
 Para llevar a cabo esta comunicación, los CanSat deben incluir una serie de componentes básicos:
 \begin{itemize}
-    \item \textbf{Ordenador a bordo (OBC, On-Board Computer):} Encargado de la comunicación con los sensores y el módulo de transmisión, Puede estar basado en microcontroladores (como Arduino o ESP32) o microcomputadores (como Raspberry Pi).
-    \item \textbf{Módulo de comunicación:} se encarga de la transmisión de datos mediante tecnologías como LoRa \cite{lora2015overview}, XBee \cite{xbee} o Wi-Fi, dependiendo del alcance necesario,
+    \item \textbf{Ordenador a bordo (OBC, \emph{On-Board Computer}):} Encargado de la comunicación con los sensores y el módulo de transmisión, Puede estar basado en microcontroladores (como Arduino o ESP32) o microcomputadores (como Raspberry Pi).
+    \item \textbf{Módulo de comunicación:} se encarga de la transmisión de datos mediante tecnologías como LoRa \cite{lora2015overview}, XBee \cite{xbee} o wifi, dependiendo del alcance necesario,
     la elección de la frecuencia de transmisión depende tanto del módulo que se utilice como de la normativa de cada país, además, debe poderse cambiar con facilidad para no interferir con otros CanSat.
     \item \textbf{Sensores:} permiten adquirir información relevante sobre el entorno, como presión atmosférica, temperatura, orientación (IMU) o localización geográfica (GPS).
     \item \textbf{Fuente de alimentación:} normalmente una batería recargable, capaz de mantener operativo el sistema durante toda la misión. En algunos casos puede complementarse con pequeños paneles solares.
@@ -79,13 +83,50 @@ por lo que se suele desarrollar menos la parte de visualización de datos, utili
 o limitadas al ordenador en el que está corriendo la estación de tierra. Algunas de estas herramientas son:
 
 \begin{itemize}
-    \item \textbf{\cite{serialplot}}: herramienta ligera que permite graficar en tiempo real los datos recibidos por puerto serie.
+    \item \textbf{SerialPlot} \cite{serialplot}: herramienta ligera que permite graficar en tiempo real los datos recibidos por puerto serie.
     Es muy usada durante el desarrollo por su sencillez y rapidez para validar sensores, aunque no permite guardar datos ni personalizar la interfaz.
-    \item \textbf{Matplotlib}~\cite{matplotlib}, ~\textbf{\cite{pyqtgraph}} o~\textbf{\cite{tkinter}}: librerías desarrolladas en python, permiten construir interfaces personalizadas, pero no están pensadas para ser accesibles a través de una interfaz web y requieren conocimientos de programación hasta para los casos más simples.
-    \item \textbf{\cite{excel}} o~\textbf{\cite{googlesheets}}: se utilizan exportando directamente los datos recibidos, no requieren conocimientos de programación pero no permiten la visualización en tiempo real.
-    \item \textbf{\cite{labview}} entorno gráfico profesional diseñado para adquisición y visualización de datos en sistemas embebidos e instrumentación industrial.
+    \item \textbf{Matplotlib}~\cite{matplotlib},~\textbf{Pyqtgraph} \cite{pyqtgraph} o~\textbf{Tkinter} \cite{tkinter}: librerías desarrolladas en python, permiten construir interfaces personalizadas, pero no están pensadas para ser accesibles a través de una interfaz web y requieren conocimientos de programación hasta para los casos más simples.
+    \item \textbf{Excel} \cite{excel} o~\textbf{Google Sheets} \cite{googlesheets}: se utilizan exportando directamente los datos recibidos, no requieren conocimientos de programación pero no permiten la visualización en tiempo real.
+    \item \textbf{Labview} \cite{labview}: entorno gráfico profesional diseñado para adquisición y visualización de datos en sistemas embebidos e instrumentación industrial.
     Permite construir interfaces complejas mediante programación visual y cuenta con soporte nativo para muchos dispositivos de hardware.
     Aunque es muy potente, tiene un coste elevado de licencia y una curva de aprendizaje considerable, por lo que raramente se utiliza en proyectos educativos como CanSat.
 \end{itemize}
 
 En resumen, la gran mayoría de herramientas son o muy básicas o demasiado potentes para el uso necesario en un CanSat, además ninguna de estas es específica para el tipo de datos y gráficos habituales en este tipo de proyectos.
+
+La plataforma desarrollada en este trabajo busca cubrir ese vacío, ofreciendo una solución intermedia: 
+\begin{itemize}
+    \item Es lo suficientemente ligera y sencilla para ser utilizada en un entorno educativo sin una curva de aprendizaje elevada.
+    \item Es reutilizable e independiente del hardware, a diferencia de soluciones ligadas a un microcontrolador concreto.
+    \item Permite la visualización en tiempo real en una interfaz web accesible desde cualquier dispositivo, lo que no está presente en la mayoría de herramientas mencionadas.
+    \item Ofrece gráficos específicos para aplicaciones espaciales y educativas, como la representación 3D de la orientación del satélite, mapas de localización GNSS y visualización integrada de vídeo.
+\end{itemize}
+
+De esta forma, la solución propuesta se posiciona como una alternativa equilibrada entre la simplicidad de las herramientas básicas y la complejidad de las plataformas profesionales, 
+adaptada específicamente a los requisitos de un proyecto tipo CanSat.
+La tabla~\ref{tab:comparativa_visualizacion} muestra una comparativa entre las soluciones existentes de telemetría y visualización y la plataforma desarrollada en este trabajo.
+
+\begin{table}[h]
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.2}
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{|l|p{4cm}|p{4cm}|p{4cm}|}
+        \hline
+        \textbf{Herramienta} & \textbf{Ventajas} & \textbf{Limitaciones} & \textbf{Adaptación a CanSat} \\
+        \hline
+        SerialPlot & Ligera, fácil de usar, permite gráficas en tiempo real de datos por puerto serie. & No permite guardar datos ni personalizar la interfaz. & Útil solo en fase de desarrollo y validación de sensores. \\
+        \hline
+        Matplotlib, Pyqtgraph, Tkinter & Librerías potentes, permiten construir interfaces personalizadas. & Requieren conocimientos de programación, no están pensadas para acceso web. & Útiles en entornos de desarrollo avanzado, poco accesibles para proyectos educativos generales. \\
+        \hline
+        Excel, Google Sheets & No requieren programación, muy extendidas y fáciles de usar. & No permiten visualización en tiempo real, requieren exportación manual de datos. & Útiles para análisis posterior, no para monitorización en vivo. \\
+        \hline
+        LabVIEW & Entorno gráfico profesional, soporte nativo para muchos dispositivos de hardware, muy potente. & Coste elevado de licencia, curva de aprendizaje pronunciada. & Demasiado complejo y costoso para un proyecto educativo como CanSat. \\
+        \hline
+        \textbf{Plataforma propuesta} & Ligera, accesible desde web, reutilizable e independiente del hardware. Incluye visualizaciones específicas (mapa GNSS, orientación 3D, vídeo en tiempo real). & Necesita despliegue inicial en contenedores Docker, mayor complejidad que herramientas básicas. & Diseñada específicamente para CanSat, equilibrando simplicidad y capacidades avanzadas. \\
+        \hline
+    \end{tabular}}
+    \caption{Comparativa de soluciones de telemetría y visualización de datos para proyectos tipo CanSat}
+    \label{tab:comparativa_visualizacion}
+\end{table}
+

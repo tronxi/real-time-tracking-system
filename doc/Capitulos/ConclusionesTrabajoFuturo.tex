@@ -1,23 +1,44 @@
 \chapter{Conclusiones y Trabajo Futuro}
 \label{cap:conclusiones}
 
-El objetivo principal que se planteaba al inicio del trabajo de crear una plataforma de visualización de datos en tiempo real, reutilizable y desacoplada de hardware específico ha sido cumplido.
-Esto se ha conseguido gracias al análisis de otras soluciones existentes y al diseño de una arquitectura centrada, desde sus primeras fases, en la independencia del hardware y en su integración sencilla en otros proyectos.
+El objetivo principal planteado al inicio del trabajo —crear una plataforma de 
+visualización de datos en tiempo real, reutilizable y desacoplada de hardware 
+específico— ha sido alcanzado. Esto se consiguió gracias al análisis de otras 
+soluciones existentes y al diseño de una arquitectura centrada, desde sus primeras 
+fases, en la independencia del hardware y en su integración sencilla en otros proyectos.
 
-La arquitectura modular del sistema facilita su mantenimiento y evolución.
-Cada componente (captura de datos, transmisión, backend, frontend) puede modificarse de manera independiente sin afectar al resto del sistema, lo que permite su reutilización parcial.
+La arquitectura modular del sistema facilita su mantenimiento y evolución. Cada 
+componente (captura de datos, transmisión, \emph{backend}, \emph{frontend}) puede 
+modificarse de manera independiente sin afectar al resto, lo que permite su 
+reutilización parcial.
 
-La construcción de un CanSat ha servido como caso ejemplo para validar la plataforma, confirmando que no existen dependencias entre el sistema de visualización y el hardware.
-Este ejemplo demuestra que la solución puede adaptarse fácilmente a configuraciones de sensores, protocolos o arquitecturas de CanSat distintas.
+La construcción de un CanSat ha servido como caso de ejemplo para validar la 
+plataforma, confirmando que no existen dependencias entre el sistema de visualización 
+y el hardware. Este ejemplo demuestra que la solución puede adaptarse fácilmente a 
+configuraciones de sensores, protocolos o arquitecturas de CanSat distintas.
 
-Además, el desarrollo del flujo completo, desde la adquisición de datos hasta su visualización en tiempo real, ha permitido identificar puntos críticos,
-permitiendo optimizar los tiempos de transmisión y garantizar la sincronización de eventos en entornos reales.
+El desarrollo del flujo completo, desde la adquisición de datos hasta su visualización 
+en tiempo real, permitió identificar puntos críticos y optimizar los tiempos de 
+transmisión, garantizando la sincronización de eventos en entornos reales. Como 
+resultado, el trabajo ha generado una plataforma flexible, útil no solo como solución 
+cerrada, sino también como base para futuros desarrollos en proyectos con necesidades 
+similares de visualización de datos.
 
-En conjunto, el trabajo ha generado una plataforma flexible, útil no solo como solución cerrada,
-sino como punto de partida para futuros desarrollos en proyectos con necesidades similares de visualización de datos.
+Durante el desarrollo surgieron también algunas dificultades que fue necesario 
+superar. Una de las más relevantes estuvo en la Raspberry Pi Zero~2~W, que presentaba 
+limitaciones para gestionar de forma estable el envío de vídeo en tiempo real. Para 
+hacerlo funcionar fue necesario reducir la resolución a 640×480 píxeles y la tasa de 
+fotogramas a 15~fps, además de utilizar ffmpeg con codificación por hardware en 
+H.264. Estas optimizaciones permitieron que el flujo de vídeo se transmitiera de manera 
+continua hacia el servidor RTMP, garantizando una visualización sin interrupciones.
 
-A pesar de haber alcanzado los objetivos inicialmente propuestos, se han identificado
-varias líneas de mejora en las que trabajar en el futuro:
+Otro problema estuvo relacionado con la conexión del receptor GNSS BN-880. Este modelo de Raspberry solo dispone de un puerto UART accesible desde los GPIO, utilizado en este caso  por el módulo LoRa. Para poder añadir el GNSS fue necesario usar un adaptador 
+USB–UART basado en el chip CP2102. Debido al espacio reducido disponible, hubo que 
+modificar físicamente el adaptador, retirando el conector original y soldando un 
+micro-USB más compacto. Esta adaptación permitió integrar el GNSS en el sistema sin sobrepasar las dimensiones máximas del CanSat.
+
+Finalmente, se han identificado varias líneas de mejora en las que trabajar en el 
+futuro:
 
 \begin{itemize}
     \item Aumentar el número de gráficas disponibles en la aplicación web, incorporando visualizaciones específicas para determinados parámetros.

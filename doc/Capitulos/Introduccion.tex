@@ -1,7 +1,7 @@
 \chapter{Introducción}
 
 \label{cap:introduccion}
-Este trabajo de fin de máster presenta el diseño e implementación de un sistema completo de adquisición, transmisión y visualización de datos en tiempo real inspirado en el concepto CanSat.
+Este trabajo de fin de máster presenta el diseño e implementación de un sistema completo de adquisición, transmisión y visualización de datos en tiempo real inspirado en el concepto CanSat, cuya estructura básica puede verse en la figura~\ref{fig:cansat}.
 
 El proyecto está formado por la construcción de un dispositivo tipo CanSat, con diferentes sensores, un sistema de posicionamiento global por satélite (GNSS), cámara y comunicación por wifi o radio y,
 además, una plataforma web de código abierto encargada de visualizar los datos recogidos en tiempo real.
@@ -18,7 +18,7 @@ A lo largo del documento se describen el contexto del trabajo, la motivación, l
 
 
 \section{Contexto}
-El proyecto CanSat, cuyo nombre proviene de la combinación de las palabras \emph{can} (lata) y \emph{satellite} (satélite), fue propuesto por el profesor Robert J. Twiggs en 1998~\cite{jaxa_cansat} comienza como un proyecto educativo basado en la simulación de un nanosatélite del tamaño de una lata de refresco y de un peso alrededor de los 350 gramos.
+El proyecto CanSat, cuyo nombre proviene de la combinación de las palabras \emph{can} (lata) y \emph{satellite} (satélite), fue propuesto por el profesor Robert J. Twiggs en 1998~\cite{jaxa_cansat}. Comienza como un proyecto educativo basado en la simulación de un nanosatélite del tamaño de una lata de refresco y de un peso alrededor de los 350 gramos.
 Su objetivo es ayudar a los alumnos de distintos niveles a entender todas las fases de desarrollo de un satélite, desde la elección de la misión científica hasta la integración del sistema completo, incluyendo los sensores requeridos para la recogida de datos, la electrónica que permite su funcionamiento y la transmisión por radio a una estación de tierra,
 la visualización de los datos, el diseño de una carcasa 3D capaz de aguantar la fuerza del lanzamiento y el diseño de un paracaídas.
 
@@ -46,28 +46,28 @@ Para ello, se han dividido los objetivos en dos partes diferenciadas: investigac
 A continuación, se describen los pasos seguidos en cada una de estas partes.
 
 \begin{itemize}
-    \item \textbf{Investigación}
+    \item \textbf{Investigación:}
     \begin{itemize}
         \item Comparación de los distintos microcontroladores y microcomputadores existentes para determinar cuál se ajusta mejor a los objetivos de nuestro desarrollo.
         \item Estudio de los distintos sensores disponibles en el mercado y su comunicación con el microcomputador.
         \item Análisis de las diferentes opciones de alimentación para el CanSat y de la posibilidad de cargarse con paneles solares.
         \item Comparación de las herramientas actuales de visualización de datos.
     \end{itemize}
-    \item \textbf{Desarrollo}, dividido en dos partes: la creación del hardware del CanSat y la plataforma de visualización.
+    \item \textbf{Desarrollo:} dividido en dos partes: la creación del hardware del CanSat y la plataforma de visualización.
     \begin{itemize}
-        \item CanSat
+        \item CanSat:
         \begin{itemize}
             \item Creación de un CanSat que cumpla con las medidas básicas (66 mm x 115 mm) y peso (entre 300 g y 350 g).
             \item Integración de receptor GPS.
-            \item Cámara para transmisión de video en tiempo real.
+            \item Cámara para transmisión de vídeo en tiempo real.
             \item Sensor de presión, temperatura y altitud.
             \item Giroscopio para obtener la orientación del dispositivo.
             \item Batería con posibilidad de carga mediante paneles solares.
-            \item Retransmisión de los datos por WIFI si el dispositivo tiene conexión a internet.
+            \item Retransmisión de los datos por wifi si el dispositivo tiene conexión a internet.
             \item Retransmisión de los datos por radio en caso de que no tenga conexión.
             \item Desarrollo de un receptor de radio en la estación terrestre.
         \end{itemize}
-        \item Plataforma de visualización
+        \item Plataforma de visualización:
         \begin{itemize}
             \item Visualización en tiempo real de toda la telemetría recibida.
             \item Visualización del último valor de cada elemento de la telemetría.
@@ -96,9 +96,9 @@ Este plan de trabajo se ha dividido en los siguientes puntos:
         \item Plataforma de visualización en tiempo real.
     \end{itemize}
     \item Implementación del código embebido en la Raspberry usando Python y las distintas librerías para interactuar con cada sensor.
-    \item Implementación de la plataforma de visualización en tiempo real basada en eventos, usando un sistema de colas RabbitMQ, un backend en Java y Spring Boot, un frontend en Flutter y una base de datos PostgreSQL para guardar los datos de telemetría.
+    \item Implementación de la plataforma de visualización en tiempo real basada en eventos, usando un sistema de colas RabbitMQ, un \emph{backend} en Java y Spring Boot, un \emph{frontend} en Flutter y una base de datos PostgreSQL para guardar los datos de telemetría.
     \item Soldar los componentes electrónicos en una placa definitiva de un tamaño que cumpla con las medidas reglamentarias de CanSat.
-    \item Realización de pruebas de integración una vez todo el sistema esté terminando, incluyendo pruebas de duración de batería y de alcance de comunicaciones por radio.
+    \item Realización de pruebas de integración una vez todo el sistema esté terminado, incluyendo pruebas de duración de batería y de alcance de comunicaciones por radio.
     \item Redacción de la memoria documentando los pasos seguidos en el proyecto y los resultados obtenidos.
 \end{itemize}
 
@@ -107,7 +107,7 @@ Este plan de trabajo se ha dividido en los siguientes puntos:
 
 Todo el código desarrollado para este proyecto se encuentra disponible en un único repositorio público bajo la licencia MIT.
 %
-Incluye el backend, frontend y los scripts embebidos tanto en el CanSat como en la estación de tierra.
+Incluye el \emph{backend}, \emph{frontend} y los \emph{script}s embebidos tanto en el CanSat como en la estación de tierra.
 %
 El repositorio está alojado en GitHub:
 
@@ -125,7 +125,7 @@ La memoria se compone de los siguientes capítulos:
 
     \item \textbf{Capítulo 3. Fundamentos teóricos:} se definen los conceptos técnicos necesarios para el desarrollo del sistema, incluyendo comparativas de hardware, tecnologías de comunicación, sensores, protocolos de vídeo y arquitecturas de visualización en tiempo real.
 
-    \item \textbf{Capítulo 4. Diseño e implementación del sistema:} se describe la arquitectura del sistema completo, los componentes elegidos, el montaje del CanSat, el desarrollo del software embebido, el backend, el frontend y las pruebas realizadas.
+    \item \textbf{Capítulo 4. Diseño e implementación del sistema:} se describe la arquitectura del sistema completo, los componentes elegidos, el montaje del CanSat, el desarrollo del software embebido, el \emph{backend}, el \emph{frontend} y las pruebas realizadas.
 
     \item \textbf{Capítulo 5. Conclusiones y trabajo futuro:} se recogen las principales conclusiones del trabajo, se valoran los resultados obtenidos y se proponen posibles mejoras y líneas de desarrollo futuras.
 \end{itemize}

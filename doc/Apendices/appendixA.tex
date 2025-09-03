@@ -4,9 +4,9 @@
 El código desarrollado durante la realización de este trabajo se encuentra disponible en el
 repositorio: \url{https://github.com/tronxi/real-time-tracking-system}
 
-Todos los componentes desarrollados para la plataforma de visualización se encuentran dockerizados, por tanto la única herramienta necesaria para desplegar la plataforma es Docker.
+Todos los componentes desarrollados para la plataforma de visualización se encuentran dockerizados, por tanto, la única herramienta necesaria para desplegar la plataforma es Docker.
 
-El primer paso es clonar el repositorio y acceder a la carpeta docker-compose:
+El primer paso es clonar el repositorio y acceder a la carpeta docker-compose. El clonado del repositorio puede verse en la figura~\ref{fig:clone}.
 
 \begin{figure}[H]
     \centering
@@ -17,34 +17,38 @@ El primer paso es clonar el repositorio y acceder a la carpeta docker-compose:
 
 A continuación, se debe ejecutar el siguiente comando para construir y lanzar todos los servicios:
 
+
 \begin{verbatim}
 docker compose up -d --build
 \end{verbatim}
 
 Este comando creará los contenedores necesarios utilizando los \texttt{Dockerfile} definidos en cada componente.
-para verificar que se han desplegado correctamente, puede utilizarse:
+Para verificar que se han desplegado correctamente, puede utilizarse:
 
 \begin{verbatim}
 docker ps
 \end{verbatim}
+La figura~\ref{fig:ps} muestra la ejecución del comando \texttt{docker ps}, con el listado de los contenedores levantados.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{Imagenes/Bitmap/ps}
-    \caption{Ejecucción del comando docker ps}
+    \caption{Ejecución del comando docker ps}
     \label{fig:ps}
 \end{figure}
 
-Como podemos ver en la salida del comando tendremos los servicios levantados en los siguientes puertos:
+Como podemos ver en la salida del comando, tendremos los servicios levantados en los siguientes puertos:
 \begin{itemize}
-    \item \textbf{Interfaz web:} \url{http://localhost}
-    \item \textbf{Backend:} \url{http://localhost:8070}
-    \item \textbf{PostgreSQL:} \texttt{localhost:5432}
-    \item \textbf{RabbitMQ:} \url{http://localhost:15672}
-    \item \textbf{Servidor RTMP:} \url{http://localhost:8080}
+    \item \textbf{Interfaz web:} \url{http://localhost}.
+    \item \textbf{Backend:} \url{http://localhost:8070}.
+    \item \textbf{PostgreSQL:} \texttt{localhost:5432}.
+    \item \textbf{RabbitMQ:} \url{http://localhost:15672}.
+    \item \textbf{Servidor RTMP:} \url{http://localhost:8080}.
 \end{itemize}
 
 Las credenciales y contraseñas necesarias para los distintos servicios están definidas como variables de entorno en el fichero \texttt{.env}, ubicado en la carpeta \texttt{docker-compose/}. Estas pueden modificarse para adaptarlas a las necesidades de cada proyecto.
+La figura~\ref{fig:interfaz_local} muestra la interfaz web accediendo desde el puerto 80 de \texttt{localhost}, 
+mientras que la figura~\ref{fig:interfaz_rabbit} presenta el panel de administración de RabbitMQ en el puerto 15672.
 
 \begin{figure}[H]
     \centering

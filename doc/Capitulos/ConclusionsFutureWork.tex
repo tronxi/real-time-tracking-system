@@ -1,6 +1,53 @@
 \chapter{Conclusions and Future Work}
 \label{cap:conclusions}
 
-Conclusions and future lines of work. This chapter contains the translation of Chapter \ref{cap:conclusiones}.
+The main objective set at the beginning of this work, to create a real-time data 
+visualization platform that is reusable and decoupled from specific hardware, has been 
+achieved. This was accomplished through the analysis of existing solutions and the design 
+of an architecture focused, from its earliest stages, on hardware independence and 
+straightforward integration into other projects.
+
+The modular architecture of the system facilitates its maintenance and evolution. Each 
+component (data acquisition, transmission, backend, frontend) can be 
+modified independently without affecting the rest of the system, which allows for partial 
+reuse.
+
+The construction of a CanSat has served as a case study to validate the platform, 
+confirming that there are no dependencies between the visualization system and the 
+hardware. This example demonstrates that the solution can be easily adapted to different 
+sensor configurations, protocols, or CanSat architectures.
+
+The development of the complete workflow, from data acquisition to real-time 
+visualization, made it possible to identify critical points and optimize transmission 
+times, ensuring event synchronization in real environments. As a result, the project has 
+produced a flexible platform, useful not only as a standalone solution but also as a 
+foundation for future developments in projects with similar data visualization needs.
+
+During the development, several challenges also had to be addressed. One of the most 
+significant was the Raspberry Pi Zero~2~W, which showed limitations in reliably managing 
+real-time video streaming. To make it work, it was necessary to reduce the resolution to 
+640×480 pixels and the frame rate to 15~fps, as well as to use ffmpeg with 
+hardware-accelerated H.264 encoding. These optimizations allowed the video stream to be 
+transmitted continuously to the RTMP server, ensuring uninterrupted visualization on the 
+web application.
+
+Another issue was related to the connection of the BN-880 GNSS receiver. This Raspberry 
+model provides only one UART port accessible through the GPIOs, which in this case was 
+already used by the LoRa module. To add the GNSS, it was necessary to use a USB–UART 
+adapter based on the CP2102 chip. Due to the limited available space, the adapter had to 
+be physically modified by removing the original connector and soldering a more compact 
+micro-USB. This adaptation made it possible to integrate the GNSS into the system without 
+exceeding the maximum dimensions of the CanSat.
+
+Finally, several lines of improvement have been identified for future work:
+
+\begin{itemize}
+    \item Expand the number of charts in the web application, adding visualizations for specific parameters.
+    \item Add a telecommand system to manage the CanSat remotely. This would allow enabling or disabling sensors or changing parameters such as the data transmission interval at runtime.
+    \item Introduce an authentication system in the web application to protect sensitive data.
+    \item Support simultaneous visualization of multiple CanSats. At present, the origin of events is not distinguished, which prevents monitoring several devices at the same time.
+    \item Extend the development of the CanSat beyond electronics and software with a 3D-printed enclosure and a parachute to enable real launch operations.
+\end{itemize}
+
 
 

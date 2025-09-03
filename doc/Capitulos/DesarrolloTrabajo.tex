@@ -1,8 +1,6 @@
 \chapter{Diseño e implementación del sistema}
 Este capítulo describe la arquitectura general del sistema y detalla cada uno de sus componentes, desde el montaje electrónico del CanSat hasta la visualización de los datos en tiempo real.
-
-Se justifica la elección del hardware y software empleados, se explica el funcionamiento del código embebido, y se documenta la integración entre los distintos módulos del sistema: la Raspberry Pi, el backend en Spring Boot, la base de datos, el broker de eventos RabbitMQ y el frontend desarrollado en Flutter.
-
+Se justifica la elección del hardware y software empleados, se explica el funcionamiento del código embebido, y se documenta la integración entre los distintos módulos del sistema: la Raspberry Pi, el \emph{backend} en Spring Boot, la base de datos, el \emph{broker} de eventos RabbitMQ y el \emph{frontend} desarrollado en Flutter.
 Finalmente, se presentan las pruebas realizadas para verificar el funcionamiento del sistema completo.
 
 
@@ -10,138 +8,79 @@ Finalmente, se presentan las pruebas realizadas para verificar el funcionamiento
 
 
 Este apartado describe los principales elementos hardware y software empleados en el sistema.
-
+%
 La selección se ha basado en los requisitos técnicos del proyecto y en las conclusiones del análisis comparativo desarrollado en el capítulo anterior.
 
 \begin{itemize}
-    \item \textbf{Unidad de procesamiento:} se ha utilizado una~\cite{raspberrypi_zero2}.
-
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.2\textwidth]{Imagenes/Bitmap/ras2}
-        \caption{Raspberry Pi Zero 2 W}
-        \label{fig:ras2}
-    \end{figure}
-
+    \item \textbf{Unidad de procesamiento:} se ha utilizado una Raspberry Pi Zero 2~\cite{raspberrypi_zero2}.
     Su capacidad para ejecutar Linux, capturar y codificar vídeo por hardware y gestionar interfaces como I\textsuperscript{2}C, UART y CSI, la hacen adecuada para su integración directa en un CanSat sin necesidad de microcontroladores adicionales.
     \item \textbf{Sensor de presión barométrica:} el BMP388~\cite{adafruitBMP388} permite estimar la altitud mediante medición barométrica.
     Además de la presión atmosférica, proporciona la temperatura del entorno.
     Ofrece una precisión de ±8~Pa, bajo consumo y comunicación por I\textsuperscript{2}C.
 
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/bmp388}
-        \caption{Sensor de presión barométrica bmp388}
-        \label{fig:bmp388}
-    \end{figure}
-
     \item \textbf{IMU:} Se ha empleado el BNO085~\cite{adafruitBNO085}, un sensor de 9 grados de libertad que combina acelerómetro, giroscopio y magnetómetro.
     Incorpora un procesador dedicado que realiza la fusión sensorial internamente y entrega directamente la orientación absoluta, lo que evita cálculos adicionales en la Raspberry Pi.
 
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/bno085}
-        \caption{IMU bno085}
-        \label{fig:bno085}
-    \end{figure}
     \item \textbf{GNSS:} se ha utilizado el módulo BN-880~\cite{bn880Module}, que integra un receptor GNSS con soporte para múltiples constelaciones (GPS, GLONASS, Galileo y BeiDou).
     Proporciona datos de posición, velocidad y altitud en tiempo real mediante interfaz UART. Incluye una antena activa integrada y una brújula electrónica.
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/bn-880}
-        \caption{GPS bn-880}
-        \label{fig:bn-880}
-    \end{figure}
+
     \item \textbf{Cámara:} se utiliza el modelo oficial de la Raspberry Pi~\cite{raspiCamV2} con interfaz CSI. Permite la captura de vídeo codificado en H.264 mediante la GPU, sin comprometer el rendimiento del sistema.
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/rascamv2}
-        \caption{Raspberry Pi Camera Module 2}
-        \label{fig:rascamv2}
-    \end{figure}
-    \item \textbf{Transmisión de datos:} el sistema utiliza Wi-Fi si hay red disponible, en caso contrario el módulo LoRa E32-900T20D~\cite{ebyteE32}.
+
+    \item \textbf{Transmisión de datos:} el sistema utiliza wifi si hay red disponible, en caso contrario el módulo LoRa E32-900T20D~\cite{ebyteE32}.
     Este módulo opera en 868~MHz y permite comunicación a larga distancia mediante UART.
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/lorae32}
-        \caption{Módulo LoRa E32-900T20D}
-        \label{fig:lorae32}
-    \end{figure}
 
     \item \textbf{Antena LoRa:} se utiliza una antena externa de 868–915~MHz, con conector SMA macho, ganancia de 3~dBi e impedancia de 50~\(\Omega\).
 
-    \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/antena_lora}
-        \caption{Antena LoRa U.FL a SMA 868–915~MHz, 3~dBi}
-        \label{fig:antena_lora}
-    \end{figure}
 
     \item \textbf{Alimentación:} el sistema se alimenta mediante una batería recargable de ion de litio (Li-ion) tipo 18650 de 3{,}7~V conectada a un cargador MCP73871~\cite{mcp73871Datasheet}, que permite la recarga mediante panel solar y proporciona protección frente a sobrecarga, descarga profunda y cortocircuitos.
 
     Para obtener los 5~V requeridos por la Raspberry Pi, se emplea un convertidor elevador DC-DC ajustable (modelo VISSQH), que incrementa la tensión de entrada hasta una salida estabilizada.
 
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/mcp73871}
-        \caption{Cargador MCP73871}
-        \label{fig:mcp73871}
-    \end{figure}
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/18650}
-        \caption{Batería 18650}
-        \label{fig:18650}
-    \end{figure}
     \item \textbf{Estación de tierra:} está formada por un receptor LoRa conectado mediante UART a una Raspberry Pi 4.
-
     Esta actúa como pasarela entre el CanSat y el sistema de mensajería RabbitMQ, reenviando los datos recibidos a través de LoRa.
 
     \item \textbf{Software embebido:} tanto la Raspberry Pi usada en el CanSat como la de la estación de tierra ejecutan scripts desarrollados en Python.
 
-    \item \textbf{Software del sistema:} el backend está desarrollado en Java utilizando el framework Spring Boot, que facilita la construcción de servicios web REST y la integración con sistemas de mensajería.
+    \item \textbf{Software del sistema:} el \emph{backend} está desarrollado en Java utilizando el \emph{framework} Spring Boot, que facilita la construcción de servicios web REST y la integración con sistemas de mensajería.
 
     Para el intercambio de mensajes se emplea RabbitMQ, un sistema de colas que implementa el protocolo AMQP.
 
     La persistencia de datos se gestiona con PostgreSQL, un sistema de gestión de bases de datos relacional.
 
-    La interfaz de usuario está implementada en Flutter, un framework multiplataforma desarrollado en Dart, y establece la comunicación en tiempo real mediante WebSocket utilizando el protocolo STOMP.
+    La interfaz de usuario está implementada en Flutter, un framework multiplataforma desarrollado en Dart, y establece la comunicación en tiempo real mediante websockets utilizando el protocolo STOMP.
 \end{itemize}
 
 
 \section{Arquitectura general del sistema}
-La arquitectura del sistema se organiza en tres bloques principales: el CanSat, la estación de tierra y la infraestructura de backend y visualización web.
+La arquitectura del sistema se organiza en tres bloques principales: el CanSat, la estación de tierra y la infraestructura de \emph{backend} y visualización web.
 
 Esta arquitectura sigue un enfoque orientado a eventos, en el que los datos generados por el CanSat son publicados y transmitidos hacia los consumidores mediante mecanismos de mensajería asincrónica.
+La figura~\ref{fig:cansat_architecture} muestra la organización general del sistema y la interacción entre sus componentes.
 
 Los tres componentes principales son:
 
 \begin{itemize}
     \item \textbf{CanSat: }integra sensores, módulo GNSS, cámara y comunicaciones.
-
     Una Raspberry Pi Zero 2 W adquiere y empaqueta los datos de telemetría para su envío.
-    Cuando hay red Wi‑Fi disponible, los eventos se publican directamente en un broker RabbitMQ. En caso contrario, los datos se transmiten mediante LoRa a la estación de tierra.
-
+    Cuando hay red wifi disponible, los eventos se publican directamente en un \emph{broker} RabbitMQ. En caso contrario, los datos se transmiten mediante LoRa a la estación de tierra.
     Todos los datos de telemetría adquiridos por los sensores se guardan de manera local en formato JSON.
-    En cuanto a la retransmisión de vídeo en tiempo real, solo se realiza cuando está conectado a una red Wi-Fi, en caso contrario, el vídeo se guarda en la memoria de la Raspberry Pi.
+    En cuanto a la retransmisión de vídeo en tiempo real, solo se realiza cuando está conectado a una red wifi, en caso contrario, el vídeo se guarda en la memoria de la Raspberry Pi.
 
     \item \textbf{Estación de tierra: }compuesta por una Raspberry Pi 4 conectada al receptor LoRa mediante UART.
-
     Ejecuta un script en Python que interpreta los paquetes recibidos y los reenvía al broker RabbitMQ a través de la red.
-
-    Esta estación actúa como pasarela cuando no hay conectividad directa entre el CanSat y la infraestructura de backend en los casos en los que no existe conexión directa mediante red.
+    Esta estación actúa como pasarela cuando no hay conectividad directa entre el CanSat y la infraestructura de \emph{backend} en los casos en los que no existe conexión directa mediante red.
 
     \item \textbf{Infraestructura de visualización: } esta infraestructura está formada por varios componentes:
-    \begin{itemize}
-        \item \textbf{RabbitMQ: } recibe los eventos de telemetría desde la estación de tierra o directamente desde el CanSat y los transmite al backend.
-        \item \textbf{Backend: } se encarga de consumir los eventos con los datos de telemetría que llegan desde RabbitMQ,
-        guardarlos en la base de datos para su posterior descarga, y emitir los eventos hasta el frontend utilizando websockets.
+    \begin{enumerate}
+        \item \textbf{RabbitMQ: } recibe los eventos de telemetría desde la estación de tierra o directamente desde el CanSat y los transmite al \emph{backend}.
+        \item \textbf{\emph{Backend}: } se encarga de consumir los eventos con los datos de telemetría que llegan desde RabbitMQ,
+        guardarlos en la base de datos para su posterior descarga, y emitir los eventos hasta el \emph{frontend} utilizando \emph{websockets}.
         \item \textbf{Base de datos: } se trata de una base de datos relacional PostgreSQL, en ella se guardan todos los eventos de telemetría asociados a su fecha de recepción.
-        \item \textbf{Frontend: } es una aplicación web desarrollada en Flutter, cuenta con distintos tipos de gráficas para visualizar los datos del CanSat en tiempo real a través de WebSockets.
+        \item \textbf{\emph{Frontend}: } es una aplicación web desarrollada en Flutter, cuenta con distintos tipos de gráficas para visualizar los datos del CanSat en tiempo real a través de websockets.
         \item \textbf{Servidor de vídeo en tiempo real:} recibe el flujo de vídeo codificado desde el CanSat mediante el protocolo RTMP y lo adapta para su reproducción en navegadores web.
-        La transmisión solo se realiza cuando hay conectividad Wi‑Fi disponible.
-    \end{itemize}
-    Para mejorar la portabilidad y facilitar el despliegue de la infraestructura en distintos entornos, todos los servicios del backend, la base de datos, el broker de mensajería y el servidor de vídeo se han contenerizado utilizando Docker.
+        La transmisión solo se realiza cuando hay conectividad wifi disponible.
+    \end{enumerate}
+    Para mejorar la portabilidad y facilitar el despliegue de la infraestructura en distintos entornos, todos los servicios del \emph{backend}, la base de datos, el \emph{broker} de mensajería y el servidor de vídeo se han contenerizado utilizando Docker.
 \end{itemize}
 \begin{figure}[H]
     \centering
@@ -154,36 +93,43 @@ Los tres componentes principales son:
 \section{Montaje electrónico del CanSat}
 El montaje electrónico se realizó inicialmente sobre una protoboard, con el objetivo de validar las conexiones y el funcionamiento de los distintos módulos durante la fase de desarrollo.
 
-Cada componente fue integrado mediante cableado directo a la Raspberry Pi Zero 2 W, usando las interfaces específicas de cada uno (UART, I\textsuperscript{2}C).
+Cada componente fue integrado mediante cableado directo a la Raspberry Pi Zero 2 W, usando las interfaces específicas de cada uno (UART, I\textsuperscript{2}C). Para evitar confusión, se muestran siempre dos formas de numerar los pines:
+
+\begin{itemize}
+    \item \textbf{GPIO (\emph{General Purpose Input/Output}):} número lógico que se utiliza desde el software para identificar el pin.
+    \item \textbf{Pin físico:} posición real dentro del conector de 40 pines de la Raspberry Pi.
+\end{itemize}
 
 A continuación, se describen las conexiones realizadas entre los distintos periféricos y la Raspberry Pi, incluyendo los pines utilizados y las interfaces empleadas.
 
 \begin{itemize}
     \item \textbf{Sensor de presión BMP388:} utiliza la interfaz I\textsuperscript{2}C.
     \begin{itemize}
-        \item SDA: GPIO~2 (pin físico~3)
-        \item SCL: GPIO~3 (pin físico~5)
-        \item Alimentación: 5~V (pin físico~2)
-        \item GND: pin físico~6
+        \item SDA: GPIO~2 (pin físico~3).
+        \item SCL: GPIO~3 (pin físico~5).
+        \item Alimentación: 5~V (pin físico~2).
+        \item GND: pin físico~6.
     \end{itemize}
 
     \item \textbf{IMU BNO085:} también conectada por I\textsuperscript{2}C en el mismo bus que el BMP388.
     \begin{itemize}
-        \item SDA: GPIO~2 (pin físico~3)
-        \item SCL: GPIO~3 (pin físico~5)
-        \item Alimentación: 5~V (pin físico~2)
-        \item GND: pin físico~6
+        \item SDA: GPIO~2 (pin físico~3).
+        \item SCL: GPIO~3 (pin físico~5).
+        \item Alimentación: 5~V (pin físico~2).
+        \item GND: pin físico~6.
     \end{itemize}
 
-    \item \textbf{Módulo LoRa E32-900T20D:} comunica por UART.
+    \item \textbf{Módulo LoRa E32-900T20D:} se comunica por UART.
     \begin{itemize}
-        \item TX del módulo → RX de la Pi: GPIO~15 (pin físico~10)
-        \item RX del módulo ← TX de la Pi: GPIO~14 (pin físico~8)
-        \item Alimentación: 5~V (pin físico~2)
-        \item GND: pin físico~6
+        \item TX del módulo → RX de la Pi: GPIO~15 (pin físico~10).
+        \item RX del módulo ← TX de la Pi: GPIO~14 (pin físico~8).
+        \item Alimentación: 5~V (pin físico~2).
+        \item GND: pin físico~6.
         \item Pines M0 y M1: conectados respectivamente a los GPIO~23 (pin físico~16) y GPIO~24 (pin físico~18) de la Raspberry Pi, lo que permite gestionar el modo de operación del módulo desde software.
         \item Conexión de antena: la antena externa se conecta al conector SMA hembra del módulo LoRa, permitiendo la comunicación en la banda de 868–915~MHz.
     \end{itemize}
+    La figura~\ref{fig:conexion_sensores} muestra el diagrama de conexión de los sensores y el módulo LoRa con la Raspberry Pi Zero 2 W.
+
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/conexion_sensores}
@@ -199,12 +145,14 @@ A continuación, se describen las conexiones realizadas entre los distintos peri
     Esto permite conectarlo al puerto micro-USB de datos de la Raspberry Pi de forma más compacta, sin necesidad de adaptadores adicionales.
 
     \begin{itemize}
-        \item TX del GNSS → RX del adaptador
-        \item RX del GNSS ← TX del adaptador
-        \item Alimentación: 5~V conectado al pin VCC del adaptador
-        \item GND: pin físico~14 conectado al GND del adaptador
-        \item Conexión de datos: vía micro-USB del adaptador al puerto USB de la Raspberry Pi
+        \item TX del GNSS → RX del adaptador.
+        \item RX del GNSS ← TX del adaptador.
+        \item Alimentación: 5~V conectado al pin VCC del adaptador.
+        \item GND: pin físico~14 conectado al GND del adaptador.
+        \item Conexión de datos: vía micro-USB del adaptador al puerto USB de la Raspberry Pi.
     \end{itemize}
+    La figura~\ref{fig:conexion_gps} representa la conexión del módulo GNSS BN-880 mediante el adaptador CP2102.
+
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/conexion_gps}
@@ -231,10 +179,11 @@ A continuación, se describen las conexiones realizadas entre los distintos peri
 
         La salida del boost se conecta al pin físico~2 (5~V) de la Raspberry Pi, y su masa al pin físico~39 (GND), proporcionando alimentación estable a todo el sistema.
     \end{itemize}
+    La figura~\ref{fig:conexion_cargador} muestra el esquema de conexión del cargador MCP73871 junto con el convertidor elevador (\emph{booster}).
     \begin{figure}[H]
         \centering
-        \includegraphics[width=0.7\textwidth]{Imagenes/Bitmap/conexion_cargador}
-        \caption{Diagrama de conexión del cargador MCP73871 y booster}
+        \includegraphics[width=0.6\textwidth]{Imagenes/Bitmap/conexion_cargador}
+        \caption{Diagrama de conexión del cargador MCP73871 y \emph{booster}}
         \label{fig:conexion_cargador}
     \end{figure}
     \item \textbf{Cámara CSI:} conectada directamente al puerto CSI (Camera Serial Interface) de la Raspberry Pi Zero 2 W mediante un cable plano.
@@ -242,6 +191,7 @@ A continuación, se describen las conexiones realizadas entre los distintos peri
     El puerto CSI es una interfaz específica para cámaras que permite transmitir vídeo sin utilizar pines GPIO.
     Además, proporciona tanto la alimentación como la señal de datos a través del propio conector.
 \end{itemize}
+La tabla~\ref{tab:resumen_conexiones} resume las conexiones realizadas entre los distintos periféricos y la Raspberry Pi Zero 2 W.
 
 \begin{table}[H]
     \centering
@@ -281,14 +231,15 @@ A continuación, se describen las conexiones realizadas entre los distintos peri
 A continuación se describe también el montaje de la estación de tierra, formada por un módulo LoRa conectado a una Raspberry Pi 4 a través de la interfaz UART:
 
 \begin{itemize}
-    \item TX del módulo → RX de la Pi: GPIO~15 (pin físico~10)
-    \item RX del módulo ← TX de la Pi: GPIO~14 (pin físico~8)
+    \item TX del módulo → RX de la Pi: GPIO~15 (pin físico~10).
+    \item RX del módulo ← TX de la Pi: GPIO~14 (pin físico~8).
     \item Pines M0 y M1: conectados respectivamente a los GPIO~23 (pin físico~16) y GPIO~24 (pin físico~18) de la Raspberry Pi, lo que permite gestionar el modo de operación del módulo desde software.
-    \item Alimentación: 5~V (pin físico~2)
-    \item GND: pin físico~6
+    \item Alimentación: 5~V (pin físico~2).
+    \item GND: pin físico~6.
     \item Conexión de antena: la antena externa se conecta al conector SMA hembra del módulo LoRa, permitiendo la comunicación en la banda de 868–915~MHz.
 
 \end{itemize}
+La figura~\ref{fig:conexion_ground} presenta el diagrama de conexión de la estación de tierra con la Raspberry Pi 4 y el módulo LoRa.
 
 \begin{figure}[H]
     \centering
@@ -296,6 +247,7 @@ A continuación se describe también el montaje de la estación de tierra, forma
     \caption{Diagrama de conexión de la estación de tierra con Raspberry Pi 4 y módulo LoRa}
     \label{fig:conexion_ground}
 \end{figure}
+La tabla~\ref{tab:conexiones_ground_pi4} detalla las conexiones del módulo LoRa a la Raspberry Pi 4 en la estación de tierra.
 
 \begin{table}[H]
     \centering
@@ -317,10 +269,12 @@ A continuación se describe también el montaje de la estación de tierra, forma
 
 Tras verificar el correcto funcionamiento de todas las conexiones en la protoboard, se procedió a su traslado a una placa PCB,
 diseñada específicamente teniendo en cuenta las dimensiones y restricciones del CanSat.
+Las figuras~\ref{fig:pcb_montaje_frontal} y~\ref{fig:montaje_trasero} muestran el montaje final del sistema en la PCB, tanto en vista frontal como trasera.
+
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{Imagenes/Bitmap/pcb_montaje_frontal}
+    \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/pcb_montaje_frontal}
     \caption{Montaje final del sistema en la PCB (vista frontal)}
     \label{fig:pcb_montaje_frontal}
 \end{figure}
@@ -380,14 +334,14 @@ Estos datos se agregan en un evento del tipo TM con la fecha en la que se genera
 La clase \texttt{LoraSender} se encarga del envío de eventos en modo texto (CSV) a través del módulo LoRa.
 Este envío se realiza en un hilo dedicado para no bloquear la adquisición de datos.
 
-Después de envíar un evento sistema espera una confirmación OK durante un máximo de 2 segundos para considerar el envío exitoso y envíar el siguiente,
-si no ese evento se descarta y se procede a envíar el siguiente, para ello se hace uso de una cola local.
+Después de enviar un evento el sistema espera una confirmación OK durante un máximo de 2 segundos para considerar el envío exitoso y enviar el siguiente,
+si no ese evento se descarta y se procede a enviar el siguiente, para ello se hace uso de una cola local.
 
 \subsection{Conexión con RabbitMQ}
 
 La clase \texttt{RabbitmqConnectionManager} crea y mantiene la conexión con el servidor RabbitMQ.
 
-Publica los eventos codificados en JSON en el exchange tracking\_device\_events de tipo fanout.
+Publica los eventos codificados en JSON en el exchange tracking\_device\_events de tipo \emph{fanout}.
 Si la conexión se pierde, intenta restablecerla automáticamente.
 
 \subsection{Formato de los eventos}
@@ -405,7 +359,7 @@ Los eventos se serializan en formato JSON o CSV, en función del canal de transm
 
 \section{Software de la estación de tierra}
 
-El software de la estación de tierra está desarrollado en python y se encarga de realizar las siguientes acciones:
+El software de la estación de tierra está desarrollado en Python y se encarga de realizar las siguientes acciones:
 
 \begin{itemize}
     \item Intenta detectar si hay conexión a internet durante 30 segundos.
@@ -418,19 +372,19 @@ El software de la estación de tierra está desarrollado en python y se encarga 
     \item Intenta parsear el mensaje como un evento válido en formato CSV, usando la clase \texttt{Event}.
 
     Si el parseo se produce sin errores, convierte el evento a JSON y lo publica en RabbitMQ y responde por LoRa con un OK para confirmar la recepción.
-    \item En caso de que el mensaje recibido está mal formado, lo descarta y registra el error sin interrumpir la ejecución.
+    \item En caso de que el mensaje recibido esté mal formado, lo descarta y registra el error sin interrumpir la ejecución.
     \item El sistema se puede detener mediante una interrupción por teclado (ctrl+C). Al cerrarse, libera el puerto serie y cierra la conexión con RabbitMQ de forma segura.
 \end{itemize}
 
 
-\section{Backend con Spring Boot}
+\section{\emph{Backend} con Spring Boot}
 
-El backend del sistema está desarrollado en Java utilizando el framework Spring Boot, es el encargado de recibir los eventos mediante RabbitMq, guardarlos en PostgreSQL y reenviarlos mediante WebSockets.
+El \emph{backend} del sistema está desarrollado en Java utilizando el \emph{framework} Spring Boot, es el encargado de recibir los eventos mediante RabbitMq, guardarlos en PostgreSQL y reenviarlos mediante \emph{websockets}.
 
 \subsection{Recepción de eventos}
 
-Los eventos generados por el CanSat son enviados a RabbitMQ utilizando un exchange de tipo fanout llamado tracking\_device\_events.
-El backend está suscrito a este exchange a través de una queue denominada tracking\_device\_events.dashboard\_backend, tal y como se configura en la clase \texttt{RabbitmqConfiguration}:
+Los eventos generados por el CanSat son enviados a RabbitMQ utilizando un exchange de tipo \emph{fanout} llamado tracking\_device\_events.
+El \emph{backend} está suscrito a este exchange a través de una queue denominada tracking\_device\_events.dashboard\_backend, tal y como se configura en la clase \texttt{RabbitmqConfiguration}:
 
 Cada vez que se recibe un mensaje en esta cola, el componente \texttt{TrackingDeviceEventsConsumer} se encarga de:
 \begin{enumerate}
@@ -459,62 +413,67 @@ Se proporciona un endpoint REST para consultar eventos entre dos fechas:
 
 \subsection{Distribución en tiempo real}
 
-El backend incluye soporte para WebSocket, los eventos almacenados se reenvían al canal \texttt{/topic/events} a través de la clase \texttt{TrackingDeviceEventsProducer}.
+El \emph{backend} incluye soporte para \emph{WebSocket}, los eventos almacenados se reenvían al canal \texttt{/topic/events} a través de la clase \texttt{TrackingDeviceEventsProducer}.
 
 
-\section{Frontend con Flutter para visualización en tiempo real}
+\section{\emph{Frontend} con Flutter para visualización en tiempo real}
 
-El frontend ha sido desarrollado utilizando Flutter, permitiendo desplegar una aplicación web responsive capaz de visualizar los eventos emitidos por el CanSat.
-La comunicación con el backend se realiza a través de WebSocket, suscribiéndose al canal /topic/events.
+El \emph{frontend} ha sido desarrollado utilizando Flutter, permitiendo desplegar una aplicación web \emph{responsive} capaz de visualizar los eventos emitidos por el CanSat.
+La comunicación con el \emph{backend} se realiza a través de \emph{WeSsockets}, suscribiéndose al canal /topic/events.
 
 La interfaz ha sido diseñada con el objetivo de ser lo más genérica posible, facilitando la visualización de métricas y gráficas sin atarse a una configuración de sensores específica o a un diseño de CanSat concreto.
 Esto permite adaptar fácilmente la plataforma a otros proyectos con diferentes sensores o estructuras.
 
 \subsection{Arquitectura general}
 
-La aplicación se estructura en torno a un patrón BLoC (Business Logic Component), donde el estado del último evento recibido se propaga de forma reactiva a los distintos widgets encargados de representar la telemetría.
+La aplicación se estructura en torno a un patrón BLoC (\emph{Business Logic Component}), donde el estado del último evento recibido se propaga de forma reactiva a los distintos widgets encargados de representar la telemetría.
 
-El componente principal TrackingDeviceEventBloc inicializa el cliente de WebSocket, gestiona la conexión y parsea los mensajes entrantes desde el backend,
+El componente principal \emph{TrackingDeviceEventBloc} inicializa el cliente de \emph{WebSockets}, gestiona la conexión y parsea los mensajes entrantes desde el \emph{backend},
 convirtiéndolos en instancias de la clase \texttt{Event}.
-Esta clase encapsula tanto la fecha como el tipo de evento y su carga útil (payload).
+Esta clase encapsula tanto la fecha como el tipo de evento y su carga útil (\emph{payload}).
 
 \subsection{Visualización modular}
 
 La interfaz gráfica se divide en varios componentes:
 
 \begin{itemize}
-    \item \textbf{Metrics:} muestra el último valor de todos los parámetros y una lista de todos los eventos de telemetría recibidos.
+    \item \textbf{\emph{Metrics}:} muestra el último valor de todos los parámetros y una lista de todos los eventos de telemetría recibidos.
 
     También permite la descarga de eventos históricos en formato .jsonl especificando un rango de fechas.
+    La figura~\ref{fig:metrics} muestra un ejemplo del componente \emph{Metrics} en funcionamiento.
     \begin{figure}[H]
         \centering
-        \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/metrics}
-        \caption{Ejemplo del Componente Metrics}
+        \includegraphics[width=1\textwidth]{Imagenes/Bitmap/metrics}
+        \caption{Ejemplo del Componente \emph{Metrics}}
         \label{fig:metrics}
     \end{figure}
-    \item \textbf{Attitude:} renderiza un modelo tridimensional que rota en tiempo real según los valores de yaw, pitch y roll incluidos en cada evento, de esta manera es posible ver la orientación actual del CanSat.
+    \item \textbf{\emph{Attitude}:} renderiza un modelo tridimensional que rota en tiempo real según los valores de \emph{yaw, pitch y roll} incluidos en cada evento, de esta manera es posible ver la orientación actual del CanSat.
+    La figura~\ref{fig:attitude} muestra un ejemplo del componente \emph{Attitude}.
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/attitude}
-        \caption{Ejemplo del Componente Attitude}
+        \caption{Ejemplo del componente \emph{Attitude}}
         \label{fig:attitude}
     \end{figure}
-    \item \textbf{TelemetryChart:} representa todos los valores de los parámetros recibidos como gráficas temporales utilizando, permitiendo observar la evolución de múltiples variables simultáneamente.
+    \item \textbf{\emph{TelemetryChart}:} representa todos los valores de los parámetros recibidos como gráficas temporales utilizando, permitiendo observar la evolución de múltiples variables simultáneamente.
+    La figura~\ref{fig:telemetry_chart} muestra un ejemplo del componente \emph{TelemetryChart}.
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/telemetry_chart}
-        \caption{Ejemplo del Componente TelemetryChart}
+        \caption{Ejemplo del componente \emph{TelemetryChart}}
         \label{fig:telemetry_chart}
     \end{figure}
-    \item \textbf{Map:} muestra un mapa con la última ubicación recibida del CanSat.
+    \item \textbf{\emph{Map}:} muestra un mapa con la última ubicación recibida del CanSat.
+    La figura~\ref{fig:map} muestra un ejemplo del componente \emph{Map}.
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.4\textwidth]{Imagenes/Bitmap/map}
-        \caption{Ejemplo del Componente Map}
+        \caption{Ejemplo del componente Map}
         \label{fig:map}
     \end{figure}
-    \item \textbf{Camera:} muestra la retransmisión de vídeo en directo.
+    \item \textbf{\emph{Camera}:} muestra la retransmisión de vídeo en directo.
 \end{itemize}
+La figura~\ref{fig:interfaz_general} muestra la interfaz del sistema en modo escritorio.
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{Imagenes/Bitmap/initerfaz_general}
@@ -530,13 +489,122 @@ En escritorio el espacio se divide en secciones horizontales y verticales que pu
 
 \section{Pruebas de integración y validación}
 
-Después de la realización de todo el desarrollo del sistema, se realizaron pruebas para comprobar su correcto funcionamiento, desde la adquisición de datos en el CanSat hasta su visualización en el aplicación web.
+La realización de las pruebas se llevó a cabo en dos fases. En primer lugar se validó la interfaz web de visualización mediante la generación de datos simulados. Para ello se desarrollaron dos scripts en Python: uno encargado de publicar eventos de telemetría en RabbitMQ con el mismo formato utilizado por el CanSat, y otro destinado a simular la transmisión de imágenes en tiempo real hacia el servidor de vídeo. De esta manera fue posible comprobar que el \emph{backend} procesaba correctamente los mensajes y que el \emph{frontend} actualizaba en tiempo real las métricas, gráficas, el mapa y el flujo de vídeo, sin necesidad de disponer del hardware físico. 
 
-Durante estas pruebas se validó:
+Ambos scripts constituyen además un ejemplo de integración para otros proyectos tipo CanSat o sistemas similares, ya que al seguir la misma estructura de datos y los mismos canales de publicación, cualquier dispositivo externo puede integrarse con la plataforma y visualizar su información en tiempo real a través del \emph{frontend}.
+
+En una segunda fase se realizaron pruebas con el sistema completo, incluyendo el CanSat, la estación de tierra y los servicios desplegados en Docker. Esto permitió validar la transmisión real por LoRa y la autonomía del dispositivo.
+
+\subsection*{Script de simulación de eventos}
+
+El script de simulación genera valores aleatorios de altitud, temperatura, posición
+(latitud/longitud) y orientación (pitch, roll, yaw), y los envía en formato JSON a través
+de RabbitMQ.
+
+\begin{verbatim}
+import json, pika, datetime, random, time
+
+def generate_event():
+    return {"datetime": datetime.datetime.utcnow().isoformat(),
+            "payload": {"altitude": random.uniform(0,50)}}
+
+ch = pika.BlockingConnection(
+    pika.ConnectionParameters(
+    host="tronxi.ddns.net", port=5672
+    credentials=pika.PlainCredentials("user","pass")
+    )
+).channel()
+
+while True:
+    ch.basic_publish(exchange="tracking_device_events", routing_key="",
+                     body=json.dumps(generate_event()).encode())
+    time.sleep(2)
+
+\end{verbatim}
+En la figura~\ref{fig:frontend-simulation} se muestra la aplicación web recibiendo en tiempo real los datos generados por el script de simulación, confirmando la integración del \emph{backend} con el \emph{frontend} sin disponer del hardware físico.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Imagenes/Bitmap/datos_simulados}
+    \caption{Visualización en tiempo real de datos de telemetría simulados en el \emph{frontend}}
+    \label{fig:frontend-simulation}
+\end{figure}
+
+\subsection*{Script de simulación de vídeo en tiempo real}
+
+Además de los datos de telemetría, se desarrolló un script en Python destinado a simular la transmisión de imágenes en tiempo real. Este programa genera de forma sintética una secuencia de fotogramas con patrones de color y animaciones básicas, y los envía a través de ffmpeg hacia un servidor RTMP. De esta manera se pudo
+validar la parte de transmisión de vídeo en la plataforma.
+
+\begin{verbatim}
+import numpy as np, time, subprocess
+
+W, H, FPS = 640, 480, 15
+RTMP_URL = "rtmp://tronxi.ddns.net:1935/live/test"
+
+# Proceso ffmpeg que envía a RTMP
+ff = subprocess.Popen([
+    "ffmpeg", "-loglevel","error",
+    "-f","rawvideo", "-pix_fmt","rgb24",
+    "-s",f"{W}x{H}", "-r",str(FPS), "-i","-",
+    "-c:v","libx264","-preset","veryfast","-tune","zerolatency",
+    "-pix_fmt","yuv420p", "-f","flv", RTMP_URL
+], stdin=subprocess.PIPE)
+
+period = 1.0 / FPS
+while True:
+    # Imagen sintética: patrón de colores aleatorios
+    frame = np.random.randint(0, 255, (H, W, 3), dtype=np.uint8)
+    ff.stdin.write(frame.tobytes())
+    time.sleep(period)
+
+\end{verbatim}
+La figura~\ref{fig:simulacion-camera} muestra la interfaz web reproduciendo un flujo de vídeo generado artificialmente por el script de simulación.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{Imagenes/Bitmap/simulacion_camera}
+    \caption{Visualización en tiempo real de imágenes simuladas en el \emph{frontend}}
+    \label{fig:simulacion-camera}
+\end{figure}
+
+\subsection*{Resultados con el sistema real}
+
+Una vez validada la interfaz con datos simulados, se realizaron pruebas completas con
+el sistema integrado (CanSat, estación de tierra y servicios desplegados en Docker).
+El objetivo fue confirmar que el comportamiento del sistema en condiciones reales
+coincidía con lo verificado en la fase de simulación. A continuación se describen los
+principales resultados obtenidos:
+
 \begin{itemize}
-    \item La generación y envío de eventos de telemetría por LoRa y RabbitMQ según la disponibilidad de internet.
-    \item El almacenamiento de los eventos en la base de datos del backend y su retransmisión por WebSocket.
-    \item La correcta actualización en tiempo real de las métricas, gráficas y visualizaciones en el frontend.
-    \item La duración de la batería en condiciones reales, confirmando que el sistema puede operar de forma autónoma durante aproximadamente 4 horas.
-    \item El alcance de la antena LoRa, validando la recepción de datos a más de 500 metros en campo abierto.
+  \item \textbf{Transmisión mediante wifi:} el CanSat transmitió eventos a RabbitMQ, que fueron
+  almacenados en PostgreSQL y retransmitidos al \emph{frontend} vía WebSocket. La latencia
+  entre la generación y la visualización fue inferior a un segundo, confirmando el
+  funcionamiento en tiempo real con conectividad a red.
+
+  \item \textbf{Transmisión mediante LoRa:} en campo abierto se recibieron eventos de forma estable hasta más de 1\,km de distancia. A partir de esa distancia comenzaron a observarse pérdidas ocasionales, lo cual concuerda con las características del módulo LoRa empleado. Este rendimiento confirma un margen suficiente para garantizar la comunicación durante una misión educativa tipo CanSat,  cuya altura no supera el kilómetro de altura.
+
+  \item \textbf{Autonomía energética:} el dispositivo funcionó de manera continua durante unas 2 horas con transmisión simultánea de telemetría y vídeo, lo que garantiza el funcionamiento durante la duración típica de una misión.
+
+  \item \textbf{Persistencia y exportación:} todos los eventos se almacenaron en la base de
+  datos PostgreSQL y pudieron consultarse y descargarse en formato jsonl mediante
+  la API REST.
 \end{itemize}
+La tabla~\ref{tab:resultados-reales} resume los principales resultados obtenidos en las pruebas con el sistema real.
+\begin{table}[H]
+\centering
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{Prueba} & \textbf{Resultado} \\
+\hline
+Transmisión mediante wifi & Latencia $<$ 1\,s, integración completa de extremo a extremo \\
+\hline
+Transmisión mediante LoRa & Recepción estable hasta $>$1\,km en campo abierto \\
+\hline
+Autonomía energética & $\sim$2\,h de operación continua con batería integrada \\
+\hline
+Persistencia y exportación & Almacenamiento correcto en PostgreSQL y descarga en jsonl \\
+\hline
+\end{tabular}
+\caption{Resumen de resultados con el sistema real}
+\label{tab:resultados-reales}
+\end{table}
