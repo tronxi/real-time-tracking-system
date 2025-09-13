@@ -1,4 +1,5 @@
 ---
+
 marp: true
 lang: es
 title: "Diseño e implementación de un sistema de adquisición, transmisión y visualización de datos basado en CanSat"
@@ -8,22 +9,61 @@ size: 16:9
 theme: default
 class: lead
 style: |
-  :root {
-    --accent: #2563eb;
-  }
+  :root { --accent: #2563eb; }
   section.lead h1, section.lead h2 { color: var(--accent); }
   section { font-size: 30px; }
   footer { color: #666; font-size: 18px; }
+  .title-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 12px;
+  }
+  .title-wrap h1 {
+    font-size: 60px;
+    line-height: 1.12;
+    margin: 0 0 18px 0;
+    color: var(--accent);
+  }
+  .title-wrap .meta {
+    font-size: 30px;
+    line-height: 1.35;
+    color: #111;
+    margin: 0 0 14px 0;
+  }
+  .title-wrap .director {
+    font-size: 26px;
+    color: #333;
+    margin: 0;
+  }
+  .title-wrap .accent {
+    width: 88px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 3px;
+    margin: 20px auto 16px;
+  }
+  .ucm-center {
+    display: block;
+    margin: 18px auto 0;
+    height: 92px;
+    object-fit: contain;
+    opacity: 0.95;
+  }
 header: ""
-# footer: "TFM · Sergio García Sánchez · UCM"
 ---
 
 <!-- _class: lead -->
-# Diseño e implementación de un sistema de adquisición, transmisión y visualización de datos basado en CanSat
-### Sergio García Sánchez — Máster en Ingeniería Informática (UCM)
-#### Director: Adrián Riesco Rodríguez
+<div class="title-wrap">
+  <h1>Diseño e implementación de un sistema de adquisición, transmisión y visualización de datos basado en CanSat</h1>
+  <p class="meta"><strong>Sergio García Sánchez</strong> — Máster en Ingeniería Informática (UCM)</p>
+  <p class="director"><strong>Director:</strong> Adrián Riesco Rodríguez</p>
+  <div class="accent"></div>
+</div>
 
-<!-- _notes: Presentación de 25 minutos. Agradece al tribunal. Expón el hilo narrativo: problema → propuesta → validación. -->
+<img src="./figuras/ucm.jpg" class="ucm-center" alt="UCM">
+
+
 
 ---
 
@@ -33,17 +73,17 @@ header: ""
 
 2. **Objectives** 
 
-3. **Herramientas de visualización**  
+3. **Fundamentos y estado del arte**  
 
 4. **Diseño y arquitectura**  
 
-5. **Implementación (embebido, backend, frontend)**  
+5. **Validación y resultados**  
 
-6. **Validación y resultados**  
+6. **Conclusions**  
 
-7. **Conclusiones y trabajo futuro**  
+7. **Future work**
 
-8. **Demo / Q&A**  
+8. **Q&A**  
 
 ---
 
@@ -143,7 +183,7 @@ This project presents the **design and implementation** of a complete system for
 }
 </style>
 
-## 3. Herramientas de visualización
+## 3. Fundamentos - Herramientas de visualización
 
 <div class="grid">
   <div class="tool">
@@ -180,7 +220,7 @@ This project presents the **design and implementation** of a complete system for
 .table-compact td{word-break:break-word;}
 .table-compact td:nth-child(1), .table-compact td:nth-child(2), .table-compact td:nth-child(5){white-space:nowrap;}
 </style>
-## 3. Fundamentos (Hardware)
+## 3. Fundamentos - Microcontroladores
 
 <table class="table-compact">
   <thead>
@@ -219,71 +259,89 @@ This project presents the **design and implementation** of a complete system for
 
 
 ---
-## 3. Fundamentos – SPI
 
-- **Serial Peripheral Interface (SPI)**  
-- Comunicación **síncrona y full-dúplex**  
-- Arquitectura **primario-secundario**, un primario y uno o varios secundarios  
-- 4 líneas:
-  - CLK (reloj)
-  - CS (selección de chip)
-  - MOSI (datos primario → secundario)
-  - MISO (datos secundario → primario)
-- Velocidad típica: **1–10 Mbps** (puede ser mayor)
-- Puede usar modo regular (CS dedicado) o modo cadena (*daisy-chain*)
+## 3. Fundamentos – Interfaces de comunicación
 
-*(Ideal mostrar esquema de SPI: primario + secundarios y las 4 líneas)*
+<style>
+.table-serial {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 24px;              /* ajusta 22–26 según necesites */
+}
+.table-serial th, .table-serial td {
+  border: 1px solid #ddd;
+  padding: 6px 8px;             /* padding reducido para que entre */
+  vertical-align: top;
+}
+.table-serial thead th {
+  background: #f6f7f9;
+  text-align: left;
+}
+.table-serial td:nth-child(1),
+.table-serial td:nth-child(2),
+.table-serial td:nth-child(5) {  /* columnas más “cortas” en ancho */
+  white-space: nowrap;
+}
+.table-serial .muted {
+  color: #666; font-size: 90%;
+}
+</style>
 
----
+<table class="table-serial">
+  <thead>
+    <tr>
+      <th>Característica</th>
+      <th>SPI</th>
+      <th>I²C</th>
+      <th>UART</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Tipo de comunicación</td>
+      <td>Síncrona</td>
+      <td>Síncrona</td>
+      <td>Asíncrona</td>
+    </tr>
+    <tr>
+      <td>Arquitectura</td>
+      <td>Primario–secundario</td>
+      <td>Primario–secundario</td>
+      <td>Punto a punto</td>
+    </tr>
+    <tr>
+      <td>Nº de líneas</td>
+      <td>4 <span class="muted">(CLK, CS, MOSI, MISO)</span></td>
+      <td>2 <span class="muted">(SDA, SCL)</span></td>
+      <td>2 <span class="muted">(TX, RX)</span></td>
+    </tr>
+    <tr>
+      <td>Dúplex</td>
+      <td>Full</td>
+      <td>Half</td>
+      <td>Full</td>
+    </tr>
+    <tr>
+      <td>Nº de dispositivos</td>
+      <td>1 primario, varios secundarios</td>
+      <td>1 primario, varios secundarios</td>
+      <td>Solo dos</td>
+    </tr>
+    <tr>
+      <td>Velocidad típica</td>
+      <td>1–10&nbsp;Mbps</td>
+      <td>100&nbsp;kbit/s – 3.4&nbsp;Mbps</td>
+      <td>9.6&nbsp;kbit/s – 3&nbsp;Mbps</td>
+    </tr>
+    <tr>
+      <td>Control de dirección</td>
+      <td>Señal CS por secundario</td>
+      <td>Dirección en protocolo</td>
+      <td>No necesario</td>
+    </tr>
+  </tbody>
+</table>
 
-## 3. Fundamentos – I²C
-
-- **Inter-Integrated Circuit (I²C)**  
-- Comunicación **síncrona y half-dúplex**  
-- Arquitectura **primario-secundario**  
-- 2 líneas compartidas:
-  - SDA (datos)
-  - SCL (reloj)
-- Cada dispositivo tiene **dirección única**  
-- Velocidades típicas:
-  - 100 kbit/s (Standard)
-  - 400 kbit/s (Fast)
-  - 1 Mbit/s (Fm+)
-  - hasta 3.4 Mbit/s (Hs-mode)
-
-*(Ideal mostrar diagrama de un primario y varios secundarios en bus común)*
-
-
----
-
-## 3. Fundamentos – UART
-
-- **Universal Asynchronous Receiver-Transmitter (UART)**  
-- Comunicación **asíncrona**, no necesita reloj compartido  
-- Arquitectura **punto a punto**  
-- 2 líneas:
-  - TX (transmisión)
-  - RX (recepción)
-- Comunicación **full-dúplex**  
-- Velocidad: 9 600 – 115 200 baudios típicos, hasta 1–2 Mbps  
-- Cada byte incluye bit de inicio, datos, paridad opcional y bits de parada
-
-*(Ideal mostrar diagrama: TX↔RX entre dos dispositivos)*
-
-
----
-
-## 3. Fundamentos – Comparativa de interfaces
-
-| Característica        | SPI             | I²C                    | UART             |
-|----------------------|----------------|----------------------|----------------|
-| Tipo de comunicación | Síncrona       | Síncrona             | Asíncrona      |
-| Arquitectura         | Primario-secundario | Primario-secundario | Punto a punto  |
-| Nº de líneas         | 4 (CLK, CS, MOSI, MISO) | 2 (SDA, SCL) | 2 (TX, RX) |
-| Dúplex               | Full           | Half                | Full           |
-| Nº de dispositivos   | 1 primario, varios secundarios | 1 primario, varios secundarios | Solo dos |
-| Velocidad típica     | 1–10 Mbps      | 100 kbit/s – 3.4 Mbps | 9.6 kbit/s – 3 Mbps |
-| Control de dirección | Señal CS por secundario | Dirección en protocolo | No necesario |
 
 
 ---
@@ -313,12 +371,71 @@ This project presents the **design and implementation** of a complete system for
 - Modelos avanzados incluyen procesador interno para fusión sensorial
 
 **Ejemplos de IMU:**
-| Sensor  | Componentes             | Orientación directa | Interfaz | Consumo |
-|--------|------------------------|-------------------|---------|--------|
-| MPU6050 | Acc + Giro            | No (procesamiento externo) | I²C | 3.9 mA |
-| BNO055 | Acc + Giro + Mag       | Sí (fusión interna) | I²C/UART | 12 mA |
-| BNO085 | Acc + Giro + Mag       | Sí (mayor precisión) | I²C/UART/SPI | 3.5 mA |
-| LSM9DS1| Acc + Giro + Mag       | No (fusión externa) | I²C/SPI | 1 mA |
+<style>
+.table-imu {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 28px;           /* ⇦ súbelo a 28 si aún cabe */
+}
+.table-imu th, .table-imu td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;         /* ⇦ ligeramente mayor */
+  vertical-align: middle;
+}
+.table-imu thead th {
+  background: #f6f7f9;
+  text-align: left;
+}
+.table-imu td:nth-child(1),
+.table-imu td:nth-child(3),
+.table-imu td:nth-child(4),
+.table-imu td:nth-child(5) {
+  white-space: nowrap;       /* evita saltos raros */
+}
+</style>
+
+<table class="table-imu">
+  <thead>
+    <tr>
+      <th>Sensor</th>
+      <th>Componentes</th>
+      <th>Orientación</th>
+      <th>Interfaz</th>
+      <th>Consumo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>MPU6050</strong></td>
+      <td>Acc + Giro</td>
+      <td>No (externo)</td>
+      <td>I²C</td>
+      <td>3.9 mA</td>
+    </tr>
+    <tr>
+      <td><strong>BNO055</strong></td>
+      <td>Acc + Giro + Mag</td>
+      <td>Sí (interna)</td>
+      <td>I²C/UART</td>
+      <td>12 mA</td>
+    </tr>
+    <tr>
+      <td><strong>BNO085</strong></td>
+      <td>Acc + Giro + Mag</td>
+      <td>Sí (precisa)</td>
+      <td>I²C/UART/SPI</td>
+      <td>3.5 mA</td>
+    </tr>
+    <tr>
+      <td><strong>LSM9DS1</strong></td>
+      <td>Acc + Giro + Mag</td>
+      <td>No (externo)</td>
+      <td>I²C/SPI</td>
+      <td>1 mA</td>
+    </tr>
+  </tbody>
+</table>
+
 
 
 ---
@@ -330,64 +447,72 @@ This project presents the **design and implementation** of a complete system for
 - Variables: precisión, frecuencia de actualización, constelaciones soportadas  
 
 **Comparativa de módulos GNSS:**
-| Módulo | Constelaciones | Precisión | Actualización | Consumo |
-|------|----------------|----------|-------------|--------|
-| BN-880 | GPS+Galileo+GLONASS+BeiDou | 2 m CEP | 1–10 Hz | 50 mA @5V |
-| NEO-M8N | GPS+Galileo+GLONASS+BeiDou | 2 m CEP | hasta 18 Hz | <150 mA |
-| NEO-F9P | +RTK | Centimétrica | hasta 20 Hz | 100 mA @3.3V |
+
+<style>
+.table-gnss {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 24px;
+}
+.table-gnss th, .table-gnss td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  vertical-align: middle;
+  text-align: center;
+}
+.table-gnss thead th {
+  background: #f6f7f9;
+}
+.table-gnss td:first-child {
+  text-align: left;
+  font-weight: bold;
+  white-space: nowrap;
+}
+</style>
+
+<table class="table-gnss">
+  <thead>
+    <tr>
+      <th>Módulo</th>
+      <th>Constelaciones</th>
+      <th>Precisión típica</th>
+      <th>Frecuencia</th>
+      <th>Consumo</th>
+      <th>Precio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BN-880</td>
+      <td>GPS, GLONASS, Galileo, BeiDou</td>
+      <td>~2 m CEP</td>
+      <td>1–10 Hz</td>
+      <td>50 mA @ 5V</td>
+      <td>15–25 €</td>
+    </tr>
+    <tr>
+      <td>NEO-M8N</td>
+      <td>GPS, GLONASS, Galileo, BeiDou</td>
+      <td>~2 m CEP</td>
+      <td>1–18 Hz</td>
+      <td>&lt;150 mA @ 5V</td>
+      <td>35–40 €</td>
+    </tr>
+    <tr>
+      <td>NEO-F9P</td>
+      <td>GPS, GLONASS, Galileo, BeiDou (RTK)</td>
+      <td>cm-level (con RTK)</td>
+      <td>hasta 20 Hz</td>
+      <td>100 mA @ 3.3V</td>
+      <td>110–130 €</td>
+    </tr>
+  </tbody>
+</table>
 
 
 ---
 
-## 3. Fundamentos – RTMP
-
-- **Real-Time Messaging Protocol**
-- Funciona sobre **TCP** (puerto 1935)
-- Establece conexión persistente cliente-servidor
-- Multiplexa vídeo, audio y control en chunks
-- Latencia típica: **3–5 s**
-- Ideal para streaming con baja latencia y buena fiabilidad
-
-
----
-
-## 3. Fundamentos – HLS
-
-- **HTTP Live Streaming** (Apple)
-- Divide el vídeo en fragmentos de ~6 s (.ts) + playlist (.m3u8)
-- Compatible con cualquier servidor HTTP
-- Permite **streaming adaptativo** según ancho de banda
-- Latencia más alta: **6–30 s**
-- Muy usado en streaming web por su simplicidad
-
-
----
-
-## 3. Fundamentos – MPEG-DASH
-
-- **Dynamic Adaptive Streaming over HTTP**
-- Estándar internacional (ISO/IEC 23009-1)
-- Segmenta en fragmentos + manifiesto (.mpd)
-- Ajuste dinámico de calidad (bitrate adaptativo)
-- Latencia: **4–10 s**
-- No está ligado a una implementación propietaria (a diferencia de HLS)
-
-
----
-
-## 3. Fundamentos – WebRTC
-
-- **Web Real-Time Communication**
-- Funciona sobre **UDP**, baja latencia (<500 ms)
-- Comunicación **peer-to-peer** con STUN/TURN
-- Soporta cifrado mediante SRTP
-- Ideal para videollamadas o streaming en directo
-- Más complejo de implementar en sistemas embebidos
-
-
----
-
-## 3. Fundamentos – Comparativa de protocolos
+## 3. Fundamentos – Protocolos de transmisión de video
 
 | Protocolo | Transporte | Latencia típica | Segmentación |
 |----------|------------|----------------|-------------|
@@ -399,73 +524,84 @@ This project presents the **design and implementation** of a complete system for
 
 ---
 
-## 3. Fundamentos – LoRa
+## 3. Fundamentos – Comunicación por radiofrecuencia
 
-- Tecnología **LPWAN** (Low-Power Wide-Area Network)
-- Modulación **Chirp Spread Spectrum (CSS)**
-- Configurable: **Spreading Factor (SF)** y **Coding Rate (CR)**
-- Incorpora **FEC (Forward Error Correction)** → robusta ante ruido
-- Opera en bandas ISM (433/868/915 MHz) → uso libre
-- Alcance: **cientos de m en entornos urbanos** hasta **>15 km en campo abierto**
-- Velocidad de datos: **0.3 – 27 kbps**
+<style>
+.table-rf {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 26px; /* Ajusta a 24 si no entra bien */
+}
+.table-rf th, .table-rf td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+.table-rf thead th {
+  background: #f6f7f9;
+  text-align: center;
+}
+.table-rf td:first-child {
+  text-align: left;
+  font-weight: bold;
+}
+</style>
 
-*(Puedes mostrar un diagrama de enlace LoRa CanSat ↔ estación de tierra)*
-
-
----
-
-## 3. Fundamentos – XBee (802.15.4)
-
-- Estándar **IEEE 802.15.4** en 2.4 GHz  
-- Modulación: **DSSS + O-QPSK** (robusta frente a interferencias)
-- Tasa de datos: **250 kbps**
-- Modos: **API** (tramas estructuradas) y **transparente** (punto a punto)
-- Topologías: punto a punto o estrella
-- Alcance típico: **30–100 m en interiores**, >300 m en exteriores
-- Interfaz con microcontrolador: **UART**, hasta 1 Mbps
-
-
----
-
-## 3. Fundamentos – APC220
-
-- Opera en **433 MHz** (banda ISM)
-- Modulación: **GFSK** → menor ancho de banda y emisiones fuera de banda
-- Velocidad de datos: **1.2 – 19.2 kbps**
-- Interfaz: **UART**
-- Incorpora **AGC** y corrección de errores interna
-- Alcance: hasta **1 km con visión directa**
-- Configuración mediante **comandos AT** o herramienta de PC
-
-
----
-
-## 3. Comparativa de tecnologías RF
-
-| Característica       | **LoRa** | **XBee (802.15.4)** | **APC220** |
-|--------------------|---------|------------------|-----------|
-| Frecuencia         | 433/868/915 MHz | 2.4 GHz | 433 MHz |
-| Modulación         | CSS (Chirp Spread Spectrum) | DSSS + O-QPSK | GFSK |
-| Velocidad de datos | 0.3–27 kbps | 250 kbps | 1.2–19.2 kbps |
-| Alcance típico     | hasta 15 km | 30–300 m | hasta 1 km |
-| Corrección errores | FEC (CR 4/5–4/8) | No especificado | FEC + AGC |
-| Interfaz MCU       | UART | UART | UART |
-| Topología          | Punto a punto | Punto a punto / estrella | Punto a punto |
-
-
----
-
-## 4. Diseño e implementación – Arquitectura general
-
-- Sistema dividido en 4 bloques:
-  1. **CanSat:** Raspberry Pi Zero 2 W + sensores + cámara  
-  2. **Estación de tierra:** Raspberry Pi 4 + receptor LoRa  
-  3. **Backend:** Spring Boot + RabbitMQ + PostgreSQL  
-  4. **Frontend:** Flutter + WebSocket (STOMP)
-
-*(Incluye aquí el diagrama de arquitectura general con flechas de flujo de datos)*
-
-
+<table class="table-rf">
+  <thead>
+    <tr>
+      <th>Característica</th>
+      <th>LoRa</th>
+      <th>XBee (802.15.4)</th>
+      <th>APC220</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Frecuencia</td>
+      <td>433 / 868 / 915 MHz</td>
+      <td>2.4 GHz</td>
+      <td>433 MHz</td>
+    </tr>
+    <tr>
+      <td>Modulación</td>
+      <td>CSS (Chirp Spread)</td>
+      <td>DSSS + O-QPSK</td>
+      <td>GFSK</td>
+    </tr>
+    <tr>
+      <td>Velocidad de datos</td>
+      <td>0.3–27 kbps</td>
+      <td>250 kbps</td>
+      <td>1.2–19.2 kbps</td>
+    </tr>
+    <tr>
+      <td>Alcance típico</td>
+      <td>hasta 15 km</td>
+      <td>30–300 m</td>
+      <td>hasta 1 km</td>
+    </tr>
+    <tr>
+      <td>Corrección errores</td>
+      <td>FEC (CR 4/5–4/8)</td>
+      <td>No especificado</td>
+      <td>FEC + AGC</td>
+    </tr>
+    <tr>
+      <td>Interfaz MCU</td>
+      <td>UART</td>
+      <td>UART</td>
+      <td>UART</td>
+    </tr>
+    <tr>
+      <td>Topología</td>
+      <td>Punto a punto</td>
+      <td>Punto a punto / estrella</td>
+      <td>Punto a punto</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -479,9 +615,6 @@ This project presents the **design and implementation** of a complete system for
 - **Cámara CSI:** captura y codificación de vídeo sin sobrecargar la CPU
 - **Transmisión:** WiFi si hay red disponible, LoRa E32-900T20D si no
 - **Alimentación:** batería 18650 + cargador MCP73871 + boost converter a 5V
-
-*(Puedes incluir foto del montaje o render 3D del CanSat)*
-
 
 
 ---
@@ -503,55 +636,198 @@ This project presents the **design and implementation** of a complete system for
 
 ---
 
-## 5. Implementación (embebido)
+## 4. Selección de tecnologías – Software
 
-- Código embebido en Raspberry Pi:
-  - Lectura de sensores y GNSS
-  - Captura de vídeo
-  - Envío de telemetría por LoRa o red
-- Ejemplo de evento en JSON
+- **Software embebido:**  
+  - Scripts en Python para lectura de sensores, GNSS, captura de vídeo y envío de datos  
 
----
+- **Backend:**  
+  - Spring Boot (Java) + API REST  
+  - RabbitMQ (AMQP) para mensajería de eventos  
+  - PostgreSQL para persistencia  
 
-## 5. Implementación (backend)
+- **Frontend:**  
+  - Desarrollado en **Flutter**  
+  - Comunicación en tiempo real mediante WebSocket (STOMP)  
 
-- Backend en Spring Boot:
-  - Ingesta de eventos desde RabbitMQ
-  - Persistencia en base de datos
-  - API REST + WebSocket para clientes
 
 ---
 
-## 5. Implementación (frontend)
+## 4. Selección de tecnologías – Arquitectura general
 
-- Frontend en Flutter:
-  - Componentes de métricas y gráficas
-  - Mapa con posición GNSS
-  - Actitud 3D del CanSat
-  - Streaming de vídeo
-- Capturas de pantalla de la interfaz final
+<img src="./figuras/cansat_architecture_slide.png" alt="CanSat" height="500" width="1000">
+
 
 ---
 
-## 6. Validación y resultados
+## 4. Selección de tecnologías – Conexion
 
-- Pruebas realizadas: simulación y sistema real
-- Métricas clave: latencia, autonomía, alcance de LoRa
-- Visualización en tiempo real durante la validación
+<style>
+.two-imgs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: center;
+  justify-items: center;
+}
+.two-imgs img {
+  max-height: 420px;
+  width: 100%;
+  object-fit: contain;
+}
+</style>
+
+
+<div class="two-imgs">
+  <img src="./figuras/conexion_sensores.png" alt="Conexión sensores">
+  <img src="./figuras/conexion_gps.png" alt="Conexión GNSS">
+</div>
+
 
 ---
 
-## 7. Conclusiones y trabajo futuro
+## 4. Selección de tecnologías – Conexion
 
-- Principales logros: modularidad, reutilización, validación exitosa
-- Posibles mejoras:
-  - Nuevos sensores
-  - Mejoras de interfaz y UX
-  - Despliegue en la nube para proyectos colaborativos
+
+<div class="two-imgs">
+  <img src="./figuras/conexion_cargador.png" alt="Conexión sensores">
+  <img src="./figuras/conexion_ground.png" alt="Conexión GNSS">
+</div>
+
 
 ---
 
-## 8. Demo / Q&A
+## 4. Selección de tecnologías – Conexion
 
-- Breve demo del sistema en vivo o vídeo grabado
-- Turno de preguntas
+
+<div class="two-imgs">
+  <img src="./figuras/pcb_montaje_frontal.png" alt="Conexión sensores">
+  <img src="./figuras/pcb_montaje_trasero.png" alt="Conexión GNSS">
+</div>
+
+
+---
+
+
+## 4. Selección de tecnologías – Interfaz
+
+<div style="display:flex; justify-content:center; align-items:center; height:100%;">
+  <img src="./figuras/initerfaz_general.png"
+       alt="CanSat"
+       height="550"
+       style="margin-bottom:20px;">
+</div>
+
+
+---
+
+## 5. Pruebas – Integración con datos simulados
+
+- **Objetivo:** validar backend y frontend **sin hardware**
+- **Telemetría simulada (Python + RabbitMQ):**
+  - Publicación periódica de eventos JSON (altitud, temperatura, GNSS, actitud)
+  - Verificación de ingesta, persistencia y actualización **en tiempo real** (métricas, gráficas, mapa)
+- **Vídeo simulado (Python + FFmpeg → RTMP):**
+  - Generación de frames sintéticos y envío a **servidor RTMP**
+  - Reproducción en el **frontend** con baja latencia
+
+
+---
+
+## 5. Pruebas – Sistema real (CanSat + Estación + Servicios)
+
+- **Transmisión por WiFi:**  
+  Eventos → RabbitMQ → PostgreSQL → WebSocket → Frontend  
+  **Latencia < 1 s** desde la generación a la visualización
+
+- **Transmisión por LoRa (868 MHz):**  
+  Recepción estable en campo abierto **hasta > 1 km**  
+  Pérdidas ocasionales a distancias superiores (acorde al módulo empleado)
+
+- **Autonomía energética:** ≈ **2 h** de operación continua con telemetría + vídeo
+
+- **Persistencia y exportación:**  
+  Datos en **PostgreSQL** y descarga en **JSONL** vía API
+
+---
+
+<style>
+.table-tests {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 26px;
+}
+.table-tests th, .table-tests td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  vertical-align: middle;
+}
+.table-tests thead th {
+  background: #f6f7f9;
+  text-align: left;
+}
+.table-tests td:first-child { white-space: nowrap; font-weight: 600; }
+</style>
+
+## 5. Resultados (resumen)
+
+<table class="table-tests">
+  <thead>
+    <tr>
+      <th>Prueba</th>
+      <th>Resultado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Transmisión por WiFi</td>
+      <td>Latencia < 1 s, integración end-to-end correcta</td>
+    </tr>
+    <tr>
+      <td>Transmisión por LoRa</td>
+      <td>Recepción estable hasta > 1 km (campo abierto)</td>
+    </tr>
+    <tr>
+      <td>Autonomía</td>
+      <td>≈ 2 h de operación continua (telemetría + vídeo)</td>
+    </tr>
+    <tr>
+      <td>Persistencia/Exportación</td>
+      <td>Datos en PostgreSQL y descarga en JSONL vía API</td>
+    </tr>
+  </tbody>
+</table>
+
+---
+
+
+## 6. Conclusions
+
+**Main goal:** Achieved → modular, hardware-agnostic, real-time platform
+
+**Key contributions**
+- Reusable architecture  
+- Modular stack (acq / tx / backend / frontend)  
+- Validated with CanSat  
+- Latency & sync optimized  
+
+**Challenges overcome**
+- RPi Zero 2 W → **640×480 @ 15 fps** (HW H.264)  
+- GNSS BN-880 via **USB–UART (CP2102)** with compact adapter
+
+
+
+---
+
+## 7. Future Work
+
+- Add more **real-time charts** and custom visualizations
+- Implement **telecommanding system** to remotely control sensors and configuration
+- Add **authentication** to protect sensitive data
+- Support monitoring of **multiple CanSats** simultaneously
+- Design and build a **3D-printed enclosure** and **parachute** for real launches
+
+---
+
+<!-- _class: lead -->
+# Preguntas
