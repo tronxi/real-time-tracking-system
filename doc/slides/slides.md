@@ -218,44 +218,84 @@ This project presents the **design and implementation** of a complete system for
 .table-compact th,.table-compact td{border:1px solid #ddd;padding:6px 8px;vertical-align:top;}
 .table-compact th{background:#f7f7f7;text-align:left;}
 .table-compact td{word-break:break-word;}
-.table-compact td:nth-child(1), .table-compact td:nth-child(2), .table-compact td:nth-child(5){white-space:nowrap;}
+.table-compact td:nth-child(1){white-space:nowrap;}
 </style>
+
 ## 3. Fundamentos - Microcontroladores
 
 <table class="table-compact">
   <thead>
     <tr>
-      <th>Plataforma</th><th>CPU / Vel.</th><th>RAM</th>
-      <th>Conectividad</th><th>Consumo</th><th>Comentario</th>
+      <th>Característica</th>
+      <th>Raspberry Pi Zero 2 W</th>
+      <th>ESP32</th>
+      <th>Arduino Nano</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td><strong>Arduino Nano</strong></td>
-      <td>ATmega328P @ 16 MHz</td>
-      <td>2 KB SRAM</td>
-      <td>UART, I²C, SPI</td>
-      <td>~20–30 mA</td>
-      <td>Sin SO; no vídeo</td>
+      <td><strong>Procesador</strong></td>
+      <td>ARM Cortex-A53 (4×, 1&nbsp;GHz)</td>
+      <td>Xtensa LX6 (2×, 240&nbsp;MHz)</td>
+      <td>ATmega328P (1×, 16&nbsp;MHz)</td>
     </tr>
     <tr>
-      <td><strong>ESP32-WROOM</strong></td>
-      <td>Dual-core Xtensa @ 240 MHz</td>
-      <td>520 KB SRAM</td>
-      <td>WiFi, BT, UART, I²C, SPI</td>
-      <td>~80–240 mA (WiFi)</td>
-      <td>Conectado, sin cámara HD</td>
+      <td><strong>Memoria</strong></td>
+      <td>512&nbsp;MB SDRAM</td>
+      <td>520&nbsp;KB SRAM + 4&nbsp;MB Flash</td>
+      <td>2&nbsp;KB SRAM + 32&nbsp;KB Flash</td>
     </tr>
     <tr>
-      <td><strong>RPi Zero 2 W</strong></td>
-      <td>Quad-core A53 @ 1 GHz</td>
-      <td>512 MB LPDDR2</td>
-      <td>WiFi, BT, USB, UART, I²C, SPI, CSI</td>
-      <td>~100–300 mA</td>
-      <td>Linux, cámara CSI, multitarea</td>
+      <td><strong>Wi-Fi</strong></td>
+      <td>Sí</td>
+      <td>Sí</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>Bluetooth</strong></td>
+      <td>4.2 + BLE</td>
+      <td>4.2 + BLE</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>SPI</strong></td>
+      <td>1</td>
+      <td>4</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><strong>I²C</strong></td>
+      <td>2</td>
+      <td>2</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><strong>UART</strong></td>
+      <td>1</td>
+      <td>3</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td><strong>Compatibilidad cámara</strong></td>
+      <td>CSI (cámara oficial)</td>
+      <td>OV2640 (ESP32-CAM)</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>Consumo típico</strong></td>
+      <td>0.7–1.5&nbsp;W</td>
+      <td>0.2–0.6&nbsp;W</td>
+      <td>0.05–0.2&nbsp;W</td>
+    </tr>
+    <tr>
+      <td><strong>Precio estimado</strong></td>
+      <td>15–20&nbsp;€</td>
+      <td>4–8&nbsp;€</td>
+      <td>25–30&nbsp;€</td>
     </tr>
   </tbody>
 </table>
+
 
 
 ---
@@ -342,7 +382,80 @@ This project presents the **design and implementation** of a complete system for
   </tbody>
 </table>
 
+---
 
+## 3. Fundamentos – Comunicación por radiofrecuencia
+
+<style>
+.table-rf {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 26px; /* Ajusta a 24 si no entra bien */
+}
+.table-rf th, .table-rf td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+.table-rf thead th {
+  background: #f6f7f9;
+  text-align: center;
+}
+.table-rf td:first-child {
+  text-align: left;
+  font-weight: bold;
+}
+</style>
+
+<table class="table-rf">
+  <thead>
+    <tr>
+      <th>Característica</th>
+      <th>LoRa</th>
+      <th>XBee (802.15.4)</th>
+      <th>APC220</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Frecuencia</td>
+      <td>433 / 868 / 915 MHz</td>
+      <td>2.4 GHz</td>
+      <td>433 MHz</td>
+    </tr>
+    <tr>
+      <td>Modulación</td>
+      <td>CSS (Chirp Spread)</td>
+      <td>DSSS + O-QPSK</td>
+      <td>GFSK</td>
+    </tr>
+    <tr>
+      <td>Velocidad de datos</td>
+      <td>0.3–27 kbps</td>
+      <td>250 kbps</td>
+      <td>1.2–19.2 kbps</td>
+    </tr>
+    <tr>
+      <td>Alcance típico</td>
+      <td>hasta 15 km</td>
+      <td>30–300 m</td>
+      <td>hasta 1 km</td>
+    </tr>
+    <tr>
+      <td>Corrección errores</td>
+      <td>FEC (CR 4/5–4/8)</td>
+      <td>No especificado</td>
+      <td>FEC + AGC</td>
+    </tr>
+    <tr>
+      <td>Interfaz MCU</td>
+      <td>UART</td>
+      <td>UART</td>
+      <td>UART</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -354,11 +467,55 @@ This project presents the **design and implementation** of a complete system for
 - Usado para estimar **altura relativa durante el vuelo**
 
 **Ejemplos de sensores comunes:**
-| Sensor   | Rango (hPa) | Precisión | Interfaz | Consumo |
-|---------|-------------|-----------|---------|---------|
-| BMP388  | 300–1250    | ±8 Pa (0.66 m) | I²C/SPI | 3.4 µA |
-| BME280  | 300–1100    | ±12 Pa (1 m) | I²C/SPI | 2.7 µA |
-| MPL3115A2 | 50–1100   | ±0.04 hPa (0.3 m) | I²C | 40 µA |
+<style>
+.table-compact{width:100%;border-collapse:collapse;font-size:22px;}
+.table-compact th,.table-compact td{border:1px solid #ddd;padding:6px 8px;vertical-align:top;}
+.table-compact th{background:#f7f7f7;text-align:left;}
+.table-compact td{word-break:break-word;}
+.table-compact td:nth-child(1){white-space:nowrap;}
+</style>
+
+## Sensores de presión / altitud
+
+<table class="table-compact">
+  <thead>
+    <tr>
+      <th>Sensor</th>
+      <th>Rango de presión</th>
+      <th>Precisión</th>
+      <th>Interfaz</th>
+      <th>Consumo</th>
+      <th>Precio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>BMP388</strong></td>
+      <td>300–1250 hPa</td>
+      <td>±8 Pa (±0,66 m)</td>
+      <td>I²C / SPI</td>
+      <td>3.4 µA</td>
+      <td>~3,50 €</td>
+    </tr>
+    <tr>
+      <td><strong>BME280</strong></td>
+      <td>300–1100 hPa</td>
+      <td>±12 Pa (±1 m)</td>
+      <td>I²C / SPI</td>
+      <td>2.7 µA</td>
+      <td>~4,00 €</td>
+    </tr>
+    <tr>
+      <td><strong>MPL3115A2</strong></td>
+      <td>50–1100 hPa</td>
+      <td>±0,04 hPa (±0,3 m)</td>
+      <td>I²C</td>
+      <td>40 µA</td>
+      <td>~6,00 €</td>
+    </tr>
+  </tbody>
+</table>
+i
 
 
 ---
@@ -370,71 +527,54 @@ This project presents the **design and implementation** of a complete system for
 - Permite conocer la **orientación** en términos de pitch, yaw y roll  
 - Modelos avanzados incluyen procesador interno para fusión sensorial
 
-**Ejemplos de IMU:**
+**Sensores IMU:**
 <style>
-.table-imu {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 28px;           /* ⇦ súbelo a 28 si aún cabe */
-}
-.table-imu th, .table-imu td {
-  border: 1px solid #ddd;
-  padding: 6px 10px;         /* ⇦ ligeramente mayor */
-  vertical-align: middle;
-}
-.table-imu thead th {
-  background: #f6f7f9;
-  text-align: left;
-}
-.table-imu td:nth-child(1),
-.table-imu td:nth-child(3),
-.table-imu td:nth-child(4),
-.table-imu td:nth-child(5) {
-  white-space: nowrap;       /* evita saltos raros */
-}
+.table-compact{width:100%;border-collapse:collapse;font-size:22px;}
+.table-compact th,.table-compact td{border:1px solid #ddd;padding:6px 8px;vertical-align:top;}
+.table-compact th{background:#f7f7f7;text-align:left;}
+.table-compact td{word-break:break-word;}
+.table-compact td:nth-child(1){white-space:nowrap;}
 </style>
 
-<table class="table-imu">
+<table class="table-compact">
   <thead>
     <tr>
       <th>Sensor</th>
       <th>Componentes</th>
-      <th>Orientación</th>
+      <th>Salida de orientación</th>
       <th>Interfaz</th>
       <th>Consumo</th>
+      <th>Precio</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><strong>MPU6050</strong></td>
-      <td>Acc + Giro</td>
-      <td>No (externo)</td>
+      <td>Acelerómetro + Giroscopio</td>
+      <td>No (requiere fusión externa)</td>
       <td>I²C</td>
       <td>3.9 mA</td>
+      <td>~1,50 €</td>
     </tr>
     <tr>
       <td><strong>BNO055</strong></td>
-      <td>Acc + Giro + Mag</td>
-      <td>Sí (interna)</td>
-      <td>I²C/UART</td>
+      <td>Acelerómetro + Giroscopio + Magnetómetro</td>
+      <td>Sí (fusión interna)</td>
+      <td>I²C / UART</td>
       <td>12 mA</td>
+      <td>~9,00 €</td>
     </tr>
     <tr>
       <td><strong>BNO085</strong></td>
-      <td>Acc + Giro + Mag</td>
-      <td>Sí (precisa)</td>
-      <td>I²C/UART/SPI</td>
+      <td>Acelerómetro + Giroscopio + Magnetómetro</td>
+      <td>Sí (mayor precisión)</td>
+      <td>I²C / UART / SPI</td>
       <td>3.5 mA</td>
-    </tr>
-    <tr>
-      <td><strong>LSM9DS1</strong></td>
-      <td>Acc + Giro + Mag</td>
-      <td>No (externo)</td>
-      <td>I²C/SPI</td>
-      <td>1 mA</td>
+      <td>~14,00 €</td>
     </tr>
   </tbody>
 </table>
+
 
 
 
@@ -510,7 +650,7 @@ This project presents the **design and implementation** of a complete system for
 </table>
 
 
----
+<!-- ---
 
 ## 3. Fundamentos – Protocolos de transmisión de video
 
@@ -519,119 +659,22 @@ This project presents the **design and implementation** of a complete system for
 | **RTMP** | TCP (1935) | 3–5 s          | Chunks multiplexados |
 | **HLS**  | HTTP (TCP) | 5–15 s         | Archivos .ts + playlist |
 | **DASH** | HTTP (TCP) | 4–10 s         | MP4 + manifiesto .mpd |
-| **WebRTC** | UDP      | <500 ms        | Flujo continuo P2P |
+| **WebRTC** | UDP      | <500 ms        | Flujo continuo P2P | -->
 
-
----
-
-## 3. Fundamentos – Comunicación por radiofrecuencia
-
-<style>
-.table-rf {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 26px; /* Ajusta a 24 si no entra bien */
-}
-.table-rf th, .table-rf td {
-  border: 1px solid #ddd;
-  padding: 6px 10px;
-  text-align: center;
-  vertical-align: middle;
-}
-.table-rf thead th {
-  background: #f6f7f9;
-  text-align: center;
-}
-.table-rf td:first-child {
-  text-align: left;
-  font-weight: bold;
-}
-</style>
-
-<table class="table-rf">
-  <thead>
-    <tr>
-      <th>Característica</th>
-      <th>LoRa</th>
-      <th>XBee (802.15.4)</th>
-      <th>APC220</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Frecuencia</td>
-      <td>433 / 868 / 915 MHz</td>
-      <td>2.4 GHz</td>
-      <td>433 MHz</td>
-    </tr>
-    <tr>
-      <td>Modulación</td>
-      <td>CSS (Chirp Spread)</td>
-      <td>DSSS + O-QPSK</td>
-      <td>GFSK</td>
-    </tr>
-    <tr>
-      <td>Velocidad de datos</td>
-      <td>0.3–27 kbps</td>
-      <td>250 kbps</td>
-      <td>1.2–19.2 kbps</td>
-    </tr>
-    <tr>
-      <td>Alcance típico</td>
-      <td>hasta 15 km</td>
-      <td>30–300 m</td>
-      <td>hasta 1 km</td>
-    </tr>
-    <tr>
-      <td>Corrección errores</td>
-      <td>FEC (CR 4/5–4/8)</td>
-      <td>No especificado</td>
-      <td>FEC + AGC</td>
-    </tr>
-    <tr>
-      <td>Interfaz MCU</td>
-      <td>UART</td>
-      <td>UART</td>
-      <td>UART</td>
-    </tr>
-    <tr>
-      <td>Topología</td>
-      <td>Punto a punto</td>
-      <td>Punto a punto / estrella</td>
-      <td>Punto a punto</td>
-    </tr>
-  </tbody>
-</table>
 
 ---
 
 ## 4. Diseño e implementación – Hardware
 
-- **Unidad de procesamiento:** Raspberry Pi Zero 2 W (Linux + vídeo H.264)
+- **Unidad de procesamiento:** Raspberry Pi Zero 2 W
 - **Sensores:**
   - BMP388 (presión y temperatura)
   - BNO085 (IMU con fusión sensorial)
   - BN-880 (GNSS multi-constelación + brújula)
-- **Cámara CSI:** captura y codificación de vídeo sin sobrecargar la CPU
+- **Cámara CSI:** Raspberry Pi Camera Module v2
 - **Transmisión:** WiFi si hay red disponible, LoRa E32-900T20D si no
 - **Alimentación:** batería 18650 + cargador MCP73871 + boost converter a 5V
-
-
----
-
-## 4. Diseño e implementación – Estación de tierra y software
-
-- **Estación de tierra:**
-  - Raspberry Pi 4 + receptor LoRa
-  - Actúa como pasarela → reenvía datos a RabbitMQ
-- **Software embebido:**
-  - Scripts en Python para adquisición de datos, envío por LoRa/WiFi y recepción
-- **Backend:**
-  - Spring Boot, API REST, ingesta de eventos y persistencia en PostgreSQL
-  - RabbitMQ como broker de eventos (AMQP)
-- **Frontend:**
-  - Implementado en Flutter
-  - Métricas, gráficas, mapa GNSS, modelo 3D, vídeo en tiempo real
+- **Estación de tierra:** Raspberry Pi 4 + receptor LoRa
 
 
 ---
@@ -648,7 +691,7 @@ This project presents the **design and implementation** of a complete system for
 
 - **Frontend:**  
   - Desarrollado en **Flutter**  
-  - Comunicación en tiempo real mediante WebSocket (STOMP)  
+  - Comunicación en tiempo real mediante WebSocket
 
 
 ---
@@ -749,7 +792,7 @@ This project presents the **design and implementation** of a complete system for
 - **Persistencia y exportación:**  
   Datos en **PostgreSQL** y descarga en **JSONL** vía API
 
----
+<!-- ---
 
 <style>
 .table-tests {
@@ -796,7 +839,7 @@ This project presents the **design and implementation** of a complete system for
       <td>Datos en PostgreSQL y descarga en JSONL vía API</td>
     </tr>
   </tbody>
-</table>
+</table> -->
 
 ---
 
