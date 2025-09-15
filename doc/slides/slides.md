@@ -850,7 +850,6 @@ i
 - **Modular architecture:** data capture, transmission, backend, frontend → independent changes; easier maintenance & reuse.
 - **Validation:** built a real CanSat; hardware-independent; adaptable to other sensors/configurations.
 - **Video challenge (Pi Zero 2 W):** unstable → 640×480 @ 15 fps + hardware-accelerated FFmpeg → smooth, continuous video.
-- **I/O challenge:** single UART used by LoRa → added USB–UART for GNSS; physically modified the adapter to fit the CanSat
 
 
 
