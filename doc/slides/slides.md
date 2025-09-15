@@ -92,8 +92,8 @@ header: ""
 
 This project presents the **design and implementation** of a complete system for:
 
-- Building a **CanSat-like device** with sensors, GNSS and camera  
-- Sending data in real time via **WiFi** or **LoRa radio**  
+- Building a **CanSat-like device** with sensors, GPS and camera  
+- Sending data in real time via **WiFi** or **radio**  
 - Displaying telemetry, position, attitude, and video in a **reusable web interface**
 
 
@@ -846,17 +846,11 @@ i
 
 ## 6. Conclusions
 
-**Main goal:** Achieved → modular, hardware-agnostic, real-time platform
-
-**Key contributions**
-- Reusable architecture  
-- Modular stack (acq / tx / backend / frontend)  
-- Validated with CanSat  
-- Latency & sync optimized  
-
-**Challenges overcome**
-- RPi Zero 2 W → **640×480 @ 15 fps** (HW H.264)  
-- GNSS BN-880 via **USB–UART (CP2102)** with compact adapter
+- **Goal achieved:** reusable, hardware-independent platform for real-time CanSat data visualization.
+- **Modular architecture:** data capture, transmission, backend, frontend → independent changes; easier maintenance & reuse.
+- **Validation:** built a real CanSat; hardware-independent; adaptable to other sensors/configurations.
+- **Video challenge (Pi Zero 2 W):** unstable → 640×480 @ 15 fps + hardware-accelerated FFmpeg → smooth, continuous video.
+- **I/O challenge:** single UART used by LoRa → added USB–UART for GNSS; physically modified the adapter to fit the CanSat
 
 
 
@@ -868,9 +862,20 @@ i
 - Implement **telecommanding system** to remotely control sensors and configuration
 - Add **authentication** to protect sensitive data
 - Support monitoring of **multiple CanSats** simultaneously
-- Design and build a **3D-printed enclosure** and **parachute** for real launches
 
 ---
 
-<!-- _class: lead -->
-# Preguntas
+<style>
+.questions { display: grid; place-items: center; text-align: center; padding: 0 6%; }
+h1 { font-size: 86px; color: var(--accent); margin: 0 0 12px; }
+p.meta { font-size: 34px; color: #111; margin: 6px 0 0; }
+.footer { color: #666; font-size: 28px; margin-top: 20px}
+</style>
+
+<div class="questions">
+<h1>Preguntas</h1>
+<p class="meta">Diseño e implementación de un sistema de adquisición, transmisión y visualización de datos basado en CanSat</p>
+<p class="meta">Sergio García Sánchez</p>
+<p class="footer">Gracias por su atención</p>
+</div>
+
