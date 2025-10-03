@@ -4,6 +4,7 @@ import time
 import os
 import rabbitmq_connection_manager
 import event as event_module
+import json
 
 PORT = '/dev/cu.usbserial-0001'
 rabbit = rabbitmq_connection_manager.RabbitmqConnectionManager()
@@ -19,9 +20,13 @@ if os.path.exists(PORT) and os.access(PORT, os.R_OK | os.W_OK):
         while True:
             line = ser.readline().decode(errors='ignore').strip()
             if line:
-                print(f"Received: {line}")
-                now = datetime.utcnow().isoformat()
-                event = event_module.Event("TM", datetime.now().isoformat(), {"raw": line})
+                try:
+                    payload = json.loads(line)
+                except Exception:
+                    payload = {"raw": line}
+
+                event = event_module.Event("TM", datetime.now().isoformat(), payload)
+                print(f"Received: {event.to_json()}")
                 rabbit.publish(event.to_json())
             time.sleep(0.1)
 

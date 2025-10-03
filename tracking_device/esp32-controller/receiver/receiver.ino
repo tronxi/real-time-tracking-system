@@ -13,28 +13,28 @@ void setup() {
 
   LoRa.setPins(SS, RST, DIO0);
 
-  if (!LoRa.begin(433E6)) {  // frecuencia en Hz
+  if (!LoRa.begin(433E6)) {
     Serial.println("Starting LoRa failed!");
     while (1);
   }
 
+  LoRa.setSpreadingFactor(7);      // más rápido (6–12)
+  LoRa.setSignalBandwidth(250E3);  // ancho de banda mayor → más rapidez
+  LoRa.setCodingRate4(5);          // menos redundancia, más velocidad
+  LoRa.setTxPower(14);  
+  LoRa.enableCrc();
   Serial.println("LoRa init OK, waiting for packets...");
 }
 
 void loop() {
-  // int packetSize = LoRa.parsePacket();
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
-    // received a packet
-    Serial.print("Received packet '");
 
-    // read packet
     while (LoRa.available()) {
       Serial.print((char)LoRa.read());
     }
+    Serial.println();
 
-    // print RSSI (fuerza de señal recibida)
-    Serial.print("' with RSSI ");
-    Serial.println(LoRa.packetRssi());
+    // Serial.println(LoRa.packetRssi());
   }
 }
