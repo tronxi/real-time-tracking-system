@@ -79,7 +79,7 @@ class TelemetrySender:
                 continue
             except Exception as e:
                 print(f"[ERROR] {e}")
-            time.sleep(0.2)
+            time.sleep(0.5)
 
     def _publish_telemetry_event(self):
         payload = {
