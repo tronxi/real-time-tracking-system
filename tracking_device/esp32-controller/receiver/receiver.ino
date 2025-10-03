@@ -18,9 +18,9 @@ void setup() {
     while (1);
   }
 
-  LoRa.setSpreadingFactor(7);      // más rápido (6–12)
-  LoRa.setSignalBandwidth(250E3);  // ancho de banda mayor → más rapidez
-  LoRa.setCodingRate4(5);          // menos redundancia, más velocidad
+  LoRa.setSpreadingFactor(7);
+  LoRa.setSignalBandwidth(250E3);
+  LoRa.setCodingRate4(5);
   LoRa.setTxPower(14);  
   LoRa.enableCrc();
   Serial.println("LoRa init OK, waiting for packets...");
