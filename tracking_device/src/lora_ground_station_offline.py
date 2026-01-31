@@ -8,7 +8,7 @@ from pyqtgraph.Qt import QtWidgets, QtCore
 from collections import deque
 import signal
 
-PORT = '/dev/cu.usbserial-0001'
+PORT = '/dev/cu.usbmodem2101'
 max_points = 90000
 
 yaw, roll, pitch = deque(maxlen=max_points), deque(maxlen=max_points), deque(maxlen=max_points)
