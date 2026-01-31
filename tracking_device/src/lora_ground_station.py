@@ -6,7 +6,7 @@ import rabbitmq_connection_manager
 import event as event_module
 import json
 
-PORT = '/dev/cu.usbserial-0001'
+PORT = '/dev/cu.usbmodem2101'
 rabbit = rabbitmq_connection_manager.RabbitmqConnectionManager()
 
 print("Checking port access...")
