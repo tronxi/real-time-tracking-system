@@ -691,21 +691,6 @@ Se han desarrollado **dos CanSat** usando distintos controladores:
 
 ---
 
-## 4. Diseño e implementación – Hardware
-
-- **Unidad de procesamiento:** Raspberry Pi Zero 2 W
-- **Sensores:**
-    - BMP388 (presión y temperatura)
-    - BNO085 (IMU con fusión sensorial)
-    - BN-880 (GNSS multi-constelación + brújula)
-- **Cámara CSI:** Raspberry Pi Camera Module v2
-- **Transmisión:** WiFi si hay red disponible, LoRa E32-900T20D si no
-- **Alimentación:** batería 18650 + cargador MCP73871 + boost converter a 5V
-- **Estación de tierra:** Raspberry Pi 4 + receptor LoRa
-
-
----
-
 ## 4. Selección de tecnologías – Software
 
 - **Software embebido:**
