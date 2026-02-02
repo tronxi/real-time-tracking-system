@@ -895,12 +895,19 @@ Se han desarrollado **dos CanSat** usando distintos controladores:
 h1 { font-size: 86px; color: var(--accent); margin: 0 0 12px; }
 p.meta { font-size: 34px; color: #111; margin: 6px 0 0; }
 .footer { color: #666; font-size: 28px; margin-top: 20px}
+.github { font-size: 26px; margin-top: 14px; }
+.github a { color: var(--accent); text-decoration: none; }
+.github a:hover { text-decoration: underline; }
 </style>
 
 <div class="questions">
-<h1>Preguntas</h1>
-<p class="meta">CanSat: sistema de adquisición y datos en tiempo real</p>
-<p class="meta">Sergio García Sánchez</p>
-<p class="footer">Gracias por su atención</p>
+  <h1>Preguntas</h1>
+  <p class="meta">CanSat: sistema de adquisición y datos en tiempo real</p>
+  <p class="meta">Sergio García Sánchez</p>
+  <p class="github">
+    GitHub: <a href="https://github.com/tronxi/cansat">github.com/tronxi/cansat</a>
+  </p>
+  <p class="footer">Gracias por su atención</p>
 </div>
+
 
